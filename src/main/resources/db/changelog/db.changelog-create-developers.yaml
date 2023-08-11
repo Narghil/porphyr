@@ -1,0 +1,31 @@
+databaseChangeLog:
+- changeSet:
+    id: 1
+    author: Pernyei Gabor
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: PK_DEVELOPERS_ID
+            name: ID
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: NAME
+            type: VARCHAR(200)
+        tableName: DEVELOPERS
+- changeSet:
+    id: 2
+    author: perny (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: NAME
+        indexName: IDX_DEVELOPERS_NAME
+        tableName: DEVELOPERS

@@ -1,0 +1,25 @@
+Projekt- feladat- és időnyilvántartó rendszer (Porphyr)
+========================================================
+lehet felhasználókat (fejlesztőket) felvenni
+lehet projekteket felvenni, és ahhoz hozzárendelni a fejlesztőket
+lehet a projektekhez feladatokat felvenni, és kijelölni hozzá a fejlesztőt
+lehet időráfordításokat könyvelni a feladatokra
+a tárolt adatok alapján ilyen-olyan tételes és összesítő lekérdezéseket kialakítani
+a felhasználók egy web-es felületről érik el (és ez bármilyen egyszerű felület is lehet, avagy csak elképzeljük a GUI behívásokat, és csak a szerveroldalra összpontosítasz)
+és persze a behívások révén eleve többszálú környezetben kell működnie, és ennek megfelelően kell implementálni már az első kapavágástól fogva
+
+Javaslom, hogy:
+
+    - a "start.spring.io" oldal alapján dobjál össze egy kiinduló Spring Boot projektet
+        legyen benne minden, ami szükséges (pl. Lombok, JPA, Postgre támogatás)
+        application.yml-ben a szükséges konfigurációs beállítások, pl. a DB elérhetősége
+    - az adatbázis táblák felvételét, és a későbbi adatstruktúra módosítások (pl. új táblák, új oszlopok) átvezetését a Liquibase segítségével végezd,
+    (ez lehetővé teszi azt is, hogy az alkalmazást egy új környezetben, teljesen üres adatbázissal elindítva, létrehozza a szükséges táblákat, és beszúrva a szükséges alap-adatokat is)
+    - az adatbázis műveleteket JPA segítségével végezd, (hagyd, hogy a persistency keretrendszerek dolgozzanak helyetted) - az úgynevezett repository-k használata
+    - a backend oldalon is tudatosan "rétegelve" alakítsd ki a funkcionalitást:
+        a GUI behívásokat kiszolgáló GUI service-ek, azért csak és kizárólag azért felelnek, hogy megértsék a GIU kérését, azt továbbítsák a megfelelő háttér (lényegi) service-nek, és a választ a GUI által elvárt formára hozzák
+        a háttér service-ek a lényegi funkcionalitást implementálják, a DB olvasásához, írásához a repository-kat használják
+    - és persze unit tesztek minden szinten:
+        a GUI szervizek esetében mock-olt háttér service-ek alapján
+        a háttér szervizek esetében mock-olt egyéb háttér service-ek és mock-olt repository-k alapján
+        (a repository-k teszt-DB segítségével, és @Rollback-es tesztesetekkel ... de ezt hagy a leges-leg-végére)

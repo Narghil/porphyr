@@ -1,0 +1,48 @@
+databaseChangeLog:
+- changeSet:
+    id: 9
+    author: Pernyei Gabor
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: PK_PROJECTDEVELOPERS_ID
+            name: ID
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: PROJECT_ID
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: DEVELOPER_ID
+            type: BIGINT
+        tableName: PROJECTDEVELOPERS
+    - addForeignKeyConstraint:
+        baseColumnNames: PROJECT_ID
+        baseTableName: PROJECTDEVELOPERS
+        constraintName: FK_PROJECTDEVELOPERS_PROJECT_ID
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: PROJECTS
+        validate: true
+    - addForeignKeyConstraint:
+        baseColumnNames: DEVELOPER_ID
+        baseTableName: PROJECTDEVELOPERS
+        constraintName: FK_PROJECTDEVELOPERS_DEVELOPER_ID
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: DEVELOPERS
+        validate: true

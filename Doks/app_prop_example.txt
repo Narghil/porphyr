@@ -1,0 +1,5 @@
+spring.jpa.database=postgres
+spring.datasource.password=astro
+spring.datasource.username=astrologer
+spring.datasource.url=jdbc:postgresql://localhost:5432/db_astrolog
+ 

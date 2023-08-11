@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/db.changelog-create-developers.yaml
+  - include:
+      file: db/changelog/db.changelog-create-projects.yaml
+  - include:
+      file: db/changelog/db.changelog-create-projecttasks.yaml
+  - include:
+      file: db/changelog/db.changelog-create-projectdevelopers.yaml

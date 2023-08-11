@@ -1,0 +1,65 @@
+databaseChangeLog:
+- changeSet:
+    id: 5
+    author: Pernyei Gabor
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: PK_TASKS_ID
+            name: ID
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: PROJECT_ID
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: NAME
+            type: VARCHAR(200)
+        - column:
+            name: DESCRIPTION
+            type: CHARACTER LARGE OBJECT
+        tableName: PROJECTTASKS
+- changeSet: 
+    id: 6
+    author: perny (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: NAME
+        indexName: IDX_TASKS_NAME
+        tableName: PROJECTTASKS
+- changeSet:
+    id: 7
+    author: perny (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: PROJECT_ID
+        indexName: FK_TASKS_PROJECT_ID_INDEX
+        tableName: PROJECTTASKS
+- changeSet: 
+    id: 8
+    author: perny (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: PROJECT_ID
+        baseTableName: PROJECTTASKS
+        constraintName: FK_TASKS_PROJECT_ID
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: PROJECTS
+        validate: true
+

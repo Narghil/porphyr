@@ -1,0 +1,34 @@
+databaseChangeLog:
+- changeSet:
+    id: 3
+    author: Pernyei Gabor
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: PK_PROJECTS_ID
+            name: ID
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: NAME
+            type: VARCHAR(200)
+        - column:
+            name: DESCRIPTION
+            type: CHARACTER LARGE OBJECT
+        tableName: PROJECTS
+- changeSet:
+    id: 4
+    author: perny (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: NAME
+        indexName: IDX_PROJECTS_NAME
+        tableName: PROJECTS
