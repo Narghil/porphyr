@@ -48,12 +48,14 @@ public class DeveloperService {
      * - Már van ilyen nevű fejlesztő <br/>
      */
     public void modifyDeveloper(final @NonNull DeveloperEntity modifiedDeveloper) {
-        if( modifiedDeveloper.getId() == null) {
+        if (modifiedDeveloper.getId() == null) {
             throw (new ServiceException(ServiceException.Exceptions.DEVELOPER_NOT_SAVED_CANT_MODIFY));
-        } else if( modifiedDeveloper.getName().isEmpty()) {
+        } else if (modifiedDeveloper.getName().isEmpty()) {
             throw (new ServiceException(ServiceException.Exceptions.DEVELOPER_WITH_EMPTY_NAME_CANT_MODIFY));
-        } else if ( ! developerRepository.findAllByName(modifiedDeveloper.getName()).isEmpty() ) {
-            throw( new ServiceException( ServiceException.Exceptions.DEVELOPER_WITH_SAME_NAME_CANT_MODIFY) );
+        } else if (!developerRepository.findAllByNameAndIdNot(
+            modifiedDeveloper.getName(), modifiedDeveloper.getId()
+        ).isEmpty()) {
+            throw (new ServiceException(ServiceException.Exceptions.DEVELOPER_WITH_SAME_NAME_CANT_MODIFY));
         } else {
             developerRepository.save(modifiedDeveloper);
         }

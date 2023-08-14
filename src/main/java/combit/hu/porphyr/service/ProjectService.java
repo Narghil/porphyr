@@ -33,6 +33,11 @@ public class ProjectService {
      * - A név már létezik
      */
     public void insertNewProject(final @NonNull ProjectEntity newProjectEntity) {
+        if( newProjectEntity.getName().isEmpty() ){
+            throw(new ServiceException(ServiceException.Exceptions.DEVELOPER_WITH_EMPTY_NAME_CANT_INSERT) );
+        } else if( ! projectRepository.findAllByName(newProjectEntity.getName()).isEmpty()){
+            throw(new ServiceException(ServiceException.Exceptions.DEVELOPER_WITH_EMPTY_NAME_CANT_INSERT) );
+        }
         projectRepository.save(newProjectEntity);
     }
 

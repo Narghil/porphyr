@@ -28,17 +28,6 @@ class ProjectServiceTest {
     @InjectMocks
     private ProjectService projectService;
 
-    //Kell ez?
-    @Autowired
-    public void setProjectRepository(ProjectRepository projectRepository) {
-        this.mockedProjectRepository = projectRepository;
-    }
-
-    @Autowired
-    public void setProjectService(ProjectService projectService) {
-        this.projectService = projectService;
-    }
-
     @Test
     void doTests() {
         List<ProjectEntity> mockedProjectList = new ArrayList<ProjectEntity>() {
@@ -51,7 +40,7 @@ class ProjectServiceTest {
                 add( projectEntity );
             }
         };
-        final ProjectEntity singleProjectEntity = new ProjectEntity("Single Project","Single Project Description");
+        ProjectEntity singleProjectEntity = new ProjectEntity("Single Project","Single Project Description");
         singleProjectEntity.setTasks( new ArrayList<ProjectTasksEntity>() {
             { add( new ProjectTasksEntity( singleProjectEntity, "Task for single project"," Description for task"));
             }
@@ -59,14 +48,28 @@ class ProjectServiceTest {
         List<ProjectEntity> actualProjectList;
 
         when(mockedProjectRepository.findAll()).thenReturn(mockedProjectList);
+        when(mockedProjectRepository.findAllById( anyLong() )).thenReturn(singleProjectEntity);
+        when(mockedProjectRepository.findAllByName( anyString() )).thenReturn(mockedProjectList);
         when(mockedProjectRepository.save(any(ProjectEntity.class))).thenReturn(null);
         doNothing().when(mockedProjectRepository).deleteById(anyLong());
-        doNothing().when(mockedProjectRepository).deleteAll();
         //Teljes lekérdezés
         actualProjectList = projectService.getProjects();
         assertEquals(actualProjectList, mockedProjectList);
         verify(mockedProjectRepository, times(1)).findAll();
         //Felvétel
+        // - Üres név
+        // - már létező név
+        // - jó adat
+        //Módosítás
+        // - Üres id
+        // - üres név
+        // - már létező név
+        // - jó adat
+        //Törlés
+        // - üres id
+        // - van hozzá fejlesztő
+        // - van hozzá feladat
+        // - jó adat
         mockedProjectList.add(singleProjectEntity);
         projectService.insertNewProject(singleProjectEntity) ;
         verify(mockedProjectRepository, times(1)).save(singleProjectEntity);

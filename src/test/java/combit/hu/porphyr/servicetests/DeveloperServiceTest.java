@@ -10,7 +10,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
@@ -28,16 +27,6 @@ class DeveloperServiceTest {
     @InjectMocks
     private DeveloperService developerService;
 
-    @Autowired
-    public void setDeveloperRepository(DeveloperRepository developerRepository) {
-        this.mockedDeveloperRepository = developerRepository;
-    }
-
-    @Autowired
-    public void setDeveloperService(DeveloperService developerService) {
-        this.developerService = developerService;
-    }
-
     @Test
     void doTests() {
         List<DeveloperEntity> mockedListFindAll = new ArrayList<DeveloperEntity>() {
@@ -52,9 +41,12 @@ class DeveloperServiceTest {
         };
         final DeveloperEntity singleDeveloperEntity = new DeveloperEntity("");
         List<DeveloperEntity> actualDeveloperList;
+        List<DeveloperEntity> mockedSameNamedDevelopersList = new ArrayList<>();
 
         when(mockedDeveloperRepository.findAll()).thenReturn(mockedListFindAll);
         when(mockedDeveloperRepository.findAllByName(anyString())).thenReturn(mockedListFindByName);
+        when(mockedDeveloperRepository.findAllByNameAndIdNot(anyString(), anyLong())).thenReturn(
+            mockedSameNamedDevelopersList);
         when(mockedDeveloperRepository.findAllById(anyLong())).thenReturn(singleDeveloperEntity);
         when(mockedDeveloperRepository.save(any(DeveloperEntity.class))).thenReturn(null);
         doNothing().when(mockedDeveloperRepository).deleteById(anyLong());
@@ -81,7 +73,8 @@ class DeveloperServiceTest {
         );
         // - Helyes adatokkal
         singleDeveloperEntity.setName("New Developer");
-        assertDoesNotThrow( () -> mockedDeveloperRepository.save( singleDeveloperEntity) );
+        assertDoesNotThrow( () -> mockedDeveloperRepository.save( singleDeveloperEntity ) );
+        verify(mockedDeveloperRepository, times(1)).save(singleDeveloperEntity);
         //Módosítás
         // - Nincs kitöltve az ID
         singleDeveloperEntity.setId(null);
@@ -98,17 +91,19 @@ class DeveloperServiceTest {
             () -> developerService.modifyDeveloper(singleDeveloperEntity),
             ServiceException.Exceptions.DEVELOPER_WITH_EMPTY_NAME_CANT_MODIFY.getDescription()
         );
-        // - Van már ilyen név
-        singleDeveloperEntity.setName(mockedListFindAll.get(0).getName());
-        mockedListFindByName.get(0).setName(mockedListFindAll.get(0).getName());
+        // - Van már ilyen név, más ID-n.
+        singleDeveloperEntity.setName("Modified Developer");
+        mockedSameNamedDevelopersList.add(new DeveloperEntity("Samenamed Developer"));
         assertThrows(
             ServiceException.class,
             () -> developerService.modifyDeveloper(singleDeveloperEntity),
             ServiceException.Exceptions.DEVELOPER_WITH_SAME_NAME_CANT_MODIFY.getDescription()
         );
+        verify(mockedDeveloperRepository, times(1)).findAllByNameAndIdNot(anyString(),anyLong());
         // - Helyes adatokkal
-        singleDeveloperEntity.setName("Modified Developer");
-        assertDoesNotThrow( () -> mockedDeveloperRepository.save( singleDeveloperEntity) );
+        singleDeveloperEntity.setId(0L);
+        assertDoesNotThrow(() -> mockedDeveloperRepository.save(singleDeveloperEntity));
+        verify(mockedDeveloperRepository, times(2)).save(singleDeveloperEntity);
         // Törlés
         // - Nincs kitöltve az ID;
         singleDeveloperEntity.setId(null);
@@ -129,9 +124,12 @@ class DeveloperServiceTest {
             () -> developerService.deleteDeveloper(singleDeveloperEntity),
             ServiceException.Exceptions.DEVELOPER_WITH_PROJECTS_CANT_DELETE.getDescription()
         );
+        verify(mockedDeveloperRepository, times(1)).findAllById(0L);
         // - Jó adatokkal
         singleDeveloperEntity.setDeveloperProjects( new ArrayList<>());
         assertDoesNotThrow( ()-> developerService.deleteDeveloper(singleDeveloperEntity));
+        verify(mockedDeveloperRepository, times(2)).findAllById(0L);
+        verify(mockedDeveloperRepository, times(1)).deleteById(0L);
         //Mindent ellenőriztünk?
         assertDoesNotThrow(ServiceException::isAllDeveloperExceptionsThrown);
     }
