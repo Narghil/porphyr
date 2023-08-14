@@ -27,7 +27,16 @@ databaseChangeLog:
             name: DESCRIPTION
             type: CHARACTER LARGE OBJECT
         tableName: PROJECTTASKS
-- changeSet: 
+    - createIndex:
+          columns:
+              - column:
+                 name: PROJECT_ID
+              - column:
+                 name: NAME
+          indexName: IDX_PROJECTTASKS_UNIQUE
+          tableName: PROJECTTASKS
+          unique: true
+- changeSet:
     id: 6
     author: perny (generated)
     changes:

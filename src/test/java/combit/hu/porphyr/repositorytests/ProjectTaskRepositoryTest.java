@@ -38,7 +38,7 @@ class ProjectTaskRepositoryTest {
         }
         projectList = projectRepository.findAll();
         assertThat(projectList).isNotEmpty();
-        ProjectEntity projectEntity = projectList.get(0);
+        ProjectEntity projectEntity = projectList.get( projectList.size() -1);
 
         List<ProjectTasksEntity> expectedProjectTaskList = projectTaskRepository.findAll();
         int firstTestElementIdx = expectedProjectTaskList.size();
@@ -59,16 +59,18 @@ class ProjectTaskRepositoryTest {
         actualProjectTaskList = projectTaskRepository.findAll();
         assertEquals(expectedProjectTaskList, actualProjectTaskList);
         //Törlés
-        //Egy projekt
+        //Egy task
         assertNotNull(expectedProjectTaskList.get(secondTestElementIdx).getId());
         projectTaskRepository.delete(expectedProjectTaskList.get(secondTestElementIdx));
         expectedProjectTaskList.remove(secondTestElementIdx);
         actualProjectTaskList = projectTaskRepository.findAll();
         assertEquals(expectedProjectTaskList, actualProjectTaskList);
-        //Minden projekt
+        //Minden task
         expectedProjectTaskList.clear();
         projectTaskRepository.deleteAll();
         actualProjectTaskList = projectTaskRepository.findAll();
         assertEquals(expectedProjectTaskList, actualProjectTaskList);
+        //Projekt törlése
+        projectRepository.delete( projectEntity );
     }
 }

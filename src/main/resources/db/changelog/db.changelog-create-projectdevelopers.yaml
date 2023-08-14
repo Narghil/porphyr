@@ -24,6 +24,15 @@ databaseChangeLog:
             name: DEVELOPER_ID
             type: BIGINT
         tableName: PROJECTDEVELOPERS
+    - createIndex:
+        columns:
+        - column:
+            name: PROJECT_ID
+        - column:
+            name: DEVELOPER_ID
+        indexName: IDX_PROJECTDEVELOPERS_UNIQUE
+        tableName: PROJECTDEVELOPERS
+        unique: true
     - addForeignKeyConstraint:
         baseColumnNames: PROJECT_ID
         baseTableName: PROJECTDEVELOPERS

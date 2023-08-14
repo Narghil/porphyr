@@ -11,5 +11,7 @@ import combit.hu.porphyr.domain.ProjectEntity;
 public interface ProjectRepository extends CrudRepository<ProjectEntity, Long> {
 
     @NonNull List<ProjectEntity> findAll();
+    @NonNull ProjectEntity findAllById(Long id);
+    @NonNull List<ProjectEntity> findAllByName(String name);
 
 }

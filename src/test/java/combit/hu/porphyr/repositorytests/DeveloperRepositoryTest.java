@@ -6,10 +6,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 class DeveloperRepositoryTest {
@@ -23,39 +25,30 @@ class DeveloperRepositoryTest {
 
     @Test
     void doTests() {
-        DeveloperEntity emptyDeveloperEntity = new DeveloperEntity();
+        DeveloperEntity singleDeveloperEntity;
         List<DeveloperEntity> expectedDeveloperList = developerRepository.findAll();
-        int firstTestElementIdx = expectedDeveloperList.size();
-        int secondTestElementIdx = firstTestElementIdx + 1;
-
+        int testElementIdx = expectedDeveloperList.size();
         //Felvitel
-        expectedDeveloperList.add(new DeveloperEntity("Első teszt fejlesztő"));
-        expectedDeveloperList.add(new DeveloperEntity("Második teszt fejlesztő"));
-        developerRepository.save(expectedDeveloperList.get(firstTestElementIdx));
-        assertNotNull(expectedDeveloperList.get(firstTestElementIdx).getId());
-        developerRepository.save(expectedDeveloperList.get(secondTestElementIdx));
-        assertNotNull(expectedDeveloperList.get(secondTestElementIdx).getId());
+        expectedDeveloperList.add(new DeveloperEntity("Teszt fejlesztő"));
+        developerRepository.save(expectedDeveloperList.get(testElementIdx));
+        assertNotNull(expectedDeveloperList.get(testElementIdx).getId());
+        //Teljes lekérdezés
         List<DeveloperEntity> actualDeveloperList = developerRepository.findAll();
         assertEquals(expectedDeveloperList, actualDeveloperList);
-        // - hibás felvitel: Nincs kitöltve a név
-        assertThrows(Exception.class, () -> developerRepository.save(emptyDeveloperEntity));
+        //Név szerinti lekérdezés
+        singleDeveloperEntity = expectedDeveloperList.get(expectedDeveloperList.size() - 1);
+        assertThat(developerRepository.findAllByName(singleDeveloperEntity.getName()))
+            .isEqualTo(Collections.singletonList(singleDeveloperEntity));
         //Módosítás
-        expectedDeveloperList.get(secondTestElementIdx).setName("Második teszt fejlesztő módosított neve");
-        developerRepository.save(expectedDeveloperList.get(secondTestElementIdx));
+        assertNotNull(expectedDeveloperList.get(testElementIdx).getId());
+        expectedDeveloperList.get(testElementIdx).setName("Teszt fejlesztő módosított neve");
+        developerRepository.save(expectedDeveloperList.get(testElementIdx));
         actualDeveloperList = developerRepository.findAll();
         assertEquals(expectedDeveloperList, actualDeveloperList);
         //Törlés
-        // - Nem létező fejlesztő törlése
-        developerRepository.delete(emptyDeveloperEntity);
-        // - Egy fejlesztő törlése
-        assertNotNull(expectedDeveloperList.get(secondTestElementIdx).getId());
-        developerRepository.delete(expectedDeveloperList.get(secondTestElementIdx));
-        expectedDeveloperList.remove(secondTestElementIdx);
-        actualDeveloperList = developerRepository.findAll();
-        assertEquals(expectedDeveloperList, actualDeveloperList);
-        // - Minden fejlesztő törlése
-        expectedDeveloperList.clear();
-        developerRepository.deleteAll();
+        assertNotNull(expectedDeveloperList.get(testElementIdx).getId());
+        developerRepository.delete(expectedDeveloperList.get(testElementIdx));
+        expectedDeveloperList.remove(testElementIdx);
         actualDeveloperList = developerRepository.findAll();
         assertEquals(expectedDeveloperList, actualDeveloperList);
     }

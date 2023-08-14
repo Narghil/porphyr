@@ -17,12 +17,13 @@ public class ServiceException extends IllegalArgumentException {
         PROJECT_WITH_DEVELOPER_CANT_DELETE( ExceptionGroups.PROJECT, "A projekthez még tartoznak fejlesztők, nem törölhető!", 0 ),
         PROJECTS_WITH_DEVELOPERS_CANT_DELETE( ExceptionGroups.PROJECT, "Legalább egy projekthez még tartoznak fejlesztők, valamennyi projekt nem törölhető egyszerre!", 0 ),
 
-        DEVELOPER_NOT_SAVED_CANT_DELETE( ExceptionGroups.DEVELOPER, "A fejlesztő még nincs elmentve, nem törölhető!", 0 ),
+        DEVELOPER_WITH_EMPTY_NAME_CANT_INSERT( ExceptionGroups.DEVELOPER, "A fejlesztő neve nincs kitöltve, nem vihető fel!", 0 ),
+        DEVELOPER_WITH_SAME_NAME_CANT_INSERT( ExceptionGroups.DEVELOPER, "Van már ilyen nevű fejlesztő, nem vihető fel még egyszer!", 0 ),
         DEVELOPER_NOT_SAVED_CANT_MODIFY( ExceptionGroups.DEVELOPER, "A fejlesztő még nincs elmentve, nem módosítható!", 0 ),
-        DEVELOPER_WITH_TASKS_CANT_DELETE( ExceptionGroups.DEVELOPER, "A fejlesztőhöz még tartoznak feladatok, nem törölhető!", 0 ),
-        DEVELOPERS_WITH_TASKS_CANT_DELETE( ExceptionGroups.DEVELOPER, "Legalább egy fejlesztőhöz még tartoznak feladatok, valamennyi fejlesztő nem törölhető egyszerre!", 0 ) ,
-        DEVELOPER_WITH_PROJECTS_CANT_DELETE( ExceptionGroups.DEVELOPER, "A fejlesztő még dolgozik legalább egy projekten, nem törölhető!", 0 ),
-        DEVELOPERS_WITH_PROJECTS_CANT_DELETE( ExceptionGroups.DEVELOPER, "Legalább egy fejlesztő még dolgozik legalább egy projekten, valamennyi fejlesztő nem törölhető egyszerre!", 0 ),
+        DEVELOPER_WITH_EMPTY_NAME_CANT_MODIFY( ExceptionGroups.DEVELOPER, "A fejlesztő neve nincs kitöltve, nem módosítható!", 0 ),
+        DEVELOPER_WITH_SAME_NAME_CANT_MODIFY( ExceptionGroups.DEVELOPER, "Van már ilyen nevű fejlesztő, a név nem módosítható erre!", 0 ),
+        DEVELOPER_NOT_SAVED_CANT_DELETE( ExceptionGroups.DEVELOPER, "A fejlesztő még nincs elmentve, nem törölhető!", 0 ),
+        DEVELOPER_WITH_PROJECTS_CANT_DELETE( ExceptionGroups.DEVELOPER, "A fejlesztő még dolgozik legalább egy projektben, nem törölhető!", 0 ),
 
         PROJECTTASK_NOT_SAVED_CANT_DELETE( ExceptionGroups.PROJECTTASKS, "A feladat még nincs elmentve, nem törölhető!",0),
         PROJECTTASK_NOT_SAVED_CANT_MODIFY( ExceptionGroups.PROJECTTASKS, "A feladat még nincs elmentve, nem módosítható!",0),
@@ -56,22 +57,13 @@ public class ServiceException extends IllegalArgumentException {
         public Integer getCounter(){ return counter; }
     }
 
-    private final String exceptionMessage;
-
-    ServiceException(@NonNull Exceptions exception) {
+    public ServiceException(@NonNull Exceptions exception) {
         super( exception.getDescription() );
-        this.exceptionMessage = exception.getDescription() ;
         exception.incrementCounter();
     }
 
-    ServiceException(@NonNull String exceptionMessage) {
+    public ServiceException(@NonNull String exceptionMessage) {
         super( exceptionMessage );
-        this.exceptionMessage = exceptionMessage ;
-    }
-
-    @Override
-    public String toString() {
-        return exceptionMessage;
     }
 
     private static void isAllExceptionsThrown( final @NonNull ExceptionGroups exceptionGroup ) {
@@ -87,6 +79,17 @@ public class ServiceException extends IllegalArgumentException {
         if (!isAllThrown) {
             throw new ServiceException("Exceptions not thrown:" + notThrownExceptions);
         }
+    }
+
+    @Override
+    public String toString(){
+        StringBuilder stringBuilder = new StringBuilder();
+        for( Exceptions exception : Exceptions.values() ){
+            if( exception.getCounter() > 0) {
+                stringBuilder.append(exception.name() + " = " + exception.getCounter() + System.getProperty("line.separator"));
+            }
+        }
+        return stringBuilder.toString();
     }
 
     @TestOnly

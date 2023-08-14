@@ -27,10 +27,36 @@ public class ProjectService {
         return projectRepository.findAll();
     }
 
+    /**
+     * Hibalehetőségek. <br/>
+     * - A név üres
+     * - A név már létezik
+     */
     public void insertNewProject(final @NonNull ProjectEntity newProjectEntity) {
         projectRepository.save(newProjectEntity);
     }
 
+    /**
+     * Hibalehetőségek. <br/>
+     * - Az ID nincs kitöltve
+     * - A név üres
+     * - A név már létezik
+     */
+    public void modifyProject(final @NonNull ProjectEntity modifiedProject) {
+
+        if (modifiedProject.getId() == null) {
+            throw new ServiceException(ServiceException.Exceptions.PROJECT_NOT_SAVED_CANT_MODIFY);
+        } else {
+            projectRepository.save(modifiedProject);
+        }
+    }
+
+    /**
+     * Hibalehetőségek. <br/>
+     * - Az ID nincs kitöltve
+     * - A projekthez még tartozik fejlesztő
+     * - A projekthez még tartozik feladat
+     */
     public void deleteProject(final @NonNull ProjectEntity projectEntity) {
         if (projectEntity.getId() != null) {
             if (projectEntity.getTasks().isEmpty()) {
@@ -43,23 +69,4 @@ public class ProjectService {
         }
     }
 
-    public void deleteAllProjects() {
-        List<ProjectEntity> projects = getProjects();
-        for (ProjectEntity projectEntity : projects) {
-            List<ProjectTasksEntity> tasks = projectEntity.getTasks();
-            if (!tasks.isEmpty()) {
-                throw new ServiceException(ServiceException.Exceptions.PROJECTS_WITH_TASKS_CANT_DELETE);
-            }
-        }
-        projectRepository.deleteAll();
-    }
-
-    public void modifyProject(final @NonNull ProjectEntity modifiedProject) {
-
-        if (modifiedProject.getId() == null) {
-            throw new ServiceException(ServiceException.Exceptions.PROJECT_NOT_SAVED_CANT_MODIFY);
-        } else {
-            projectRepository.save(modifiedProject);
-        }
-    }
 }

@@ -16,6 +16,7 @@ databaseChangeLog:
         - column:
             constraints:
               nullable: false
+              unique: true
             name: NAME
             type: VARCHAR(200)
         tableName: DEVELOPERS

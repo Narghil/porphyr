@@ -29,6 +29,15 @@
             type: BIGINT
             defaultValue: 0
         tableName: PROJECTTASKDEVELOPERS
+    - createIndex:
+          columns:
+          - column:
+              name: PROJECTTASK_ID
+          - column:
+              name: PROJECTDEVELOPER_ID
+          indexName: IDX_PROJECTTASKDEVELOPERS_UNIQUE
+          tableName: PROJECTTASKDEVELOPERS
+          unique: true
     - addForeignKeyConstraint:
         baseColumnNames: PROJECTTASK_ID
         baseTableName: PROJECTTASKDEVELOPERS

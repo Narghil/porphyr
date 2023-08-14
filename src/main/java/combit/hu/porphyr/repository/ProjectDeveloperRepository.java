@@ -10,7 +10,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ProjectDevelopersRepository extends CrudRepository<ProjectDevelopersEntity, Long>  {
+public interface ProjectDeveloperRepository extends CrudRepository<ProjectDevelopersEntity, Long>  {
     @NonNull List<ProjectDevelopersEntity> findAll();
     @NonNull List<ProjectDevelopersEntity> findAllByProjectEntity(ProjectEntity projectEntity);
     @NonNull List<ProjectDevelopersEntity> findAllByDeveloperEntity(DeveloperEntity developerEntity);

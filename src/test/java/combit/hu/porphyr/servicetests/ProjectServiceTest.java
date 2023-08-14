@@ -90,18 +90,12 @@ class ProjectServiceTest {
         // - egy
         assertThrows( ServiceException.class, () -> projectService.deleteProject(singleProjectEntity), ServiceException.Exceptions.PROJECT_WITH_TASKS_CANT_DELETE.getDescription());
         verify(mockedProjectRepository, times(0)).deleteById(anyLong());
-        // - mind
-        assertThrows( ServiceException.class, () -> projectService.deleteAllProjects(), ServiceException.Exceptions.PROJECTS_WITH_TASKS_CANT_DELETE.getDescription() );
-        verify(mockedProjectRepository, times(0)).deleteAll();
         //Törlés, jó ID-vel, task-ok nélkül
         singleProjectEntity.setTasks( new ArrayList<>());
         mockedProjectList.get(0).setTasks( new ArrayList<>());
         // - egy
         assertDoesNotThrow( () -> projectService.deleteProject(singleProjectEntity), ServiceException.Exceptions.PROJECT_WITH_TASKS_CANT_DELETE.getDescription());
         verify(mockedProjectRepository, times(1)).deleteById(anyLong());
-        // - mind
-        assertDoesNotThrow(() -> projectService.deleteAllProjects(), ServiceException.Exceptions.PROJECTS_WITH_TASKS_CANT_DELETE.getDescription() );
-        verify(mockedProjectRepository, times(1)).deleteAll();
         //Minden lehetséges hibát ellenőriztünk?
         assertDoesNotThrow(ServiceException::isAllProjectExceptionsThrown);
     }
