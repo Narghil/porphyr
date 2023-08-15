@@ -45,7 +45,7 @@ public class DeveloperService {
      * Hibalehetőségek: <br/>
      * - Nincs kitöltve az ID <br/>
      * - Nincs kitöltve a név <br/>
-     * - Már van ilyen nevű fejlesztő <br/>
+     * - Van másik ilyen nevű fejlesztő <br/>
      */
     public void modifyDeveloper(final @NonNull DeveloperEntity modifiedDeveloper) {
         if (modifiedDeveloper.getId() == null) {
@@ -53,8 +53,7 @@ public class DeveloperService {
         } else if (modifiedDeveloper.getName().isEmpty()) {
             throw (new ServiceException(ServiceException.Exceptions.DEVELOPER_WITH_EMPTY_NAME_CANT_MODIFY));
         } else if (!developerRepository.findAllByNameAndIdNot(
-            modifiedDeveloper.getName(), modifiedDeveloper.getId()
-        ).isEmpty()) {
+            modifiedDeveloper.getName(), modifiedDeveloper.getId()).isEmpty()) {
             throw (new ServiceException(ServiceException.Exceptions.DEVELOPER_WITH_SAME_NAME_CANT_MODIFY));
         } else {
             developerRepository.save(modifiedDeveloper);
@@ -68,16 +67,12 @@ public class DeveloperService {
      */
     public void deleteDeveloper(final @NonNull DeveloperEntity developerEntity) {
         Long developerID = developerEntity.getId();
-        DeveloperEntity actualDeveloperEntity;
-        if( developerID != null) {
-            actualDeveloperEntity = developerRepository.findAllById( developerEntity.getId() );
-            if (actualDeveloperEntity.getDeveloperProjects().isEmpty()) {
-                developerRepository.deleteById(developerID);
-            } else {
-                throw( new ServiceException( ServiceException.Exceptions.DEVELOPER_WITH_PROJECTS_CANT_DELETE) );
-            }
-        } else {
+        if( developerID == null) {
             throw( new ServiceException( ServiceException.Exceptions.DEVELOPER_NOT_SAVED_CANT_DELETE) );
+        } else if (developerRepository.findAllById( developerEntity.getId() ).getDeveloperProjects().isEmpty()) {
+                developerRepository.deleteById(developerID);
+        } else {
+            throw( new ServiceException( ServiceException.Exceptions.DEVELOPER_WITH_PROJECTS_CANT_DELETE) );
         }
     }
 

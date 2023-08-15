@@ -1,7 +1,6 @@
 package combit.hu.porphyr.service;
 
 import combit.hu.porphyr.domain.ProjectEntity;
-import combit.hu.porphyr.domain.ProjectTasksEntity;
 import combit.hu.porphyr.repository.ProjectRepository;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +33,9 @@ public class ProjectService {
      */
     public void insertNewProject(final @NonNull ProjectEntity newProjectEntity) {
         if( newProjectEntity.getName().isEmpty() ){
-            throw(new ServiceException(ServiceException.Exceptions.DEVELOPER_WITH_EMPTY_NAME_CANT_INSERT) );
+            throw(new ServiceException(ServiceException.Exceptions.PROJECT_WITH_EMPTY_NAME_CANT_INSERT) );
         } else if( ! projectRepository.findAllByName(newProjectEntity.getName()).isEmpty()){
-            throw(new ServiceException(ServiceException.Exceptions.DEVELOPER_WITH_EMPTY_NAME_CANT_INSERT) );
+            throw(new ServiceException(ServiceException.Exceptions.PROJECT_WITH_SAME_NAME_CANT_INSERT) );
         }
         projectRepository.save(newProjectEntity);
     }
@@ -51,6 +50,10 @@ public class ProjectService {
 
         if (modifiedProject.getId() == null) {
             throw new ServiceException(ServiceException.Exceptions.PROJECT_NOT_SAVED_CANT_MODIFY);
+        } else if (modifiedProject.getName().isEmpty()) {
+            throw new ServiceException(ServiceException.Exceptions.PROJECT_WITH_EMPTY_NAME_CANT_MODIFY);
+        } else if ( ! projectRepository.findAllByNameAndIdNot(modifiedProject.getName(), modifiedProject.getId()).isEmpty()) {
+            throw new ServiceException(ServiceException.Exceptions.PROJECT_WITH_SAME_NAME_CANT_MODIFY);
         } else {
             projectRepository.save(modifiedProject);
         }
@@ -63,14 +66,17 @@ public class ProjectService {
      * - A projekthez még tartozik feladat
      */
     public void deleteProject(final @NonNull ProjectEntity projectEntity) {
-        if (projectEntity.getId() != null) {
-            if (projectEntity.getTasks().isEmpty()) {
-                projectRepository.deleteById(projectEntity.getId());
-            } else {
-                throw new ServiceException(ServiceException.Exceptions.PROJECT_WITH_TASKS_CANT_DELETE);
-            }
-        } else {
+        if (projectEntity.getId() == null) {
             throw new ServiceException(ServiceException.Exceptions.PROJECT_NOT_SAVED_CANT_DELETE);
+        } else {
+            ProjectEntity actualProject = projectRepository.findAllById(projectEntity.getId());
+            if (!actualProject.getTasks().isEmpty()){
+                throw new ServiceException(ServiceException.Exceptions.PROJECT_WITH_TASKS_CANT_DELETE);
+            } else if (!actualProject.getDevelopers().isEmpty()) {
+                throw new ServiceException(ServiceException.Exceptions.PROJECT_WITH_DEVELOPERS_CANT_DELETE);
+            } else {
+                projectRepository.deleteById(projectEntity.getId());
+            }
         }
     }
 

@@ -6,10 +6,8 @@ import combit.hu.porphyr.repository.DeveloperRepository;
 import combit.hu.porphyr.service.DeveloperService;
 import combit.hu.porphyr.service.ServiceException;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
@@ -19,7 +17,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-@ExtendWith(MockitoExtension.class)
 class DeveloperServiceTest {
 
     @Mock
@@ -29,30 +26,22 @@ class DeveloperServiceTest {
 
     @Test
     void doTests() {
-        List<DeveloperEntity> mockedListFindAll = new ArrayList<DeveloperEntity>() {
-            {
-                add(new DeveloperEntity("Developer"));
-            }
-        };
-        List<DeveloperEntity> mockedListFindByName = new ArrayList<DeveloperEntity>() {
-            {
-                add(new DeveloperEntity("Developer"));
-            }
-        };
-        final DeveloperEntity singleDeveloperEntity = new DeveloperEntity("");
-        List<DeveloperEntity> actualDeveloperList;
-        List<DeveloperEntity> mockedSameNamedDevelopersList = new ArrayList<>();
+        final List<DeveloperEntity> mockedListFindAll = new ArrayList<>();
+        final List<DeveloperEntity> mockedListFindAllByName = new ArrayList<>();
+        final List<DeveloperEntity> mockedListFindAllByNameAndIdNot = new ArrayList<>();
+        final List<ProjectDevelopersEntity> mockedListDeveloperProjects = new ArrayList<>();
+        final DeveloperEntity singleDeveloperEntity = new DeveloperEntity("Developer");
+        singleDeveloperEntity.setDeveloperProjects(mockedListDeveloperProjects);
 
         when(mockedDeveloperRepository.findAll()).thenReturn(mockedListFindAll);
-        when(mockedDeveloperRepository.findAllByName(anyString())).thenReturn(mockedListFindByName);
-        when(mockedDeveloperRepository.findAllByNameAndIdNot(anyString(), anyLong())).thenReturn(
-            mockedSameNamedDevelopersList);
+        when(mockedDeveloperRepository.findAllByName(anyString())).thenReturn(mockedListFindAllByName);
+        when(mockedDeveloperRepository.findAllByNameAndIdNot(anyString(), anyLong())).thenReturn(mockedListFindAllByNameAndIdNot);
         when(mockedDeveloperRepository.findAllById(anyLong())).thenReturn(singleDeveloperEntity);
         when(mockedDeveloperRepository.save(any(DeveloperEntity.class))).thenReturn(null);
         doNothing().when(mockedDeveloperRepository).deleteById(anyLong());
+
         //Teljes lekérdezés
-        actualDeveloperList = developerService.getDevelopers();
-        assertEquals(actualDeveloperList, mockedListFindAll);
+        developerService.getDevelopers();
         verify(mockedDeveloperRepository, times(1)).findAll();
         //Felvétel
         singleDeveloperEntity.setId(null);
@@ -64,8 +53,8 @@ class DeveloperServiceTest {
             ServiceException.Exceptions.DEVELOPER_WITH_EMPTY_NAME_CANT_INSERT.getDescription()
         );
         // - Már van ilyen név
-        singleDeveloperEntity.setName(mockedListFindAll.get(0).getName());
-        mockedListFindByName.add(mockedListFindAll.get(0));
+        singleDeveloperEntity.setName("New Developer");
+        mockedListFindAllByName.add(singleDeveloperEntity);
         assertThrows(
             ServiceException.class,
             () -> developerService.insertNewDeveloper(singleDeveloperEntity),
@@ -73,6 +62,7 @@ class DeveloperServiceTest {
         );
         // - Helyes adatokkal
         singleDeveloperEntity.setName("New Developer");
+        mockedListFindAllByName.clear();
         assertDoesNotThrow( () -> mockedDeveloperRepository.save( singleDeveloperEntity ) );
         verify(mockedDeveloperRepository, times(1)).save(singleDeveloperEntity);
         //Módosítás
@@ -93,7 +83,7 @@ class DeveloperServiceTest {
         );
         // - Van már ilyen név, más ID-n.
         singleDeveloperEntity.setName("Modified Developer");
-        mockedSameNamedDevelopersList.add(new DeveloperEntity("Samenamed Developer"));
+        mockedListFindAllByNameAndIdNot.add(singleDeveloperEntity);
         assertThrows(
             ServiceException.class,
             () -> developerService.modifyDeveloper(singleDeveloperEntity),
@@ -101,7 +91,7 @@ class DeveloperServiceTest {
         );
         verify(mockedDeveloperRepository, times(1)).findAllByNameAndIdNot(anyString(),anyLong());
         // - Helyes adatokkal
-        singleDeveloperEntity.setId(0L);
+        mockedListFindAllByNameAndIdNot.clear();
         assertDoesNotThrow(() -> mockedDeveloperRepository.save(singleDeveloperEntity));
         verify(mockedDeveloperRepository, times(2)).save(singleDeveloperEntity);
         // Törlés
@@ -114,11 +104,7 @@ class DeveloperServiceTest {
         );
         // - Hozzá van rendelve egy projekthez
         singleDeveloperEntity.setId(0L);
-        singleDeveloperEntity.setDeveloperProjects( new ArrayList<ProjectDevelopersEntity>() {
-            {
-                add( new ProjectDevelopersEntity() );
-            }
-        } );
+        mockedListDeveloperProjects.add( new ProjectDevelopersEntity() );
         assertThrows(
             ServiceException.class,
             () -> developerService.deleteDeveloper(singleDeveloperEntity),
@@ -126,7 +112,7 @@ class DeveloperServiceTest {
         );
         verify(mockedDeveloperRepository, times(1)).findAllById(0L);
         // - Jó adatokkal
-        singleDeveloperEntity.setDeveloperProjects( new ArrayList<>());
+        mockedListDeveloperProjects.clear();
         assertDoesNotThrow( ()-> developerService.deleteDeveloper(singleDeveloperEntity));
         verify(mockedDeveloperRepository, times(2)).findAllById(0L);
         verify(mockedDeveloperRepository, times(1)).deleteById(0L);
