@@ -1,0 +1,260 @@
+databaseChangeLog:
+- changeSet:
+    id: 11
+    author: Pernyei Gabor
+    changes:
+    # ---------------------
+    # Inserts into PROJECTS
+    # ---------------------
+    - insert:
+        columns:
+        - column:
+            name: NAME
+            value: 1. projekt
+        - column:
+            name: DESCRIPTION
+            value: Első projekt
+        tableName: PROJECTS
+    - insert:
+        columns:
+        - column:
+            name: NAME
+            value: 2. projekt
+        - column:
+            name: DESCRIPTION
+            value: Második projekt
+        tableName: PROJECTS
+    # -------------------------
+    # Inserts into PROJECTTASKS
+    # -------------------------
+    - insert:
+        columns:
+        - column:
+            name: PROJECT_ID
+            valueNumeric: 1
+        - column:
+            name: NAME
+            value: 1. projekt 1. feladat
+        - column:
+            name: DESCRIPTION
+            value: Első projekt első feladat
+        tableName: PROJECTTASKS
+    - insert:
+        columns:
+        - column:
+            name: PROJECT_ID
+            valueNumeric: 1
+        - column:
+            name: NAME
+            value: 1. projekt 2. feladat
+        - column:
+            name: DESCRIPTION
+            value: Első projekt második feladat
+        tableName: PROJECTTASKS
+    - insert:
+        columns:
+        - column:
+            name: PROJECT_ID
+            valueNumeric: 2
+        - column:
+            name: NAME
+            value: 2. projekt 1. feladat
+        - column:
+            name: DESCRIPTION
+            value: Második projekt első feladat
+        tableName: PROJECTTASKS
+    - insert:
+        columns:
+        - column:
+            name: PROJECT_ID
+            valueNumeric: 2
+        - column:
+            name: NAME
+            value: 2. projekt 2. feladat
+        - column:
+            name: DESCRIPTION
+            value: Második projekt második feladat
+        tableName: PROJECTTASKS
+    # -----------------------
+    # Inserts into DEVELOPERS
+    # -----------------------
+    - insert:
+        columns:
+        - column:
+            name: NAME
+            value: 1. fejlesztő
+        tableName: DEVELOPERS
+    - insert:
+        columns:
+        - column:
+            name: NAME
+            value: 2. fejlesztő
+        tableName: DEVELOPERS
+    - insert:
+        columns:
+        - column:
+            name: NAME
+            value: 3. fejlesztő
+        tableName: DEVELOPERS
+    - insert:
+        columns:
+        - column:
+            name: NAME
+            value: 4. fejlesztő
+        tableName: DEVELOPERS
+    # ------------------------------
+    # Inserts into PROJECTDEVELOPERS
+    # ------------------------------
+    - insert:
+        columns:
+        - column:
+            name: PROJECT_ID
+            valueNumeric: 1
+        - column:
+            name: DEVELOPER_ID
+            valueNumeric: 1
+        tableName: PROJECTDEVELOPERS
+    - insert:
+        columns:
+        - column:
+            name: PROJECT_ID
+            valueNumeric: 1
+        - column:
+            name: DEVELOPER_ID
+            valueNumeric: 2
+        tableName: PROJECTDEVELOPERS
+    - insert:
+        columns:
+        - column:
+            name: PROJECT_ID
+            valueNumeric: 1
+        - column:
+            name: DEVELOPER_ID
+            valueNumeric: 3
+        tableName: PROJECTDEVELOPERS
+    - insert:
+        columns:
+        - column:
+            name: PROJECT_ID
+            valueNumeric: 2
+        - column:
+            name: DEVELOPER_ID
+            valueNumeric: 2
+        tableName: PROJECTDEVELOPERS
+    - insert:
+        columns:
+        - column:
+            name: PROJECT_ID
+            valueNumeric: 2
+        - column:
+            name: DEVELOPER_ID
+            valueNumeric: 3
+        tableName: PROJECTDEVELOPERS
+    - insert:
+        columns:
+        - column:
+            name: PROJECT_ID
+            valueNumeric: 2
+        - column:
+            name: DEVELOPER_ID
+            valueNumeric: 4
+        tableName: PROJECTDEVELOPERS
+    # ----------------------------------
+    # Inserts into PROJECTTASKDEVELOPERS
+    # ----------------------------------
+    - insert:
+        columns:
+        - column:
+            name: PROJECTTASK_ID
+            valueNumeric: 1
+        - column:
+            name: PROJECTDEVELOPER_ID
+            valueNumeric: 1
+        - column:
+            name: SPEND_TIME
+            valueNumeric: 0
+        tableName: PROJECTTASKDEVELOPERS
+    - insert:
+        columns:
+        - column:
+            name: PROJECTTASK_ID
+            valueNumeric: 1
+        - column:
+            name: PROJECTDEVELOPER_ID
+            valueNumeric: 2
+        - column:
+            name: SPEND_TIME
+            valueNumeric: 0
+        tableName: PROJECTTASKDEVELOPERS
+    - insert:
+        columns:
+        - column:
+            name: PROJECTTASK_ID
+            valueNumeric: 2
+        - column:
+            name: PROJECTDEVELOPER_ID
+            valueNumeric: 2
+        - column:
+            name: SPEND_TIME
+            valueNumeric: 0
+        tableName: PROJECTTASKDEVELOPERS
+    - insert:
+        columns:
+        - column:
+            name: PROJECTTASK_ID
+            valueNumeric: 2
+        - column:
+            name: PROJECTDEVELOPER_ID
+            valueNumeric: 3
+        - column:
+            name: SPEND_TIME
+            valueNumeric: 0
+        tableName: PROJECTTASKDEVELOPERS
+    - insert:
+        columns:
+        - column:
+            name: PROJECTTASK_ID
+            valueNumeric: 3
+        - column:
+            name: PROJECTDEVELOPER_ID
+            valueNumeric: 4
+        - column:
+            name: SPEND_TIME
+            valueNumeric: 0
+        tableName: PROJECTTASKDEVELOPERS
+    - insert:
+        columns:
+        - column:
+            name: PROJECTTASK_ID
+            valueNumeric: 3
+        - column:
+            name: PROJECTDEVELOPER_ID
+            valueNumeric: 5
+        - column:
+            name: SPEND_TIME
+            valueNumeric: 0
+        tableName: PROJECTTASKDEVELOPERS
+    - insert:
+        columns:
+        - column:
+            name: PROJECTTASK_ID
+            valueNumeric: 4
+        - column:
+            name: PROJECTDEVELOPER_ID
+            valueNumeric: 5
+        - column:
+            name: SPEND_TIME
+            valueNumeric: 0
+        tableName: PROJECTTASKDEVELOPERS
+    - insert:
+        columns:
+        - column:
+            name: PROJECTTASK_ID
+            valueNumeric: 4
+        - column:
+            name: PROJECTDEVELOPER_ID
+            valueNumeric: 6
+        - column:
+            name: SPEND_TIME
+            valueNumeric: 0
+        tableName: PROJECTTASKDEVELOPERS

@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
+@ActiveProfiles("service_test")
 class ProjectServiceTest {
 
     @Mock
@@ -33,8 +35,8 @@ class ProjectServiceTest {
         final List<ProjectDevelopersEntity> mockedListProjectDevelopers = new ArrayList<>();
         final List<ProjectTasksEntity> mockedListProjectTasks = new ArrayList<>();
         final ProjectEntity singleProjectEntity = new ProjectEntity("Project","Description");
-        singleProjectEntity.setDevelopers(mockedListProjectDevelopers);
-        singleProjectEntity.setTasks(mockedListProjectTasks);
+        singleProjectEntity.setProjectDevelopers(mockedListProjectDevelopers);
+        singleProjectEntity.setProjectTasks(mockedListProjectTasks);
 
         when(mockedProjectRepository.findAll()).thenReturn(mockedListFindAll);
         when(mockedProjectRepository.findAllByName(anyString())).thenReturn(mockedListFindAllByName);
@@ -47,7 +49,7 @@ class ProjectServiceTest {
         projectService.getProjects();
         verify(mockedProjectRepository, times(1)).findAll();
         //Felvétel
-        singleProjectEntity.setId(null);
+        //singleProjectEntity.setId(null);
         //- Nincs kitöltve a név
         singleProjectEntity.setName("");
         assertThrows(
@@ -70,14 +72,14 @@ class ProjectServiceTest {
         verify(mockedProjectRepository, times(1)).save(singleProjectEntity);
         //Módosítás
         // - Nincs kitöltve az ID
-        singleProjectEntity.setId(null);
+        //singleProjectEntity.setId(null);
         assertThrows(
             ServiceException.class,
             () -> projectService.modifyProject(singleProjectEntity),
             ServiceException.Exceptions.PROJECT_NOT_SAVED_CANT_MODIFY.getDescription()
         );
         //- Nincs kitöltve a név
-        singleProjectEntity.setId(0L);
+        //singleProjectEntity.setId(0L);
         singleProjectEntity.setName("");
         assertThrows(
             ServiceException.class,
@@ -99,13 +101,13 @@ class ProjectServiceTest {
         verify(mockedProjectRepository, times(2)).save(singleProjectEntity);
         // Törlés
         // - Nincs kitöltve az ID;
-        singleProjectEntity.setId(null);
+        //singleProjectEntity.setId(null);
         assertThrows(
             ServiceException.class,
             () -> projectService.deleteProject(singleProjectEntity),
             ServiceException.Exceptions.PROJECT_NOT_SAVED_CANT_DELETE.getDescription()
         );
-        singleProjectEntity.setId(0L);
+        //singleProjectEntity.setId(0L);
         // - Hozzá van rendelve egy projekthez
         mockedListProjectDevelopers.add( new ProjectDevelopersEntity() );
         assertThrows(

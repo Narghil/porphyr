@@ -70,14 +70,18 @@ public class ProjectService {
             throw new ServiceException(ServiceException.Exceptions.PROJECT_NOT_SAVED_CANT_DELETE);
         } else {
             ProjectEntity actualProject = projectRepository.findAllById(projectEntity.getId());
-            if (!actualProject.getTasks().isEmpty()){
+            if (!actualProject.getProjectTasks().isEmpty()){
                 throw new ServiceException(ServiceException.Exceptions.PROJECT_WITH_TASKS_CANT_DELETE);
-            } else if (!actualProject.getDevelopers().isEmpty()) {
+            } else if (!actualProject.getProjectDevelopers().isEmpty()) {
                 throw new ServiceException(ServiceException.Exceptions.PROJECT_WITH_DEVELOPERS_CANT_DELETE);
             } else {
                 projectRepository.deleteById(projectEntity.getId());
             }
         }
+    }
+
+    public ProjectEntity getProjectById( Long id ){
+        return projectRepository.findAllById(id);
     }
 
 }

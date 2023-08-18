@@ -1,9 +1,12 @@
 package combit.hu.porphyr.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
 
 import javax.persistence.Column;
@@ -21,6 +24,7 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 public class ProjectEntity {
+    @Setter(AccessLevel.NONE)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private @Nullable Long id;
@@ -31,16 +35,18 @@ public class ProjectEntity {
 
     @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "projectEntity")
-    private List<ProjectTasksEntity> tasks;
+    @JsonBackReference
+    private List<ProjectTasksEntity> projectTasks;
 
     @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "projectEntity")
-    private List<ProjectDevelopersEntity> developers;
+    @JsonBackReference
+    private List<ProjectDevelopersEntity> projectDevelopers;
 
     public ProjectEntity(final @NonNull String name, final @Nullable String description) {
         this.name = name;
         this.description = description;
-        this.tasks = new ArrayList<>();
+        this.projectTasks = new ArrayList<>();
     }
 
 }

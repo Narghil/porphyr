@@ -6,9 +6,11 @@ import combit.hu.porphyr.repository.DeveloperRepository;
 import combit.hu.porphyr.service.DeveloperService;
 import combit.hu.porphyr.service.ServiceException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
+@ActiveProfiles("service_test")
 class DeveloperServiceTest {
 
     @Mock
@@ -44,7 +47,7 @@ class DeveloperServiceTest {
         developerService.getDevelopers();
         verify(mockedDeveloperRepository, times(1)).findAll();
         //Felvétel
-        singleDeveloperEntity.setId(null);
+        //singleDeveloperEntity.setId(null);
         //- Nincs kitöltve a név
         singleDeveloperEntity.setName("");
         assertThrows(
@@ -63,18 +66,18 @@ class DeveloperServiceTest {
         // - Helyes adatokkal
         singleDeveloperEntity.setName("New Developer");
         mockedListFindAllByName.clear();
-        assertDoesNotThrow( () -> mockedDeveloperRepository.save( singleDeveloperEntity ) );
+        assertDoesNotThrow( () -> developerService.insertNewDeveloper( singleDeveloperEntity ) );
         verify(mockedDeveloperRepository, times(1)).save(singleDeveloperEntity);
         //Módosítás
         // - Nincs kitöltve az ID
-        singleDeveloperEntity.setId(null);
+        //singleDeveloperEntity.setId(null);
         assertThrows(
             ServiceException.class,
             () -> developerService.modifyDeveloper(singleDeveloperEntity),
             ServiceException.Exceptions.DEVELOPER_NOT_SAVED_CANT_MODIFY.getDescription()
         );
         //- Nincs kitöltve a név
-        singleDeveloperEntity.setId(0L);
+        //singleDeveloperEntity.setId(0L);
         singleDeveloperEntity.setName("");
         assertThrows(
             ServiceException.class,
@@ -96,14 +99,14 @@ class DeveloperServiceTest {
         verify(mockedDeveloperRepository, times(2)).save(singleDeveloperEntity);
         // Törlés
         // - Nincs kitöltve az ID;
-        singleDeveloperEntity.setId(null);
+        //singleDeveloperEntity.setId(null);
         assertThrows(
             ServiceException.class,
             () -> developerService.deleteDeveloper(singleDeveloperEntity),
             ServiceException.Exceptions.DEVELOPER_NOT_SAVED_CANT_DELETE.getDescription()
         );
         // - Hozzá van rendelve egy projekthez
-        singleDeveloperEntity.setId(0L);
+        //singleDeveloperEntity.setId(0L);
         mockedListDeveloperProjects.add( new ProjectDevelopersEntity() );
         assertThrows(
             ServiceException.class,

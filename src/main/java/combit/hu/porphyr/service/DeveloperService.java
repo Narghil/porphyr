@@ -8,12 +8,18 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import java.util.List;
 
 @Service
 @Transactional
 @Scope("prototype")
 public class DeveloperService {
+
+    @Autowired
+    private EntityManager entityManager;
 
     private DeveloperRepository developerRepository;
 
@@ -26,6 +32,7 @@ public class DeveloperService {
         return developerRepository.findAll();
     }
 
+
     /**
     * Hibalehetőségek: <br/>
     * - Nincs kitöltve a név <br/>
@@ -37,7 +44,7 @@ public class DeveloperService {
         } else if ( ! developerRepository.findAllByName(newDeveloperEntity.getName()).isEmpty() ) {
             throw( new ServiceException( ServiceException.Exceptions.DEVELOPER_WITH_SAME_NAME_CANT_INSERT) );
         } else {
-            developerRepository.save(newDeveloperEntity);
+            developerRepository.saveAndFlush(newDeveloperEntity);
         }
     }
 
@@ -48,6 +55,12 @@ public class DeveloperService {
      * - Van másik ilyen nevű fejlesztő <br/>
      */
     public void modifyDeveloper(final @NonNull DeveloperEntity modifiedDeveloper) {
+        if ( entityManager == null ){
+            throw new ServiceException(ServiceException.Exceptions.UNDEFINED);
+        }
+        if ( modifiedDeveloper.getId() != null ) {
+            entityManager.detach(modifiedDeveloper);
+        }
         if (modifiedDeveloper.getId() == null) {
             throw (new ServiceException(ServiceException.Exceptions.DEVELOPER_NOT_SAVED_CANT_MODIFY));
         } else if (modifiedDeveloper.getName().isEmpty()) {
@@ -56,7 +69,7 @@ public class DeveloperService {
             modifiedDeveloper.getName(), modifiedDeveloper.getId()).isEmpty()) {
             throw (new ServiceException(ServiceException.Exceptions.DEVELOPER_WITH_SAME_NAME_CANT_MODIFY));
         } else {
-            developerRepository.save(modifiedDeveloper);
+            developerRepository.saveAndFlush(modifiedDeveloper);
         }
     }
 
@@ -74,6 +87,10 @@ public class DeveloperService {
         } else {
             throw( new ServiceException( ServiceException.Exceptions.DEVELOPER_WITH_PROJECTS_CANT_DELETE) );
         }
+    }
+
+    public DeveloperEntity getDeveloperById( final @NonNull Long id){
+        return developerRepository.findAllById(id);
     }
 
 }

@@ -1,8 +1,11 @@
 package combit.hu.porphyr.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.Setter;
 import lombok.ToString;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,20 +23,22 @@ import javax.persistence.Table;
 @NoArgsConstructor
 @Data
 public class ProjectTaskDevelopersEntity {
+    @Setter(AccessLevel.NONE)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private @Nullable Long id;
-    @Column
+    @Column( name = "spend_time")
     private @NonNull Long spendTime;
 
     @ToString.Exclude
     @ManyToOne
     @JoinColumn( name = "projecttask_id")
+    @JsonManagedReference
     ProjectTasksEntity projectTasksEntity;
 
     @ToString.Exclude
     @ManyToOne
-    @JoinColumn( name = "projectdevelopers_id")
+    @JoinColumn( name = "projectdeveloper_id")
+    @JsonManagedReference
     ProjectDevelopersEntity projectDevelopersEntity;
-
 }

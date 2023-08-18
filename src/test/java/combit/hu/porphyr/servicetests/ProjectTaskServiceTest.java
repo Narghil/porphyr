@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
+@ActiveProfiles("service_test")
 class ProjectTaskServiceTest {
 
     @Mock
@@ -60,7 +62,7 @@ class ProjectTaskServiceTest {
         );
         // - A project entity nem létező projektre mutat;
         singleProjectTasksEntity.setProjectEntity(singleProjectEntity);
-        singleProjectTasksEntity.getProjectEntity().setId(0L);
+        //singleProjectTasksEntity.getProjectEntity().setId(0L);
         when(mockedProjectRepository.findAllById( anyLong() ) ).thenReturn(null);
         assertThrows(
             ServiceException.class,
@@ -90,14 +92,14 @@ class ProjectTaskServiceTest {
         verify(mockedProjectTaskRepository, times(1)).save(singleProjectTasksEntity);
         //Módosítás
         // - Nincs kitöltve az ID
-        singleProjectTasksEntity.setId(null);
+        //singleProjectTasksEntity.setId(null);
         assertThrows(
             ServiceException.class,
             () -> projectTaskService.modifyProjectTask(singleProjectTasksEntity),
             ServiceException.Exceptions.PROJECTTASK_NOT_SAVED_CANT_MODIFY.getDescription()
         );
         // - Nincs kiválasztott project
-        singleProjectTasksEntity.setId(0L);
+        //singleProjectTasksEntity.setId(0L);
         singleProjectTasksEntity.setProjectEntity(null);
         assertThrows(
             ServiceException.class,
@@ -106,7 +108,7 @@ class ProjectTaskServiceTest {
         );
         // - A project entity nem létező projektre mutat;
         singleProjectTasksEntity.setProjectEntity(singleProjectEntity);
-        singleProjectTasksEntity.getProjectEntity().setId(0L);
+        //singleProjectTasksEntity.getProjectEntity().setId(0L);
         when(mockedProjectRepository.findAllById( anyLong() ) ).thenReturn(null);
         assertThrows(
             ServiceException.class,
@@ -115,7 +117,7 @@ class ProjectTaskServiceTest {
         );
         when(mockedProjectRepository.findAllById( anyLong() ) ).thenReturn( singleProjectEntity );
         //- Nincs kitöltve a név
-        singleProjectTasksEntity.setId(0L);
+        //singleProjectTasksEntity.setId(0L);
         singleProjectTasksEntity.setName("");
         assertThrows(
             ServiceException.class,
@@ -137,13 +139,13 @@ class ProjectTaskServiceTest {
         verify(mockedProjectTaskRepository, times(2)).save(singleProjectTasksEntity);
         // Törlés
         // - Nincs kitöltve az ID;
-        singleProjectTasksEntity.setId(null);
+        //singleProjectTasksEntity.setId(null);
         assertThrows(
             ServiceException.class,
             () -> projectTaskService.deleteProjectTask(singleProjectTasksEntity),
             ServiceException.Exceptions.PROJECTTASK_NOT_SAVED_CANT_DELETE.getDescription()
         );
-        singleProjectTasksEntity.setId(0L);
+        //singleProjectTasksEntity.setId(0L);
         // - Van még hozzárendelt fejlesztő
         mockedListProjectTaskDevelopers.add( new ProjectTaskDevelopersEntity() );
         assertThrows(
