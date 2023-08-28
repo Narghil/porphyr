@@ -3,11 +3,14 @@ package combit.hu.porphyr.service;
 import combit.hu.porphyr.domain.ProjectEntity;
 import combit.hu.porphyr.repository.ProjectRepository;
 import lombok.NonNull;
+import lombok.Setter;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 
 @Service
@@ -15,73 +18,88 @@ import java.util.List;
 @Scope("prototype")
 public class ProjectService {
 
-    private ProjectRepository projectRepository;
+    @Autowired
+    @Setter
+    private EntityManager entityManager;
 
     @Autowired
-    public void setProjectRepository(ProjectRepository projectRepository) {
-        this.projectRepository = projectRepository;
-    }
+    @Setter
+    private ProjectRepository projectRepository;
 
     public @NonNull List<ProjectEntity> getProjects() {
         return projectRepository.findAll();
     }
 
     /**
-     * Hibalehetőségek. <br/>
-     * - A név üres
-     * - A név már létezik
+     * Hibalehetőségek: <br/>
+     * - Nincs kitöltve a név <br/>
+     * - Van másik ilyen nevű projekt <br/>
      */
     public void insertNewProject(final @NonNull ProjectEntity newProjectEntity) {
-        if( newProjectEntity.getName().isEmpty() ){
-            throw(new ServiceException(ServiceException.Exceptions.PROJECT_WITH_EMPTY_NAME_CANT_INSERT) );
-        } else if( ! projectRepository.findAllByName(newProjectEntity.getName()).isEmpty()){
-            throw(new ServiceException(ServiceException.Exceptions.PROJECT_WITH_SAME_NAME_CANT_INSERT) );
+        if (newProjectEntity.getName().isEmpty()) {
+            throw (new ServiceException(ServiceException.Exceptions.PROJECT_INSERT_EMPTY_NAME));
+        } else if (!projectRepository.findAllByName(newProjectEntity.getName()).isEmpty()) {
+            throw (new ServiceException(ServiceException.Exceptions.PROJECT_INSERT_SAME_NAME));
+        } else {
+            projectRepository.saveAndFlush(newProjectEntity);
         }
-        projectRepository.save(newProjectEntity);
     }
 
     /**
-     * Hibalehetőségek. <br/>
-     * - Az ID nincs kitöltve
-     * - A név üres
-     * - A név már létezik
+     * Hibalehetőségek: <br/>
+     * - Nincs kitöltve az ID <br/>
+     * - Nincs kitöltve a név <br/>
+     * - Van másik ilyen nevű projekt <br/>
      */
     public void modifyProject(final @NonNull ProjectEntity modifiedProject) {
-
+        entityManager.detach(modifiedProject);
         if (modifiedProject.getId() == null) {
-            throw new ServiceException(ServiceException.Exceptions.PROJECT_NOT_SAVED_CANT_MODIFY);
+            throw new ServiceException(ServiceException.Exceptions.PROJECT_MODIFY_NOT_SAVED);
         } else if (modifiedProject.getName().isEmpty()) {
-            throw new ServiceException(ServiceException.Exceptions.PROJECT_WITH_EMPTY_NAME_CANT_MODIFY);
-        } else if ( ! projectRepository.findAllByNameAndIdNot(modifiedProject.getName(), modifiedProject.getId()).isEmpty()) {
-            throw new ServiceException(ServiceException.Exceptions.PROJECT_WITH_SAME_NAME_CANT_MODIFY);
+            throw new ServiceException(ServiceException.Exceptions.PROJECT_MODIFY_EMPTY_NAME);
+        } else if ( ! projectRepository.findAllByNameAndIdNot(
+            modifiedProject.getName(), modifiedProject.getId()).isEmpty()) {
+            throw new ServiceException(ServiceException.Exceptions.PROJECT_MODIFY_SAME_NAME);
         } else {
-            projectRepository.save(modifiedProject);
+            projectRepository.saveAndFlush(modifiedProject);
         }
     }
 
     /**
      * Hibalehetőségek. <br/>
      * - Az ID nincs kitöltve
-     * - A projekthez még tartozik fejlesztő
+     * - A projekthez még van hozzárendelt fejlesztő
      * - A projekthez még tartozik feladat
      */
     public void deleteProject(final @NonNull ProjectEntity projectEntity) {
-        if (projectEntity.getId() == null) {
-            throw new ServiceException(ServiceException.Exceptions.PROJECT_NOT_SAVED_CANT_DELETE);
+        Long projectId = projectEntity.getId();
+        if (projectId == null) {
+            throw new ServiceException(ServiceException.Exceptions.PROJECT_DELETE_NOT_SAVED);
         } else {
-            ProjectEntity actualProject = projectRepository.findAllById(projectEntity.getId());
-            if (!actualProject.getProjectTasks().isEmpty()){
-                throw new ServiceException(ServiceException.Exceptions.PROJECT_WITH_TASKS_CANT_DELETE);
-            } else if (!actualProject.getProjectDevelopers().isEmpty()) {
-                throw new ServiceException(ServiceException.Exceptions.PROJECT_WITH_DEVELOPERS_CANT_DELETE);
+            ProjectEntity actualProjectData = projectRepository.findAllById(projectId);
+            if( actualProjectData == null ){
+                throw (new ServiceException(ServiceException.Exceptions.UNDEFINED));
             } else {
-                projectRepository.deleteById(projectEntity.getId());
+                if (!actualProjectData.getProjectTasks().isEmpty()) {
+                    throw new ServiceException(ServiceException.Exceptions.PROJECT_DELETE_TASKS_ASSIGNED);
+                } else if (!actualProjectData.getProjectDevelopers().isEmpty()) {
+                    throw new ServiceException(ServiceException.Exceptions.PROJECT_DELETE_DEVELOPERS_ASSIGNED);
+                } else {
+                    projectRepository.deleteById(projectEntity.getId());
+                    entityManager.flush();
+                }
             }
         }
     }
 
-    public ProjectEntity getProjectById( Long id ){
-        return projectRepository.findAllById(id);
+    public @Nullable ProjectEntity getProjectById( final @NonNull Long id ){return projectRepository.findAllById(id);}
+    public @Nullable ProjectEntity getProjectByName( final @NonNull String name ){
+        List<ProjectEntity> namedProjects = projectRepository.findAllByName( name );
+        if( namedProjects.isEmpty()){
+            return null;
+        } else {
+            return namedProjects.get(0);
+        }
     }
 
 }

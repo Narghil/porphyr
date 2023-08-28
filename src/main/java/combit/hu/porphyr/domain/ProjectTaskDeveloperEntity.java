@@ -22,7 +22,7 @@ import javax.persistence.Table;
 @Table(name = "PROJECTTASKDEVELOPERS")
 @NoArgsConstructor
 @Data
-public class ProjectTaskDevelopersEntity {
+public class ProjectTaskDeveloperEntity {
     @Setter(AccessLevel.NONE)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -34,11 +34,13 @@ public class ProjectTaskDevelopersEntity {
     @ManyToOne
     @JoinColumn( name = "projecttask_id")
     @JsonManagedReference
-    ProjectTasksEntity projectTasksEntity;
+    @NonNull
+    private ProjectTaskEntity projectTaskEntity;
 
     @ToString.Exclude
     @ManyToOne
     @JoinColumn( name = "projectdeveloper_id")
     @JsonManagedReference
-    ProjectDevelopersEntity projectDevelopersEntity;
+    @NonNull
+    private ProjectDeveloperEntity projectDeveloperEntity;
 }

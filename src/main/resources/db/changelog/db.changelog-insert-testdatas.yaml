@@ -24,6 +24,24 @@ databaseChangeLog:
             name: DESCRIPTION
             value: Második projekt
         tableName: PROJECTS
+    - insert:
+        columns:
+        - column:
+            name: NAME
+            value: Projekt fejlesztővel
+        - column:
+            name: DESCRIPTION
+            value: Projekt fejlesztővel
+        tableName: PROJECTS
+    - insert:
+        columns:
+        - column:
+            name: NAME
+            value: Projekt feladattal
+        - column:
+            name: DESCRIPTION
+            value: Projekt feladattal
+        tableName: PROJECTS
     # -------------------------
     # Inserts into PROJECTTASKS
     # -------------------------
@@ -74,6 +92,18 @@ databaseChangeLog:
         - column:
             name: DESCRIPTION
             value: Második projekt második feladat
+        tableName: PROJECTTASKS
+    - insert:
+        columns:
+        - column:
+            name: PROJECT_ID
+            valueNumeric: 4
+        - column:
+            name: NAME
+            value: Projekt feladattal - feladat
+        - column:
+            name: DESCRIPTION
+            value: Projekt feladattal - feladat
         tableName: PROJECTTASKS
     # -----------------------
     # Inserts into DEVELOPERS
@@ -155,6 +185,15 @@ databaseChangeLog:
         - column:
             name: PROJECT_ID
             valueNumeric: 2
+        - column:
+            name: DEVELOPER_ID
+            valueNumeric: 4
+        tableName: PROJECTDEVELOPERS
+    - insert:
+        columns:
+        - column:
+            name: PROJECT_ID
+            valueNumeric: 3
         - column:
             name: DEVELOPER_ID
             valueNumeric: 4

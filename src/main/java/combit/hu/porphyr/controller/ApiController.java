@@ -1,22 +1,19 @@
 package combit.hu.porphyr.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import combit.hu.porphyr.domain.DeveloperEntity;
-import combit.hu.porphyr.domain.ProjectDevelopersEntity;
-import combit.hu.porphyr.domain.ProjectEntity;
-import combit.hu.porphyr.domain.ProjectTasksEntity;
 import combit.hu.porphyr.service.DeveloperService;
 import combit.hu.porphyr.service.ProjectService;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.Objects;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+
+import javax.servlet.http.HttpServletRequest;
+
 import static combit.hu.porphyr.Constants.WEBNEWLINE;
 
 @RestController
@@ -46,4 +43,16 @@ public class ApiController {
     public String developers() throws JsonProcessingException {
         return( ow.writeValueAsString(developerService.getDevelopers()));
     }
+
+    @RequestMapping("/observe")
+    public String observe() throws JsonProcessingException {
+        String retVal = "Observing is not implemented";
+        return( retVal );
+    }
+
+    @ExceptionHandler(Exception.class)
+    public String exceptionHandler(HttpServletRequest rA, Exception ex) {
+        return rA.getMethod() + " ; " + ex.getMessage();
+    }
+
 }

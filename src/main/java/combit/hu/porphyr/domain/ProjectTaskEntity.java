@@ -20,19 +20,25 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A projektekhez tartozó feladatok nyilvántartása
+ */
 @Entity
 @Table(name = "PROJECTTASKS")
-@NoArgsConstructor
 @Data
-public class ProjectTasksEntity {
+@NoArgsConstructor
+public class ProjectTaskEntity {
     @Setter(AccessLevel.NONE)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private @Nullable Long id;
+
     @Column
     private @NonNull String name;
+
     @Column(columnDefinition = "CLOB")
     private @Nullable String description;
 
@@ -40,17 +46,19 @@ public class ProjectTasksEntity {
     @ManyToOne
     @JoinColumn( name = "project_id")
     @JsonManagedReference
-    ProjectEntity projectEntity;
+    @NonNull
+    private ProjectEntity projectEntity;
 
     @EqualsAndHashCode.Exclude
-    @OneToMany(mappedBy = "projectTasksEntity")
+    @OneToMany(mappedBy = "projectTaskEntity")
     @JsonBackReference
-    private List<ProjectTaskDevelopersEntity> projectTaskDevelopers;
+    private List<ProjectTaskDeveloperEntity> projectTaskDevelopers;
 
-    public ProjectTasksEntity(final @NonNull ProjectEntity projectEntity, final @NonNull String name, final @Nullable String description) {
+    public ProjectTaskEntity(final @NonNull ProjectEntity projectEntity, final @NonNull String name, final @Nullable String description) {
         this.projectEntity = projectEntity;
         this.name = name;
         this.description = description;
+        this.projectTaskDevelopers = new ArrayList<>();
     }
 
 }

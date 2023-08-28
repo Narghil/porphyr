@@ -1,4 +1,3 @@
-
 package combit.hu.porphyr;
 
 import combit.hu.porphyr.domain.DeveloperEntity;
@@ -12,12 +11,13 @@ import org.junit.jupiter.api.TestInstance;
 import org.mockito.AdditionalAnswers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -26,8 +26,8 @@ import static org.mockito.Mockito.verify;
 
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ActiveProfiles("service_test")
 class DeveloperTests {
-
     @Autowired
     private EntityManager entityManager;
 
@@ -40,122 +40,227 @@ class DeveloperTests {
     @BeforeAll
     void setupAll() {
         spyDeveloperRepository = Mockito.mock(
-            DeveloperRepository.class,
-            AdditionalAnswers.delegatesTo(developerRepository)
+            DeveloperRepository.class, AdditionalAnswers.delegatesTo(developerRepository)
         );
         spiedDeveloperService.setDeveloperRepository(spyDeveloperRepository);
+        spiedDeveloperService.setEntityManager(entityManager);
+        ServiceException.initExceptionsCounter();
     }
 
     @BeforeEach
-    void setupEach(){
+    void setupEach() {
         entityManager.clear();
+        Mockito.clearInvocations(spyDeveloperRepository);
     }
-
-    private DeveloperEntity expectedDeveloper, actualDeveloper, myDeveloper;
 
     @Test
     @Transactional
     @Rollback
     void developerRepositoryTest() {
-        //Developer felvétele
-        myDeveloper = new DeveloperEntity("New Developer");
-        spyDeveloperRepository.saveAndFlush(myDeveloper);
-        expectedDeveloper = myDeveloper;
-        assert myDeveloper.getId() != null;
-        actualDeveloper = spyDeveloperRepository.findAllById(myDeveloper.getId());
-        assertEquals(expectedDeveloper, actualDeveloper);
-        //Developer módosítása
-        myDeveloper.setName("Modified Developer");
-        spyDeveloperRepository.saveAndFlush(myDeveloper);
-        expectedDeveloper = myDeveloper;
-        assert myDeveloper.getId() != null;
-        actualDeveloper = spyDeveloperRepository.findAllById(myDeveloper.getId());
-        assertEquals(expectedDeveloper, actualDeveloper);
-        //Developer törlése
-        assert myDeveloper.getId() != null;
-        spyDeveloperRepository.deleteById(myDeveloper.getId());
-        actualDeveloper = spyDeveloperRepository.findAllById(myDeveloper.getId());
-        assertNull(actualDeveloper);
-        //Developer törlése, aki még projekthez van rendelve - hiba
-        spyDeveloperRepository.deleteById(1L) ;
-        assertThrows(javax.persistence.PersistenceException.class, () -> entityManager.flush());
+        Long developerId;
+        final DeveloperEntity expectedDeveloper = new DeveloperEntity("");
+        DeveloperEntity actualDeveloper;
+        //-------------------------------- Developer felvétele --
+        // - Üres névvel (constraint ellenőrzése )
+        assertThrows(Exception.class, () -> spiedDeveloperService.insertNewDeveloper(expectedDeveloper));
+        // - Már létező névvel (constraint ellenőrzése)
+        expectedDeveloper.setName("1. fejlesztő");
+        assertThrows(Exception.class, () -> spiedDeveloperService.insertNewDeveloper(expectedDeveloper));
+        // - Még nem létező névvel
+        expectedDeveloper.setName("New Developer");
+        assertDoesNotThrow(() -> spyDeveloperRepository.saveAndFlush(expectedDeveloper));
+        developerId = expectedDeveloper.getId();
+        assert developerId != null;
+        // - Visszaolvasás
         entityManager.clear();
-        actualDeveloper = spyDeveloperRepository.findAllById(1L);
-        assertNotNull(actualDeveloper);
-        //FindAll
-        assertEquals( 4, spyDeveloperRepository.findAll().size());
-        //FindAllByName
-        assertEquals( 1, spyDeveloperRepository.findAllByName("1. fejlesztő").size());
-        //FindAllByNameIdNot
-        assertEquals( 0, spyDeveloperRepository.findAllByNameAndIdNot("1. fejlesztő", 1L).size());
-        assertEquals( 1, spyDeveloperRepository.findAllByNameAndIdNot("1. fejlesztő", 2L).size());
+        actualDeveloper = spyDeveloperRepository.findAllById(developerId);
+        assertEquals(expectedDeveloper, actualDeveloper);
+        //--------------------------------- Developer módosítása ---------------------------------
+        expectedDeveloper.setName("Modified Developer");
+        assertDoesNotThrow(() -> spyDeveloperRepository.saveAndFlush(expectedDeveloper));
+        developerId = expectedDeveloper.getId();
+        assert developerId != null;
+        // - Visszaolvasás
+        entityManager.clear();
+        actualDeveloper = spyDeveloperRepository.findAllById(developerId);
+        assertEquals(expectedDeveloper, actualDeveloper);
+        // ----------------------------------- Developer törlése --------------------------------
+        assertDoesNotThrow(() -> spyDeveloperRepository.deleteById(expectedDeveloper.getId()));
+        actualDeveloper = spyDeveloperRepository.findAllById(developerId);
+        assertNull(actualDeveloper);
+        entityManager.clear();
+        // - Visszaolvasás
+        actualDeveloper = spyDeveloperRepository.findAllById(developerId);
+        assertNull(actualDeveloper);
+        // - fejlesztő törlése, aki projekthez van rendelve (foreign key ellenőrzése)
+        final DeveloperEntity deleteDeveloper = spyDeveloperRepository.findAllById(1L);
+        assertNotNull( deleteDeveloper );
+        assertThrows(Exception.class, () -> spiedDeveloperService.deleteDeveloper(deleteDeveloper));
+        //------------------------------- Lekérdezések ---------------------------------------------
+        // - FindAll
+        assertEquals(4, spyDeveloperRepository.findAll().size());
+        // - FindAllByName
+        assertEquals(1, spyDeveloperRepository.findAllByName("1. fejlesztő").size());
+        // - FindAllByNameIdNot
+        assertEquals(0, spyDeveloperRepository.findAllByNameAndIdNot("1. fejlesztő", 1L).size());
+        assertEquals(1, spyDeveloperRepository.findAllByNameAndIdNot("1. fejlesztő", 2L).size());
     }
 
     @Test
     @Transactional
     @Rollback
-    void developerServiceTest() {
-        //entityManager.clear();
-        //Minden developer lekérdezése
-        assertEquals( 4, spiedDeveloperService.getDevelopers().size() );
-        verify(spyDeveloperRepository, times(1)).findAll();
-        //Felvétel
-        myDeveloper = new DeveloperEntity();
+    void developerServiceInsertTest() {
+        Long developerId;
+        DeveloperEntity developerForInsert;
+        DeveloperEntity actualDeveloper;
+        //----------------------- Felvétel: insertNewDeveloper(); -----------------------------------------
         // - Kitöltetlen névvel
-        assertThrows(
-            ServiceException.class,
-            () -> spiedDeveloperService.insertNewDeveloper(myDeveloper),
-            ServiceException.Exceptions.DEVELOPER_WITH_EMPTY_NAME_CANT_INSERT.getDescription()
+        developerForInsert = new DeveloperEntity();
+        assertEquals(
+            ServiceException.Exceptions.DEVELOPER_INSERT_EMPTY_NAME.getDescription(),
+            assertThrows(ServiceException.class, () -> spiedDeveloperService.insertNewDeveloper(developerForInsert)
+            ).getMessage()
         );
         // - Már létező névvel
-        myDeveloper.setName("1. fejlesztő");
-        assertThrows(
-            ServiceException.class,
-            () -> spiedDeveloperService.insertNewDeveloper(myDeveloper),
-            ServiceException.Exceptions.DEVELOPER_WITH_SAME_NAME_CANT_INSERT.getDescription()
+        developerForInsert.setName("1. fejlesztő");
+        assertEquals(
+            ServiceException.Exceptions.DEVELOPER_INSERT_SAME_NAME.getDescription(),
+            assertThrows(ServiceException.class, () -> spiedDeveloperService.insertNewDeveloper(developerForInsert)
+            ).getMessage()
         );
         // - Még nem létező névvel
-        myDeveloper.setName("5. fejlesztő");
-        assertDoesNotThrow( () -> spiedDeveloperService.insertNewDeveloper(myDeveloper));
-        verify(spyDeveloperRepository, times(1)).saveAndFlush(myDeveloper);
-        //Módosítás
+        developerForInsert.setName("5. fejlesztő");
+        assertDoesNotThrow(() -> spiedDeveloperService.insertNewDeveloper(developerForInsert));
+        verify(spyDeveloperRepository, times(1)).saveAndFlush(developerForInsert);
+        // - Visszaolvasás
+        developerId = developerForInsert.getId();
+        entityManager.clear();
+        assertNotNull(developerId);
+        actualDeveloper = Objects.requireNonNull(spiedDeveloperService.getDeveloperById(developerId));
+        assertEquals("5. fejlesztő", actualDeveloper.getName());
+        // - Minden hibalehetőség tesztelve volt:
+        assertDoesNotThrow(() -> ServiceException.isAllExceptionsThrown(ServiceException.ExceptionGroups.DEVELOPER_INSERT));
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    void developerServiceModifyTest() {
+        Long developerId;
+        final DeveloperEntity developerWithEmptyId = new DeveloperEntity();
+        final DeveloperEntity developerWithAnyNames;
+        DeveloperEntity actualDeveloper;
+        //------------------------------ Módosítás: modifyDeveloper(); ----------------------------------------
         // - Nincs kitöltve az ID
-        myDeveloper = new DeveloperEntity();
-        assertThrows(
-            ServiceException.class,
-            () -> spiedDeveloperService.modifyDeveloper(myDeveloper),
-            ServiceException.Exceptions.DEVELOPER_NOT_SAVED_CANT_MODIFY.getDescription()
+        assertEquals(
+            ServiceException.Exceptions.DEVELOPER_MODIFY_NOT_SAVED.getDescription(),
+            assertThrows(ServiceException.class, () -> spiedDeveloperService.modifyDeveloper(developerWithEmptyId)
+            ).getMessage()
         );
         // - Nincs kitöltve a név
-        myDeveloper = spiedDeveloperService.getDeveloperById(5L);
-        myDeveloper.setName("");
-        assertThrows(
-            ServiceException.class,
-            () -> spiedDeveloperService.modifyDeveloper(myDeveloper),
-            ServiceException.Exceptions.DEVELOPER_WITH_EMPTY_NAME_CANT_MODIFY.getDescription()
+        developerWithAnyNames = Objects.requireNonNull(spiedDeveloperService.getDeveloperById(4L));
+        developerWithAnyNames.setName("");
+        assertEquals(
+            ServiceException.Exceptions.DEVELOPER_MODIFY_EMPTY_NAME.getDescription(),
+            assertThrows(ServiceException.class, () -> spiedDeveloperService.modifyDeveloper(developerWithAnyNames)
+            ).getMessage()
         );
         // - Ki van töltve a név, de van már ilyen.
-        myDeveloper.setName("1. fejlesztő");
-        //entityManager.detach(myDeveloper);
-        assertThrows(
-            ServiceException.class,
-            () -> spiedDeveloperService.modifyDeveloper(myDeveloper),
-            ServiceException.Exceptions.DEVELOPER_WITH_SAME_NAME_CANT_MODIFY.getDescription()
+        developerWithAnyNames.setName("1. fejlesztő");
+        assertEquals(
+            ServiceException.Exceptions.DEVELOPER_MODIFY_SAME_NAME.getDescription(),
+            assertThrows(ServiceException.class, () -> spiedDeveloperService.modifyDeveloper(developerWithAnyNames)
+            ).getMessage()
         );
         // - Ki van töltve a név, ugyanaz, ami volt: Nem hiba
-        myDeveloper.setName("5. fejlesztő");
+        developerWithAnyNames.setName("4. fejlesztő");
         assertDoesNotThrow(
-            () -> spiedDeveloperService.modifyDeveloper(myDeveloper)
+            () -> spiedDeveloperService.modifyDeveloper(developerWithAnyNames)
         );
-        assertEquals("5. fejlesztő", spiedDeveloperService.getDeveloperById(5L).getName() );
-        verify(spyDeveloperRepository, times(2)).saveAndFlush(any(DeveloperEntity.class));
+        entityManager.clear();
+        actualDeveloper = spiedDeveloperService.getDeveloperById(4L);
+        assertNotNull(actualDeveloper);
+        assertEquals("4. fejlesztő", actualDeveloper.getName());
+        verify(spyDeveloperRepository, times(1)).saveAndFlush(any(DeveloperEntity.class));
         // - Ki van töltve a név, másra
-        myDeveloper.setName("Ötödik fejlesztő");
+        developerWithAnyNames.setName("Negyedik fejlesztő");
         assertDoesNotThrow(
-            () -> spiedDeveloperService.modifyDeveloper(myDeveloper)
+            () -> spiedDeveloperService.modifyDeveloper(developerWithAnyNames)
         );
-        assertEquals("Ötödik fejlesztő", spiedDeveloperService.getDeveloperById(5L).getName() );
-        verify(spyDeveloperRepository, times(3)).saveAndFlush(any(DeveloperEntity.class));
-        //Törlés
+        verify(spyDeveloperRepository, times(2)).saveAndFlush(any(DeveloperEntity.class));
+        // - Visszaolvasás
+        entityManager.clear();
+        developerId = developerWithAnyNames.getId();
+        assertNotNull(developerId);
+        actualDeveloper = spiedDeveloperService.getDeveloperById(developerId);
+        assertEquals("Negyedik fejlesztő", Objects.requireNonNull(actualDeveloper).getName());
+        // - Minden hibalehetőség tesztelve volt:
+        assertDoesNotThrow(() -> ServiceException.isAllExceptionsThrown(ServiceException.ExceptionGroups.DEVELOPER_MODIFY));
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    void developerServiceDeleteTest() {
+        Long developerId;
+        final DeveloperEntity developerWithEmptyId;
+        final DeveloperEntity developerWithProject;
+        DeveloperEntity developerWithNoProject;
+        DeveloperEntity actualDeveloper;
+        // ---------------------------------- Törlés: deleteDeveloper() ----------------------------------------
+        // - Nincs kitöltve az ID
+        developerWithEmptyId = new DeveloperEntity();
+        assertEquals(
+            ServiceException.Exceptions.DEVELOPER_DELETE_NOT_SAVED.getDescription(),
+            assertThrows(ServiceException.class, () -> spiedDeveloperService.deleteDeveloper(developerWithEmptyId)
+            ).getMessage()
+        );
+        // - Már létező developer, de még be van osztva projekthez.
+        entityManager.clear();
+        developerWithProject = spiedDeveloperService.getDeveloperById(1L);
+        assertNotNull(developerWithProject);
+        assertEquals(
+            ServiceException.Exceptions.DEVELOPER_DELETE_ASSIGNED_TO_PROJECTS.getDescription(),
+            assertThrows(ServiceException.class, () -> spiedDeveloperService.deleteDeveloper(developerWithProject)
+            ).getMessage()
+        );
+        // - Létező developer, nincs projekthez rendelve
+        entityManager.clear();
+        developerWithNoProject = new DeveloperEntity("Ötödik fejlesztő");
+        spiedDeveloperService.insertNewDeveloper(developerWithNoProject);
+        entityManager.clear();
+        actualDeveloper = spiedDeveloperService.getDeveloperByName("Ötödik fejlesztő");
+        assertNotNull(actualDeveloper);
+        developerId = actualDeveloper.getId();
+        assertNotNull( developerId );
+        assertDoesNotThrow(() -> spiedDeveloperService.deleteDeveloper(actualDeveloper));
+        verify(spyDeveloperRepository, times(1)).deleteById(developerId);
+        // - Visszaolvasás
+        entityManager.clear();
+        assertNull(spiedDeveloperService.getDeveloperById(developerId));
+        assertNull(spiedDeveloperService.getDeveloperByName("Ötödik fejlesztő"));
+        // - Minden hibalehetőség tesztelve volt:
+        assertDoesNotThrow(() -> ServiceException.isAllExceptionsThrown(ServiceException.ExceptionGroups.DEVELOPER_DELETE));
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    void developerServiceQueriesTest() {
+        DeveloperEntity actualDeveloper;
+        //----------------------- Minden developer lekérdezése: getDevelopers() --------------------------
+        assertEquals(4, spiedDeveloperService.getDevelopers().size());
+        verify(spyDeveloperRepository, times(1)).findAll();
+        // --------------------------------- Egyéb lekérdezések ------------------------------------------
+        // Egy developer projektjei: getDeveloperProjects()
+        entityManager.clear();
+        actualDeveloper = Objects.requireNonNull(spiedDeveloperService.getDeveloperByName("1. fejlesztő"));
+        assertEquals(1, actualDeveloper.getDeveloperProjects().size());
+        actualDeveloper = Objects.requireNonNull(spiedDeveloperService.getDeveloperByName("2. fejlesztő"));
+        assertEquals(2, actualDeveloper.getDeveloperProjects().size());
+        actualDeveloper = Objects.requireNonNull(spiedDeveloperService.getDeveloperByName("3. fejlesztő"));
+        assertEquals(2, actualDeveloper.getDeveloperProjects().size());
+        actualDeveloper = Objects.requireNonNull(spiedDeveloperService.getDeveloperByName("4. fejlesztő"));
+        assertEquals(2, actualDeveloper.getDeveloperProjects().size());
     }
 }

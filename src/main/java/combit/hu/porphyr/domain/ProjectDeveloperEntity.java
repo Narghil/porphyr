@@ -20,11 +20,14 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.List;
 
+/**
+ * A projektek és a fejlesztők összerendelése
+*/
 @Entity
 @Table(name = "PROJECTDEVELOPERS")
 @NoArgsConstructor
 @Data
-public class ProjectDevelopersEntity {
+public class ProjectDeveloperEntity {
     @Setter(AccessLevel.NONE)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -32,23 +35,28 @@ public class ProjectDevelopersEntity {
 
     @ToString.Exclude
     @ManyToOne
-    @JoinColumn( name = "project_id")
+    @JoinColumn(name = "project_id")
     @JsonManagedReference
+    @NonNull
     ProjectEntity projectEntity;
 
     @ToString.Exclude
     @ManyToOne
     @JoinColumn( name = "developer_id")
     @JsonManagedReference
+    @NonNull
     DeveloperEntity developerEntity;
 
     @EqualsAndHashCode.Exclude
-    @OneToMany(mappedBy = "projectDevelopersEntity")
+    @OneToMany(mappedBy = "projectDeveloperEntity")
     @JsonBackReference
-    private List<ProjectTaskDevelopersEntity> projectTaskDevelopers;
+    private List<ProjectTaskDeveloperEntity> projectTaskDevelopers;
 
-    public ProjectDevelopersEntity(final @NonNull ProjectEntity projectEntity, final @NonNull DeveloperEntity developerEntity) {
-        this.projectEntity = projectEntity;
-        this.developerEntity = developerEntity;
+    public void setProjectAndDeveloper(
+        final @NonNull ProjectEntity projectEntity,
+        final @NonNull DeveloperEntity developerEntity
+    ) {
+        setProjectEntity(projectEntity);
+        setDeveloperEntity(developerEntity);
     }
 }

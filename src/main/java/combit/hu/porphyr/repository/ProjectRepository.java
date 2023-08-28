@@ -15,4 +15,5 @@ public interface ProjectRepository extends CrudRepository<ProjectEntity, Long> {
     @Nullable ProjectEntity findAllById(final @NonNull Long id);
     @NonNull List<ProjectEntity> findAllByName(final @NonNull String name);
     @NonNull List<ProjectEntity> findAllByNameAndIdNot(final @NonNull String name, final @NonNull Long id);
+    void saveAndFlush( final @NonNull ProjectEntity projectEntity);
 }

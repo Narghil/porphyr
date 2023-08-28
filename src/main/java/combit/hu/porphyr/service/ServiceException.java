@@ -5,47 +5,68 @@ import lombok.Synchronized;
 import org.jetbrains.annotations.TestOnly;
 
 public class ServiceException extends IllegalArgumentException {
-    private enum ExceptionGroups{ UNDEFINED, PROJECT, DEVELOPER, PROJECTTASKS, PROJECTDEVELOPERS, PROJECTTASKDEVELOPERS }
+    public enum ExceptionGroups{   UNDEFINED,
+                                    PROJECT_INSERT, PROJECT_MODIFY, PROJECT_DELETE,
+                                    DEVELOPER_INSERT, DEVELOPER_MODIFY, DEVELOPER_DELETE,
+                                    PROJECTTASKS_INSERT, PROJECTTASKS_MODIFY, PROJECTTASKS_DELETE,
+                                    PROJECTDEVELOPERS_INSERT, PROJECTDEVELOPERS_DELETE,
+                                    PROJECTTASKDEVELOPERS_INSERT, PROJECTTASKDEVELOPERS_MODIFY, PROJECTTASKDEVELOPERS_DELETE }
     public enum Exceptions{
-        PROJECT_WITH_EMPTY_NAME_CANT_INSERT( ExceptionGroups.PROJECT, "A projekt neve nincs kitöltve, nem vihető fel!", 0),
-        PROJECT_WITH_SAME_NAME_CANT_INSERT( ExceptionGroups.PROJECT, "Van már ilyen nevű projekt, nem vihető fel még egyszer!", 0),
-        PROJECT_NOT_SAVED_CANT_MODIFY( ExceptionGroups.PROJECT, "A projekt még nincs elmentve, nem módosítható!", 0 ),
-        PROJECT_WITH_EMPTY_NAME_CANT_MODIFY( ExceptionGroups.PROJECT, "A projekt neve nincs kitöltve, nem módosítható!", 0),
-        PROJECT_WITH_SAME_NAME_CANT_MODIFY( ExceptionGroups.PROJECT, "Van már ilyen nevű projekt, a név nem módosítható erre!", 0),
-        PROJECT_NOT_SAVED_CANT_DELETE( ExceptionGroups.PROJECT, "A projekt még nincs elmentve, nem törölhető!", 0 ),
-        PROJECT_WITH_TASKS_CANT_DELETE( ExceptionGroups.PROJECT, "A projekthez még tartoznak feladatok, nem törölhető!", 0 ),
-        PROJECT_WITH_DEVELOPERS_CANT_DELETE( ExceptionGroups.PROJECT, "A projekthez még tartoznak fejlesztők, nem törölhető!", 0 ),
+        PROJECT_INSERT_EMPTY_NAME( ExceptionGroups.PROJECT_INSERT, "A projekt neve nincs kitöltve, nem vihető fel!", 0),
+        PROJECT_INSERT_SAME_NAME( ExceptionGroups.PROJECT_INSERT, "Van már ilyen nevű projekt, nem vihető fel még egyszer!", 0),
+        PROJECT_MODIFY_NOT_SAVED( ExceptionGroups.PROJECT_MODIFY, "A projekt még nincs elmentve, nem módosítható!", 0 ),
+        PROJECT_MODIFY_EMPTY_NAME( ExceptionGroups.PROJECT_MODIFY, "A projekt neve nincs kitöltve, nem módosítható!", 0),
+        PROJECT_MODIFY_SAME_NAME( ExceptionGroups.PROJECT_MODIFY, "Van már ilyen nevű projekt, a név nem módosítható erre!", 0),
+        PROJECT_DELETE_NOT_SAVED( ExceptionGroups.PROJECT_DELETE, "A projekt még nincs elmentve, nem törölhető!", 0 ),
+        PROJECT_DELETE_TASKS_ASSIGNED( ExceptionGroups.PROJECT_DELETE, "A projekthez még tartoznak feladatok, nem törölhető!", 0 ),
+        PROJECT_DELETE_DEVELOPERS_ASSIGNED( ExceptionGroups.PROJECT_DELETE, "A projekthez még tartoznak fejlesztők, nem törölhető!", 0 ),
 
-        DEVELOPER_WITH_EMPTY_NAME_CANT_INSERT( ExceptionGroups.DEVELOPER, "A fejlesztő neve nincs kitöltve, nem vihető fel!", 0 ),
-        DEVELOPER_WITH_SAME_NAME_CANT_INSERT( ExceptionGroups.DEVELOPER, "Van már ilyen nevű fejlesztő, nem vihető fel még egyszer!", 0 ),
-        DEVELOPER_NOT_SAVED_CANT_MODIFY( ExceptionGroups.DEVELOPER, "A fejlesztő még nincs elmentve, nem módosítható!", 0 ),
-        DEVELOPER_WITH_EMPTY_NAME_CANT_MODIFY( ExceptionGroups.DEVELOPER, "A fejlesztő neve nincs kitöltve, nem módosítható!", 0 ),
-        DEVELOPER_WITH_SAME_NAME_CANT_MODIFY( ExceptionGroups.DEVELOPER, "Van már ilyen nevű fejlesztő, a név nem módosítható erre!", 0 ),
-        DEVELOPER_NOT_SAVED_CANT_DELETE( ExceptionGroups.DEVELOPER, "A fejlesztő még nincs elmentve, nem törölhető!", 0 ),
-        DEVELOPER_WITH_PROJECTS_CANT_DELETE( ExceptionGroups.DEVELOPER, "A fejlesztő még dolgozik legalább egy projektben, nem törölhető!", 0 ),
+        DEVELOPER_INSERT_EMPTY_NAME( ExceptionGroups.DEVELOPER_INSERT, "A fejlesztő neve nincs kitöltve, nem vihető fel!", 0 ),
+        DEVELOPER_INSERT_SAME_NAME( ExceptionGroups.DEVELOPER_INSERT, "Van már ilyen nevű fejlesztő, nem vihető fel még egyszer!", 0 ),
+        DEVELOPER_MODIFY_NOT_SAVED( ExceptionGroups.DEVELOPER_MODIFY, "A fejlesztő még nincs elmentve, nem módosítható!", 0 ),
+        DEVELOPER_MODIFY_EMPTY_NAME( ExceptionGroups.DEVELOPER_MODIFY, "A fejlesztő neve nincs kitöltve, nem módosítható!", 0 ),
+        DEVELOPER_MODIFY_SAME_NAME( ExceptionGroups.DEVELOPER_MODIFY, "Van már ilyen nevű fejlesztő, a név nem módosítható erre!", 0 ),
+        DEVELOPER_DELETE_NOT_SAVED( ExceptionGroups.DEVELOPER_DELETE, "A fejlesztő még nincs elmentve, nem törölhető!", 0 ),
+        DEVELOPER_DELETE_ASSIGNED_TO_PROJECTS( ExceptionGroups.DEVELOPER_DELETE, "A fejlesztő még dolgozik legalább egy projektben, nem törölhető!", 0 ),
 
-        PROJECTTASK_PROJECT_IS_NULL_CANT_INSERT( ExceptionGroups.PROJECTTASKS, "Nincs kiválasztott projekt, a feladat nem vihető fel!",0),
-        PROJECTTASK_PROJECT_NOT_EXISTS_CANT_INSERT( ExceptionGroups.PROJECTTASKS, "A kiválasztott projektet törölték, a feladat nem vihető fel!",0),
-        PROJECTTASK_WITH_EMPTY_NAME_CANT_INSERT( ExceptionGroups.PROJECTTASKS, "A feladat neve nincs kitöltve, nem vihető fel!",0),
-        PROJECTTASK_WITH_SAME_NAME_CANT_INSERT( ExceptionGroups.PROJECTTASKS, "Már van ilyen nevű feladat, nem vihető fel!",0),
-        PROJECTTASK_NOT_SAVED_CANT_MODIFY( ExceptionGroups.PROJECTTASKS, "A feladat még nincs elmentve, nem módosítható!",0),
-        PROJECTTASK_PROJECT_IS_NULL_CANT_MODIFY( ExceptionGroups.PROJECTTASKS, "Nincs kiválasztott projekt, a feladat nem módosítható!",0),
-        PROJECTTASK_PROJECT_NOT_EXISTS_CANT_MODIFY( ExceptionGroups.PROJECTTASKS, "A kiválasztott projektet törölték, a feladat nem módosítható!",0),
-        PROJECTTASK_WITH_EMPTY_NAME_CANT_MODIFY( ExceptionGroups.PROJECTTASKS, "A feladat neve nincs kitöltve, nem módosítható!",0),
-        PROJECTTASK_WITH_SAME_NAME_CANT_MODIFY( ExceptionGroups.PROJECTTASKS, "Már van ilyen nevű feladat, a név nem módosítható erre!",0),
-        PROJECTTASK_NOT_SAVED_CANT_DELETE( ExceptionGroups.PROJECTTASKS, "A feladat még nincs elmentve, nem törölhető!",0),
-        PROJECTTASK_WITH_DEVELOPERS_CANT_DELETE( ExceptionGroups.PROJECTTASKS, "A feladathoz még tartoznak fejlesztők, nem törölhető!",0),
+        PROJECTTASK_INSERT_PROJECT_NOT_SAVED( ExceptionGroups.PROJECTTASKS_INSERT, "A kiválasztott projektet még nincs elmentve, a feladat nem vihető fel!",0),
+        PROJECTTASK_INSERT_PROJECT_NOT_EXISTS( ExceptionGroups.PROJECTTASKS_INSERT, "A kiválasztott projektet törölték, a feladat nem vihető fel!",0),
+        PROJECTTASK_INSERT_EMPTY_NAME( ExceptionGroups.PROJECTTASKS_INSERT, "A feladat neve nincs kitöltve, nem vihető fel!",0),
+        PROJECTTASK_INSERT_SAME_PROJECT_AND_NAME( ExceptionGroups.PROJECTTASKS_INSERT, "Már van ilyen nevű feladat a projektben, nem vihető fel!",0),
 
-        PROJECTDEVELOPER_NOT_SAVED_CANT_DELETE( ExceptionGroups.PROJECTDEVELOPERS, "A projekt-fejlesztő összerendelés még nincs elmentve, nem törölhető!",0),
-        PROJECTDEVELOPER_NOT_SAVED_CANT_MODIFY( ExceptionGroups.PROJECTDEVELOPERS, "A projekt-fejlesztő összerendelés még nincs elmentve, nem módosítható!",0),
-        PROJECTDEVELOPER_WITH_TASKS_CANT_DELETE( ExceptionGroups.PROJECTDEVELOPERS, "A projekt-fejlesztő összerendeléshez még tartozik feladat, nem törölhető!",0),
-        PROJECTDEVELOPERS_WITH_TASKS_CANT_DELETE( ExceptionGroups.PROJECTDEVELOPERS, "Legalább egy projekt-fejlesztő összerendeléshez még tartozik feladat, valamennyi összerendelés nem törölhető egyszerre!",0),
+        PROJECTTASK_MODIFY_PROJECT_NOT_SAVED( ExceptionGroups.PROJECTTASKS_MODIFY, "A kiválasztott projektet még nincs elmentve, a feladat nem módosítható!",0),
+        PROJECTTASK_MODIFY_PROJECT_NOT_EXISTS( ExceptionGroups.PROJECTTASKS_MODIFY, "A kiválasztott projektet törölték, a feladat nem módosítható!",0),
+        PROJECTTASK_MODIFY_NOT_SAVED( ExceptionGroups.PROJECTTASKS_MODIFY, "A feladat még nincs elmentve, nem módosítható!",0),
+        PROJECTTASK_MODIFY_EMPTY_NAME( ExceptionGroups.PROJECTTASKS_MODIFY, "A feladat neve nincs kitöltve, nem módosítható!",0),
+        PROJECTTASK_MODIFY_SAME_PROJECT_AND_NAME( ExceptionGroups.PROJECTTASKS_MODIFY, "Már van ilyen nevű feladat, a név nem módosítható erre!",0),
 
-        PROJECTTASKDEVELOPER_NOT_SAVED_CANT_DELETE( ExceptionGroups.PROJECTTASKDEVELOPERS, "A fejlesztő-feladat összerendelés még nincs elmentve, nem törölhető!",0),
-        PROJECTTASKDEVELOPER_NOT_SAVED_CANT_MODIFY( ExceptionGroups.PROJECTTASKDEVELOPERS, "A fejlesztő-feladat összerendelés még nincs elmentve, nem módosítható!",0),
+        PROJECTTASK_DELETE_NOT_SAVED( ExceptionGroups.PROJECTTASKS_DELETE, "A feladat még nincs elmentve, nem törölhető!",0),
+        PROJECTTASK_DELETE_DEVELOPERS_ASSIGNED( ExceptionGroups.PROJECTTASKS_DELETE, "A feladathoz még tartoznak fejlesztők, nem törölhető!",0),
+
+        PROJECTDEVELOPER_INSERT_PROJECT_NOT_SAVED( ExceptionGroups.PROJECTDEVELOPERS_INSERT, "A kiválasztott projekt nincs elmentve, az összerendelés nem végezhető el!", 0),
+        PROJECTDEVELOPER_INSERT_PROJECT_NOT_EXISTS( ExceptionGroups.PROJECTDEVELOPERS_INSERT, "A kiválasztott projektet törölték, az összerendelés nem végezhető el!" , 0),
+        PROJECTDEVELOPER_INSERT_DEVELOPER_NOT_SAVED( ExceptionGroups.PROJECTDEVELOPERS_INSERT, "A kiválasztott fejlesztő nincs elmentve, az összerendelés nem végezhető el!", 0),
+        PROJECTDEVELOPER_INSERT_DEVELOPER_NOT_EXISTS( ExceptionGroups.PROJECTDEVELOPERS_INSERT, "A kiválasztott fejlesztőt törölték, az összerendelés nem végezhető el!" , 0),
+        PROJECTDEVELOPER_INSERT_EXISTING_DATA( ExceptionGroups.PROJECTDEVELOPERS_INSERT, "A kiválasztott projektben már dolgozik a kiválasztott fejlesztő!" , 0),
+
+        PROJECTDEVELOPER_DELETE_NOT_SAVED( ExceptionGroups.PROJECTDEVELOPERS_DELETE, "Az összerendelés még nincs elmentve, nem törölhető!",0),
+        PROJECTDEVELOPER_DELETE_ASSIGNED_TO_TASK( ExceptionGroups.PROJECTDEVELOPERS_DELETE, "A fejlesztő nem törölhető a projektből, még dolgozik a projekt feladatain!",0),
+
+        PROJECTTASKDEVELOPER_INSERT_PROJECTTASK_NOT_SAVED( ExceptionGroups.PROJECTTASKDEVELOPERS_INSERT, "A kiválasztott feladat nincs elmentve, az összerendelés nem végezhető el!", 0),
+        PROJECTTASKDEVELOPER_INSERT_PROJECTTASK_NOT_EXISTS( ExceptionGroups.PROJECTTASKDEVELOPERS_INSERT, "A kiválasztott feladatot törölték, az összerendelés nem végezhető el!", 0),
+        PROJECTTASKDEVELOPER_INSERT_PROJECTDEVELOPER_NOT_SAVED( ExceptionGroups.PROJECTTASKDEVELOPERS_INSERT, "A kiválasztott fejlesztő nincs elmentve, az összerendelés nem végezhető el!", 0),
+        PROJECTTASKDEVELOPER_INSERT_PROJECTDEVELOPER_NOT_EXISTS( ExceptionGroups.PROJECTTASKDEVELOPERS_INSERT, "A kiválasztott fejlesztőt törölték, az összerendelés nem végezhető el!", 0),
+        PROJECTTASKDEVELOPER_INSERT_TASK_OR_DEVELOPER_NOT_IN_PROJECT( ExceptionGroups.PROJECTTASKDEVELOPERS_INSERT, "A feladat és a fejlesztő más-más projekthez tartozik!", 0),
+        PROJECTTASKDEVELOPER_INSERT_EXISTING_DATA( ExceptionGroups.PROJECTTASKDEVELOPERS_INSERT, "A kiválasztott feladaton már dolgozik a kiválasztott fejlesztő!", 0),
+
+        PROJECTTASKDEVELOPER_MODIFY_NOT_SAVED( ExceptionGroups.PROJECTTASKDEVELOPERS_MODIFY, "Az összerendelés nincs elmentve, a módosítás nem végezhető el!", 0),
+        PROJECTTASKDEVELOPER_MODIFY_TIME_IS_NEGATIVE( ExceptionGroups.PROJECTTASKDEVELOPERS_MODIFY, "Az eltöltött idő nem lehet nullánál kisebb!", 0),
+
+        PROJECTTASKDEVELOPER_DELETE_NOT_SAVED( ExceptionGroups.PROJECTTASKDEVELOPERS_MODIFY, "Az összerendelés nincs elmentve, nem törölhető!", 0),
+        PROJECTTASKDEVELOPER_DELETE_TIME_NOT_ZERO( ExceptionGroups.PROJECTTASKDEVELOPERS_MODIFY, "Az eltöltött idő nem nulla, az összerendelés nem törölhető!", 0),
 
         UNDEFINED( ExceptionGroups.UNDEFINED, "Undefined", 0),
-        NULLVALUE( ExceptionGroups.UNDEFINED, "Adathiba: Üres érték, nem várt helyen.", 0)
+        NULL_VALUE( ExceptionGroups.UNDEFINED, "Adathiba: Üres érték, nem várt helyen.", 0)
         ;
 
         private final ExceptionGroups exceptionGroup ;
@@ -65,6 +86,8 @@ public class ServiceException extends IllegalArgumentException {
         public Integer getCounter(){ return counter; }
     }
 
+    private static final String LINE_SEPARATOR = System.getProperty("line.separator");
+
     public ServiceException(@NonNull Exceptions exception) {
         super( exception.getDescription() );
         exception.incrementCounter();
@@ -72,26 +95,6 @@ public class ServiceException extends IllegalArgumentException {
 
     public ServiceException(@NonNull String exceptionMessage) {
         super( exceptionMessage );
-    }
-
-    private static void isAllExceptionsThrown( final @NonNull ExceptionGroups exceptionGroup ) {
-        boolean isAllThrown = true;
-        String separator = System.getProperty("line.separator");
-        StringBuilder notThrownExceptions = new StringBuilder(separator);
-
-        notThrownExceptions.append("Exceptions not thrown:");
-        notThrownExceptions.append(separator);
-        for( Exceptions exception : Exceptions.values() ){
-            if( ( exception.getExceptionGroup().equals( exceptionGroup )) && (exception.getCounter() == 0) ){
-                isAllThrown = false;
-                notThrownExceptions.append(exception.name());
-                notThrownExceptions.append(separator);
-            }
-        }
-        if (!isAllThrown) {
-            notThrownExceptions.append(separator);
-            throw new ServiceException("Exceptions not thrown:" + notThrownExceptions);
-        }
     }
 
     @Override
@@ -108,62 +111,31 @@ public class ServiceException extends IllegalArgumentException {
         return stringBuilder.toString();
     }
 
-    private static String toString( final @NonNull ExceptionGroups exceptionGroup){
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(System.getProperty("line.separator"));
-        stringBuilder.append(exceptionGroup.name());
-        stringBuilder.append( " - number of thrown exeptions:");
-        stringBuilder.append(System.getProperty("line.separator"));
+    @TestOnly
+    public static void isAllExceptionsThrown( final @NonNull ExceptionGroups exceptionGroup ) {
+        boolean isAllThrown = true;
+        StringBuilder notThrownExceptions = new StringBuilder(LINE_SEPARATOR);
+
+        notThrownExceptions.append("Exceptions not thrown:");
+        notThrownExceptions.append(LINE_SEPARATOR);
         for( Exceptions exception : Exceptions.values() ){
-            if( exception.getExceptionGroup() == exceptionGroup && exception.getCounter() > 0) {
-                stringBuilder.append(exception.name());
-                stringBuilder.append(" = ");
-                stringBuilder.append(exception.getCounter());
-                stringBuilder.append(System.getProperty("line.separator"));
+            if( ( exception.getExceptionGroup().equals( exceptionGroup )) && (exception.getCounter() == 0) ){
+                isAllThrown = false;
+                notThrownExceptions.append(exception.name());
+                notThrownExceptions.append(LINE_SEPARATOR);
             }
         }
-        stringBuilder.append(System.getProperty("line.separator"));
-        return stringBuilder.toString();
+        if (!isAllThrown) {
+            notThrownExceptions.append(LINE_SEPARATOR);
+            throw new ServiceException("Exceptions not thrown:" + notThrownExceptions);
+        }
     }
 
     @TestOnly
-    public static void toStringProjectTaskExceptionsThrown(){
-        System.out.println(toString(ExceptionGroups.PROJECTTASKS)); }
-
-    @TestOnly
-    public static void toStringProjectExceptionsThrown(){
-        System.out.println(toString(ExceptionGroups.PROJECT)); }
-
-    @TestOnly
-    public static void isAllProjectExceptionsThrown() {
-        isAllExceptionsThrown( ExceptionGroups.PROJECT );
-    }
-
-    @TestOnly
-    public static void isAllDeveloperExceptionsThrown() {
-        isAllExceptionsThrown( ExceptionGroups.DEVELOPER );
-    }
-
-    @TestOnly
-    public static void isAllProjectTaskExceptionsThrown() {
-        isAllExceptionsThrown( ExceptionGroups.PROJECTTASKS );
-    }
-
-    @TestOnly
-    public static void isAllProjectDevelopersExceptionsThrown() {
-        isAllExceptionsThrown( ExceptionGroups.PROJECTDEVELOPERS );
-    }
-
-    @TestOnly
-    public static void isAllProjectTaskDevelopersExceptionsThrown() {
-        isAllExceptionsThrown( ExceptionGroups.PROJECTTASKDEVELOPERS );
+    public static void initExceptionsCounter() {
+        for (Exceptions exception : Exceptions.values()) {
+            exception.counter = 0;
+        }
     }
 
 }
-
-/*
-Megjegyzés: A tesztelési lehetőségekre azért van szükség, mert:
- - Az assertThrows( <class>, <executable>, <message> ), ha a kivétel más üzenetet ad vissza, mint a <message>,
-   akkor is tövábbengedi a futást.
-   Magyarán ennyiből még nem ellenőrizhető, hogy a kívánt kivételt dobta-e a teszt.
- */

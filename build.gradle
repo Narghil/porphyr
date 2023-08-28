@@ -21,6 +21,11 @@ repositories {
 	mavenCentral()
 }
 
+tasks.withType(JavaCompile).configureEach {
+	options.incremental = true
+	options.compilerArgs << "-Xlint:deprecation"
+}
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -30,15 +35,29 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-autoconfigure'
 	implementation 'org.liquibase:liquibase-core'
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
-    testImplementation 'junit:junit:4.13.1'
-	compileOnly 'org.jetbrains:annotations:15.0'
-	compileOnly 'org.projectlombok:lombok'
+	implementation 'org.jetbrains:annotations:15.0'
+	implementation 'com.google.code.findbugs:jsr305:3.+'
+	implementation 'com.google.guava:guava:31.1-jre'
+	implementation 'org.slf4j:slf4j-api'
+	implementation 'ch.qos.logback:logback-classic:1.2.12'
+	implementation 'ch.qos.logback:logback-core:1.2.12'
+	implementation 'org.projectlombok:lombok'
+	implementation 'org.postgresql:postgresql:42.6.0'
+
 	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'org.postgresql:postgresql'
+
 	annotationProcessor 'org.projectlombok:lombok'
+
+	testImplementation 'junit:junit:4.13.1'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
+	testImplementation 'org.hamcrest:hamcrest-all:1.3'
+
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
