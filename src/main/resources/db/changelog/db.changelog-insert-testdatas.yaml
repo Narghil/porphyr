@@ -295,5 +295,5 @@ databaseChangeLog:
             valueNumeric: 6
         - column:
             name: SPEND_TIME
-            valueNumeric: 0
+            valueNumeric: 1
         tableName: PROJECTTASKDEVELOPERS

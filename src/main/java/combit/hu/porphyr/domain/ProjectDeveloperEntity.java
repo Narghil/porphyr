@@ -1,10 +1,10 @@
 package combit.hu.porphyr.domain;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
@@ -18,14 +18,27 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A projektek és a fejlesztők összerendelése
-*/
+ * A projektek és a fejlesztők összerendelése <br/>
+ * <br/>
+ * Mezők: <br/>
+ * {@code - id:} &#9;&#9;&#9; Egyedi azonosító <br/>
+ * {@code - projectEntity:} &#9;&#9; A projekt. <br/>
+ * {@code - developerEntity:} &#9;&#9; A fejlesztő. <br/>
+ * {@code - projectTaskDevelopers:} &#9; Az aktuális összerendeléshez tartozó projectTask hozzárendelések. <br/>
+ * A projectEntity és a developerEntity együtt egyedi. <br/>
+ * <br/>
+ * @see ProjectEntity
+ * @see DeveloperEntity
+ * @see ProjectTaskEntity
+ * @see ProjectTaskDeveloperEntity
+ */
+
 @Entity
 @Table(name = "PROJECTDEVELOPERS")
-@NoArgsConstructor
 @Data
 public class ProjectDeveloperEntity {
     @Setter(AccessLevel.NONE)
@@ -33,24 +46,29 @@ public class ProjectDeveloperEntity {
     @Id
     private @Nullable Long id;
 
-    @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "project_id")
     @JsonManagedReference
     @NonNull
     ProjectEntity projectEntity;
 
-    @ToString.Exclude
     @ManyToOne
-    @JoinColumn( name = "developer_id")
+    @JoinColumn(name = "developer_id")
     @JsonManagedReference
     @NonNull
     DeveloperEntity developerEntity;
 
+    @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "projectDeveloperEntity")
     @JsonBackReference
-    private List<ProjectTaskDeveloperEntity> projectTaskDevelopers;
+    private @NonNull List<ProjectTaskDeveloperEntity> projectTaskDevelopers;
+
+    public ProjectDeveloperEntity() {
+        projectEntity = new ProjectEntity();
+        developerEntity = new DeveloperEntity();
+        projectTaskDevelopers = new ArrayList<>();
+    }
 
     public void setProjectAndDeveloper(
         final @NonNull ProjectEntity projectEntity,

@@ -10,23 +10,27 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.concurrent.GuardedBy;
+import javax.annotation.concurrent.ThreadSafe;
 import javax.persistence.EntityManager;
 import java.util.List;
 
 @Service
 @Transactional
-@Scope("prototype")
+@ThreadSafe
 public class ProjectService {
 
     @Autowired
     @Setter
+    @GuardedBy("this")
     private EntityManager entityManager;
 
     @Autowired
     @Setter
+    @GuardedBy("this")
     private ProjectRepository projectRepository;
 
-    public @NonNull List<ProjectEntity> getProjects() {
+    public synchronized @NonNull List<ProjectEntity> getProjects() {
         return projectRepository.findAll();
     }
 
@@ -35,7 +39,7 @@ public class ProjectService {
      * - Nincs kitöltve a név <br/>
      * - Van másik ilyen nevű projekt <br/>
      */
-    public void insertNewProject(final @NonNull ProjectEntity newProjectEntity) {
+    public synchronized void insertNewProject(final @NonNull ProjectEntity newProjectEntity) {
         if (newProjectEntity.getName().isEmpty()) {
             throw (new ServiceException(ServiceException.Exceptions.PROJECT_INSERT_EMPTY_NAME));
         } else if (!projectRepository.findAllByName(newProjectEntity.getName()).isEmpty()) {
@@ -51,7 +55,7 @@ public class ProjectService {
      * - Nincs kitöltve a név <br/>
      * - Van másik ilyen nevű projekt <br/>
      */
-    public void modifyProject(final @NonNull ProjectEntity modifiedProject) {
+    public synchronized void modifyProject(final @NonNull ProjectEntity modifiedProject) {
         entityManager.detach(modifiedProject);
         if (modifiedProject.getId() == null) {
             throw new ServiceException(ServiceException.Exceptions.PROJECT_MODIFY_NOT_SAVED);
@@ -67,11 +71,11 @@ public class ProjectService {
 
     /**
      * Hibalehetőségek. <br/>
-     * - Az ID nincs kitöltve
-     * - A projekthez még van hozzárendelt fejlesztő
-     * - A projekthez még tartozik feladat
+     * - Az ID nincs kitöltve<br />
+     * - A projekthez még van hozzárendelt fejlesztő<br />
+     * - A projekthez még tartozik feladat<br />
      */
-    public void deleteProject(final @NonNull ProjectEntity projectEntity) {
+    public synchronized void deleteProject(final @NonNull ProjectEntity projectEntity) {
         Long projectId = projectEntity.getId();
         if (projectId == null) {
             throw new ServiceException(ServiceException.Exceptions.PROJECT_DELETE_NOT_SAVED);
@@ -92,7 +96,7 @@ public class ProjectService {
         }
     }
 
-    public @Nullable ProjectEntity getProjectById( final @NonNull Long id ){return projectRepository.findAllById(id);}
+    public synchronized @Nullable ProjectEntity getProjectById( final @NonNull Long id ){return projectRepository.findAllById(id);}
     public @Nullable ProjectEntity getProjectByName( final @NonNull String name ){
         List<ProjectEntity> namedProjects = projectRepository.findAllByName( name );
         if( namedProjects.isEmpty()){

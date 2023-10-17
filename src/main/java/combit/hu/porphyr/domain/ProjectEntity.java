@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
+import lombok.ToString;
 import org.jetbrains.annotations.Nullable;
 
 import javax.persistence.Column;
@@ -20,12 +20,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A projektek nyilvántartása
- */
+ * A projektek adatainak nyilvántartása.<br/>
+ * <br/>
+ * Mezők:<br/>
+ * {@code - id:} &#9;&#9;&#9; Egyedi azonosító <br/>
+ * {@code - name:} &#9;&#9;&#9; A projekt neve. Egyedi mező <br/>
+ * {@code - description:} &#9;&#9; A projekt leírása <br/>
+ * {@code - projectTasks:} &#9;&#9; A projekthez tartotó feladatok listája. <br/>
+ * {@code - projectDevelopers:} &#9; A projekthez rendelt fejlesztők listája <br/>
+ * <br/>
+ * @see ProjectTaskEntity
+ * @see ProjectDeveloperEntity
+*/
+
 @Entity
 @Table(name = "PROJECTS")
 @Data
-@NoArgsConstructor
 public class ProjectEntity {
     @Setter(AccessLevel.NONE)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,23 +48,29 @@ public class ProjectEntity {
     @Column(columnDefinition = "CLOB")
     private @Nullable String description;
 
+    @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "projectEntity")
     @JsonBackReference
-    private List<ProjectTaskEntity> projectTasks;
+    private @NonNull List<ProjectTaskEntity> projectTasks;
 
+    @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "projectEntity")
     @JsonBackReference
-    private List<ProjectDeveloperEntity> projectDevelopers;
+    private @NonNull List<ProjectDeveloperEntity> projectDevelopers;
 
     public ProjectEntity(final @NonNull String name, final @Nullable String description) {
-        this.id = null;
         this.name = name;
         this.description = description;
         this.projectTasks = new ArrayList<>();
         this.projectDevelopers = new ArrayList<>();
     }
 
+    public ProjectEntity() {
+        name = "";
+        this.projectTasks = new ArrayList<>();
+        this.projectDevelopers = new ArrayList<>();
+    }
 }
 

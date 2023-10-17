@@ -5,7 +5,6 @@ import combit.hu.porphyr.domain.ProjectDeveloperEntity;
 import combit.hu.porphyr.domain.ProjectEntity;
 import lombok.NonNull;
 import org.jetbrains.annotations.Nullable;
-import org.springframework.context.annotation.Scope;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

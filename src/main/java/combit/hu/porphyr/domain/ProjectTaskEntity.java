@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
@@ -24,12 +23,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A projektekhez tartozó feladatok nyilvántartása
+ * A projektekhez tartozó feladatok nyilvántartása <br />
+ * <br />
+ * Mezők: <br />
+ * {@code - id:} &#9;&#9;&#9; Egyedi azonosító <br />
+ * {@code - projectEntity:} &#9;&#9; A projekt, amihez a feladat tartozik <br />
+ * {@code - name:} &#9;&#9;&#9; A projekt neve. A projectEntity-n belül egyedi <br />
+ * {@code - description:} &#9;&#9; A projekt leírása <br />
+ * {@code - projectTaskDevelopers:} &#9; Az aktuális feladathoz tartozó ProjectDeveloperEntity összerendelések.
+ * <br />
+ * @see ProjectEntity
+ * @see ProjectDeveloperEntity
+ * @see ProjectTaskDeveloperEntity
  */
+
 @Entity
 @Table(name = "PROJECTTASKS")
 @Data
-@NoArgsConstructor
 public class ProjectTaskEntity {
     @Setter(AccessLevel.NONE)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,23 +52,32 @@ public class ProjectTaskEntity {
     @Column(columnDefinition = "CLOB")
     private @Nullable String description;
 
-    @ToString.Exclude
     @ManyToOne
-    @JoinColumn( name = "project_id")
+    @JoinColumn(name = "project_id")
     @JsonManagedReference
     @NonNull
     private ProjectEntity projectEntity;
 
+    @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "projectTaskEntity")
     @JsonBackReference
-    private List<ProjectTaskDeveloperEntity> projectTaskDevelopers;
+    private @NonNull List<ProjectTaskDeveloperEntity> projectTaskDevelopers;
 
-    public ProjectTaskEntity(final @NonNull ProjectEntity projectEntity, final @NonNull String name, final @Nullable String description) {
+    public ProjectTaskEntity(
+        final @NonNull ProjectEntity projectEntity,
+        final @NonNull String name,
+        final @Nullable String description
+    ) {
         this.projectEntity = projectEntity;
         this.name = name;
         this.description = description;
         this.projectTaskDevelopers = new ArrayList<>();
     }
 
+    public ProjectTaskEntity() {
+        this.projectTaskDevelopers = new ArrayList<>();
+        projectEntity = new ProjectEntity();
+        name = "";
+    }
 }

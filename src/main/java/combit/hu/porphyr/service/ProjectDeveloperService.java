@@ -15,45 +15,52 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.concurrent.GuardedBy;
+import javax.annotation.concurrent.ThreadSafe;
 import javax.persistence.EntityManager;
 import java.util.List;
 
 @Service
 @Transactional
-@Scope("prototype")
+@ThreadSafe
 public class ProjectDeveloperService {
 
     @Autowired
     @Setter
+    @GuardedBy("this")
     private EntityManager entityManager;
 
     @Autowired
     @Setter
+    @GuardedBy("this")
     private ProjectDeveloperRepository projectDeveloperRepository;
 
     @Autowired
     @Setter
+    @GuardedBy("this")
     private ProjectRepository projectRepository;
 
     @Autowired
     @Setter
+    @GuardedBy("this")
     private ProjectTaskDeveloperRepository projectTaskDeveloperRepository;
 
     @Autowired
     @Setter
+    @GuardedBy("this")
     private DeveloperRepository developerRepository;
 
     /**
      * Hibalehetőségek <br />
-     * - projectEntity = null
-     * - projectEntity.id = null
-     * - projectEntity nincs az adatbázisban
-     * - developerEntity = null
-     * - developerEntity.id = nul
-     * - developerEntity nincs az adatbázisban
-     * - már van ilyen tétel
+     * - projectEntity = null <br />
+     * - projectEntity.id = null <br />
+     * - projectEntity nincs az adatbázisban <br />
+     * - developerEntity = null <br />
+     * - developerEntity.id = null <br />
+     * - developerEntity nincs az adatbázisban <br />
+     * - már van ilyen tétel <br />
      */
-    public void insertNewProjectDeveloper(final @NonNull ProjectDeveloperEntity newProjectDeveloperEntity) {
+    public synchronized void insertNewProjectDeveloper(final @NonNull ProjectDeveloperEntity newProjectDeveloperEntity) {
         @Nullable ServiceException serviceException = null;
         entityManager.detach(newProjectDeveloperEntity);
 
@@ -77,10 +84,10 @@ public class ProjectDeveloperService {
     }
 
     /**
-     * - Az entity még nincs elmentve
-     * - nem törölhető az az összerendelés, amihez tartozik ProjectTaskDeveloper bejegyzés
+     * - Az entity még nincs elmentve<br />
+     * - nem törölhető az az összerendelés, amihez tartozik ProjectTaskDeveloper bejegyzés<br />
      */
-    public void deleteProjectDeveloper(final @NonNull ProjectDeveloperEntity projectDeveloperEntity) {
+    public synchronized void deleteProjectDeveloper(final @NonNull ProjectDeveloperEntity projectDeveloperEntity) {
         if (projectDeveloperEntity.getId() == null) {
             throw new ServiceException(ServiceException.Exceptions.PROJECTDEVELOPER_DELETE_NOT_SAVED);
         } else if (!projectTaskDeveloperRepository.findAllByProjectDeveloperEntity(projectDeveloperEntity).isEmpty()) {
@@ -91,26 +98,26 @@ public class ProjectDeveloperService {
         }
     }
 
-    public @Nullable ProjectDeveloperEntity getProjectDeveloperById(final @NonNull Long id) {
+    public synchronized @Nullable ProjectDeveloperEntity getProjectDeveloperById(final @NonNull Long id) {
         return projectDeveloperRepository.findAllById(id);
     }
 
-    public @Nullable ProjectDeveloperEntity getProjectDeveloperByProjectAndDeveloper(
+    public synchronized @Nullable ProjectDeveloperEntity getProjectDeveloperByProjectAndDeveloper(
         final @NonNull ProjectEntity project,
         final @NonNull DeveloperEntity developer
     ) {
         return projectDeveloperRepository.findAllByProjectEntityAndDeveloperEntity(project, developer);
     }
 
-    public @NonNull List<ProjectDeveloperEntity> getProjectDevelopers() {
+    public synchronized @NonNull List<ProjectDeveloperEntity> getProjectDevelopers() {
         return projectDeveloperRepository.findAll();
     }
 
-    public @NonNull List<ProjectDeveloperEntity> getProjectDevelopersByDeveloper(final @NonNull DeveloperEntity developer) {
+    public synchronized @NonNull List<ProjectDeveloperEntity> getProjectDevelopersByDeveloper(final @NonNull DeveloperEntity developer) {
         return projectDeveloperRepository.findAllByDeveloperEntity(developer);
     }
 
-    public @NonNull List<ProjectDeveloperEntity> getProjectDevelopersByProject(final @NonNull ProjectEntity project) {
+    public synchronized @NonNull List<ProjectDeveloperEntity> getProjectDevelopersByProject(final @NonNull ProjectEntity project) {
         return projectDeveloperRepository.findAllByProjectEntity(project);
     }
 }

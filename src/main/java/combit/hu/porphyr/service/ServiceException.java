@@ -4,6 +4,9 @@ import lombok.NonNull;
 import lombok.Synchronized;
 import org.jetbrains.annotations.TestOnly;
 
+import javax.annotation.concurrent.ThreadSafe;
+
+@ThreadSafe
 public class ServiceException extends IllegalArgumentException {
     public enum ExceptionGroups{   UNDEFINED,
                                     PROJECT_INSERT, PROJECT_MODIFY, PROJECT_DELETE,
@@ -62,8 +65,8 @@ public class ServiceException extends IllegalArgumentException {
         PROJECTTASKDEVELOPER_MODIFY_NOT_SAVED( ExceptionGroups.PROJECTTASKDEVELOPERS_MODIFY, "Az összerendelés nincs elmentve, a módosítás nem végezhető el!", 0),
         PROJECTTASKDEVELOPER_MODIFY_TIME_IS_NEGATIVE( ExceptionGroups.PROJECTTASKDEVELOPERS_MODIFY, "Az eltöltött idő nem lehet nullánál kisebb!", 0),
 
-        PROJECTTASKDEVELOPER_DELETE_NOT_SAVED( ExceptionGroups.PROJECTTASKDEVELOPERS_MODIFY, "Az összerendelés nincs elmentve, nem törölhető!", 0),
-        PROJECTTASKDEVELOPER_DELETE_TIME_NOT_ZERO( ExceptionGroups.PROJECTTASKDEVELOPERS_MODIFY, "Az eltöltött idő nem nulla, az összerendelés nem törölhető!", 0),
+        PROJECTTASKDEVELOPER_DELETE_NOT_SAVED( ExceptionGroups.PROJECTTASKDEVELOPERS_DELETE, "Az összerendelés nincs elmentve, nem törölhető!", 0),
+        PROJECTTASKDEVELOPER_DELETE_TIME_NOT_ZERO( ExceptionGroups.PROJECTTASKDEVELOPERS_DELETE, "Az eltöltött idő nem nulla, az összerendelés nem törölhető!", 0),
 
         UNDEFINED( ExceptionGroups.UNDEFINED, "Undefined", 0),
         NULL_VALUE( ExceptionGroups.UNDEFINED, "Adathiba: Üres érték, nem várt helyen.", 0)

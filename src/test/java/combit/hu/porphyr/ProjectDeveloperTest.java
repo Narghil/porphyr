@@ -151,7 +151,7 @@ class ProjectDeveloperTest {
     @Test
     @Transactional
     @Rollback
-    void setProjectDeveloperServiceInsertTest() {
+    void projectDeveloperServiceInsertTest() {
         ProjectEntity projectEntity;
         DeveloperEntity developerEntity;
         ProjectDeveloperEntity newProjectDeveloperEntity = new ProjectDeveloperEntity();
@@ -235,7 +235,7 @@ class ProjectDeveloperTest {
     @Test
     @Transactional
     @Rollback
-    void setProjectDeveloperServiceDeleteTest() {
+    void projectDeveloperServiceDeleteTest() {
         // - Az entity még nincs elmentve
         final @NonNull ProjectDeveloperEntity newProjectDeveloperEntity = new ProjectDeveloperEntity();
         assertEquals(
@@ -272,7 +272,7 @@ class ProjectDeveloperTest {
     @Test
     @Transactional
     @Rollback
-    void setProjectDeveloperServiceQueriesTest() {
+    void projectDeveloperServiceQueriesTest() {
         DeveloperEntity developerEntity;
         ProjectEntity projectEntity;
         // - getProjectDevelopers

@@ -42,6 +42,15 @@ databaseChangeLog:
             name: PROJECTTASK_ID
         indexName: FK_PROJECTTASKDEVELOPERS_PROJECTTASK_ID_INDEX_F
         tableName: PROJECTTASKDEVELOPERS
+    - createIndex:
+        columns:
+        - column:
+            name: PROJECTTASK_ID
+        - column:
+            name: PROJECTDEVELOPER_ID
+        indexName: UNIQ_PROJECTTASKDEVELOPERS
+        tableName: PROJECTTASKDEVELOPERS
+        unique: true
     - addForeignKeyConstraint:
         baseColumnNames: PROJECTDEVELOPER_ID
         baseTableName: PROJECTTASKDEVELOPERS

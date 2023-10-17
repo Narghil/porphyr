@@ -12,34 +12,39 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.concurrent.GuardedBy;
+import javax.annotation.concurrent.ThreadSafe;
 import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Objects;
 
 @Service
 @Transactional
-@Scope("prototype")
+@ThreadSafe
 public class ProjectTaskService {
 
     @Autowired
     @Setter
+    @GuardedBy("this")
     private EntityManager entityManager;
 
     @Autowired
     @Setter
+    @GuardedBy("this")
     private ProjectTaskRepository projectTaskRepository;
 
     @Autowired
     @Setter
+    @GuardedBy("this")
     private ProjectRepository projectRepository;
 
     /**
      * Hibalehetőségek: <br/>
-     * - A project entity nem létező project -re mutat
-     * - A task neve üres
-     * - Ilyen nevű task már van a projekten belül!
+     * - A project entity nem létező project -re mutat<br />
+     * - A task neve üres<br />
+     * - Ilyen nevű task már van a projekten belül!<br />
      */
-    public void insertNewProjectTask(final @NonNull ProjectTaskEntity newProjectTaskEntity) {
+    public synchronized void insertNewProjectTask(final @NonNull ProjectTaskEntity newProjectTaskEntity) {
         ProjectEntity project = newProjectTaskEntity.getProjectEntity();
         String taskName = newProjectTaskEntity.getName();
 
@@ -59,12 +64,12 @@ public class ProjectTaskService {
 
     /**
      * Hibalehetőségek: <br/>
-     * - A task ID-je üres
-     * - A project entity üres vagy nem létező project-re mutat
-     * - A task neve üres
-     * - Ilyen nevű task már van a projektben
+     * - A task ID-je üres<br />
+     * - A project entity üres vagy nem létező project-re mutat<br />
+     * - A task neve üres<br />
+     * - Ilyen nevű task már van a projektben<br />
      */
-    public void modifyProjectTask(final @NonNull ProjectTaskEntity modifiedProjectTaskEntity) {
+    public synchronized void modifyProjectTask(final @NonNull ProjectTaskEntity modifiedProjectTaskEntity) {
         Long taskId = modifiedProjectTaskEntity.getId();
         ProjectEntity project = modifiedProjectTaskEntity.getProjectEntity();
         String taskName = modifiedProjectTaskEntity.getName();
@@ -87,10 +92,10 @@ public class ProjectTaskService {
 
     /**
      * Hibalehetőségek: <br/>
-     * - A task ID-je üres
-     * - A task-hoz még van hozzárendelve fejlesztő
+     * - A task ID-je üres<br />
+     * - A task-hoz még van hozzárendelve fejlesztő<br />
      */
-    public void deleteProjectTask(final @NonNull ProjectTaskEntity deleteProjectTaskEntity) {
+    public synchronized void deleteProjectTask(final @NonNull ProjectTaskEntity deleteProjectTaskEntity) {
         Long taskId = deleteProjectTaskEntity.getId();
 
         if (taskId == null) {
@@ -105,15 +110,15 @@ public class ProjectTaskService {
         }
     }
 
-    public @NonNull List<ProjectTaskEntity> getProjectTasks() {
+    public synchronized @NonNull List<ProjectTaskEntity> getProjectTasks() {
         return projectTaskRepository.findAll();
     }
 
-    public @Nullable ProjectTaskEntity getProjectTaskById(final @NonNull Long projectTaskId) {
+    public synchronized @Nullable ProjectTaskEntity getProjectTaskById(final @NonNull Long projectTaskId) {
         return projectTaskRepository.findAllById(projectTaskId);
     }
 
-    public @Nullable ProjectTaskEntity getProjectTaskByProjectEntityAndName(
+    public synchronized @Nullable ProjectTaskEntity getProjectTaskByProjectEntityAndName(
         final @NonNull ProjectEntity projectEntity, final @NonNull String taskName
     ) {
         return projectTaskRepository.findAllByProjectEntityAndName(projectEntity, taskName);

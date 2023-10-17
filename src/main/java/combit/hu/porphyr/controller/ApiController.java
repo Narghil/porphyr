@@ -14,8 +14,6 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static combit.hu.porphyr.Constants.WEBNEWLINE;
-
 @RestController
 public class ApiController {
 
@@ -45,9 +43,8 @@ public class ApiController {
     }
 
     @RequestMapping("/observe")
-    public String observe() throws JsonProcessingException {
-        String retVal = "Observing is not implemented";
-        return( retVal );
+    public String observe(){
+        return( "Observing is not implemented" );
     }
 
     @ExceptionHandler(Exception.class)
