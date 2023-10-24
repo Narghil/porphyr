@@ -22,6 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 
+import java.util.concurrent.ExecutionException;
+
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.junit.jupiter.api.Assertions.*;
@@ -122,7 +124,7 @@ class ProjectTaskTests {
     @Test
     @Transactional
     @Rollback
-    void projectTaskServiceInsertTest() {
+    void projectTaskServiceInsertTest() throws ExecutionException, InterruptedException {
         final ProjectTaskEntity newProjectTask;
         ProjectTaskEntity actualProjectTask;
         //---------------- insertNewProjectTask -----------------------------
@@ -182,7 +184,7 @@ class ProjectTaskTests {
     @Test
     @Transactional
     @Rollback
-    void projectTaskServiceModifyTest() {
+    void projectTaskServiceModifyTest() throws ExecutionException, InterruptedException {
         ProjectEntity projectEntity = projectRepository.findAllById(1L);
         final ProjectTaskEntity projectTaskWithNoId;
         final ProjectTaskEntity projectTaskWithAnyCases;
@@ -249,7 +251,7 @@ class ProjectTaskTests {
     @Test
     @Transactional
     @Rollback
-    void projectTaskServiceDeleteTest() {
+    void projectTaskServiceDeleteTest() throws ExecutionException, InterruptedException {
         final ProjectTaskEntity projectTaskWithNoId;
         final ProjectTaskEntity projectTaskWithDeveloper;
         final ProjectTaskEntity projectTaskWithNoDeveloper;
@@ -293,7 +295,7 @@ class ProjectTaskTests {
     @Test
     @Transactional
     @Rollback
-    void projectTaskServiceQueriesTest() {
+    void projectTaskServiceQueriesTest() throws ExecutionException, InterruptedException {
         //getProjectTasks
         assertEquals(5, spiedProjectTaskService.getProjectTasks().size());
         //getProjectTaskById

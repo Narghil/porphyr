@@ -23,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
+import java.util.concurrent.ExecutionException;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -222,7 +224,7 @@ class ProjectTaskDeveloperTest {
     @Test
     @Transactional
     @Rollback
-    void projectTaskDeveloperServiceModifyTest() {
+    void projectTaskDeveloperServiceModifyTest() throws ExecutionException, InterruptedException {
         // -  projectTaskDeveloperEntity nincs elmentve
         ProjectTaskDeveloperEntity newProjectTaskDeveloper = new ProjectTaskDeveloperEntity();
         assertEquals(
@@ -259,7 +261,7 @@ class ProjectTaskDeveloperTest {
     @Test
     @Transactional
     @Rollback
-    void projectTaskDeveloperServiceDeleteTest() {
+    void projectTaskDeveloperServiceDeleteTest() throws ExecutionException, InterruptedException {
         // -  projectTaskDeveloperEntity nincs elmentve
         ProjectTaskDeveloperEntity newProjectTaskDeveloper = new ProjectTaskDeveloperEntity();
         assertEquals(
@@ -299,7 +301,7 @@ class ProjectTaskDeveloperTest {
     @Test
     @Transactional
     @Rollback
-    void projectTaskDeveloperServiceQueriesTest() {
+    void projectTaskDeveloperServiceQueriesTest() throws ExecutionException, InterruptedException {
         ProjectTaskEntity projectTaskEntity = projectTaskRepository.findAllById(1L);
         ProjectDeveloperEntity projectDeveloperEntity = projectDeveloperRepository.findAllById(1L);
         assertNotNull(projectTaskEntity);

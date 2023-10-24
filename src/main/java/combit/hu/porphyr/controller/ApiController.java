@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 public class ApiController {
@@ -33,12 +34,12 @@ public class ApiController {
     }
 
     @RequestMapping("/projects_rest")
-    public String projects() throws JsonProcessingException {
+    public String projects() throws JsonProcessingException, ExecutionException, InterruptedException {
         return( ow.writeValueAsString(projectService.getProjects()));
     }
 
     @RequestMapping("/developers_rest")
-    public String developers() throws JsonProcessingException {
+    public String developers() throws JsonProcessingException, ExecutionException, InterruptedException  {
         return( ow.writeValueAsString(developerService.getDevelopers()));
     }
 

@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -56,7 +57,7 @@ class ProjectTests {
     @Test
     @Transactional
     @Rollback
-    void projectRepositoryTest() {
+    void projectRepositoryTest() throws ExecutionException, InterruptedException {
         Long projectId;
         final ProjectEntity projectWithSameName;
         final ProjectEntity projectWithNewName;
@@ -112,7 +113,7 @@ class ProjectTests {
     @Test
     @Transactional
     @Rollback
-    void projectServiceInsertTest() {
+    void projectServiceInsertTest() throws ExecutionException, InterruptedException {
         Long projectId;
         final ProjectEntity projectForInsert;
         ProjectEntity actualProject;
@@ -147,7 +148,7 @@ class ProjectTests {
     @Test
     @Transactional
     @Rollback
-    void projectServiceModifyTest() {
+    void projectServiceModifyTest() throws ExecutionException, InterruptedException {
         Long projectId;
         final ProjectEntity projectWithNoId;
         final ProjectEntity projectWithAnyNames;
@@ -205,7 +206,7 @@ class ProjectTests {
     @Test
     @Transactional
     @Rollback
-    void projectServiceDeleteTest() {
+    void projectServiceDeleteTest() throws ExecutionException, InterruptedException {
         Long projectId;
         final ProjectEntity projectWithNoId;
         final ProjectEntity projectWithDeveloper;
@@ -260,7 +261,7 @@ class ProjectTests {
     @Test
     @Transactional
     @Rollback
-    void projectServiceQueriesTest() {
+    void projectServiceQueriesTest() throws ExecutionException, InterruptedException {
         ProjectEntity actualProject;
         //----------------------- Minden project lekérdezése: getProjects() --------------------------
         assertEquals(4, spiedProjectService.getProjects().size());

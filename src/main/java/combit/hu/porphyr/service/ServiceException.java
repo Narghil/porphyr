@@ -5,6 +5,9 @@ import lombok.Synchronized;
 import org.jetbrains.annotations.TestOnly;
 
 import javax.annotation.concurrent.ThreadSafe;
+import java.util.concurrent.ExecutionException;
+
+import static combit.hu.porphyr.Constants.*;
 
 @ThreadSafe
 public class ServiceException extends IllegalArgumentException {
@@ -89,8 +92,6 @@ public class ServiceException extends IllegalArgumentException {
         public Integer getCounter(){ return counter; }
     }
 
-    private static final String LINE_SEPARATOR = System.getProperty("line.separator");
-
     public ServiceException(@NonNull Exceptions exception) {
         super( exception.getDescription() );
         exception.incrementCounter();
@@ -98,6 +99,14 @@ public class ServiceException extends IllegalArgumentException {
 
     public ServiceException(@NonNull String exceptionMessage) {
         super( exceptionMessage );
+    }
+
+    public static void handleExecutionException( ExecutionException exception) throws ExecutionException{
+        if( exception.getCause() instanceof ServiceException){
+            throw (ServiceException) exception.getCause();
+        } else {
+            throw exception;
+        }
     }
 
     @Override
@@ -114,22 +123,25 @@ public class ServiceException extends IllegalArgumentException {
         return stringBuilder.toString();
     }
 
+    /**
+     * Vizsgálat: A megadott csoport valamennyi hibalehetősége ellenőrzésre került-e?
+     */
     @TestOnly
     public static void isAllExceptionsThrown( final @NonNull ExceptionGroups exceptionGroup ) {
         boolean isAllThrown = true;
-        StringBuilder notThrownExceptions = new StringBuilder(LINE_SEPARATOR);
+        StringBuilder notThrownExceptions = new StringBuilder(NEWLINE);
 
         notThrownExceptions.append("Exceptions not thrown:");
-        notThrownExceptions.append(LINE_SEPARATOR);
+        notThrownExceptions.append(NEWLINE);
         for( Exceptions exception : Exceptions.values() ){
             if( ( exception.getExceptionGroup().equals( exceptionGroup )) && (exception.getCounter() == 0) ){
                 isAllThrown = false;
                 notThrownExceptions.append(exception.name());
-                notThrownExceptions.append(LINE_SEPARATOR);
+                notThrownExceptions.append(NEWLINE);
             }
         }
         if (!isAllThrown) {
-            notThrownExceptions.append(LINE_SEPARATOR);
+            notThrownExceptions.append(NEWLINE);
             throw new ServiceException("Exceptions not thrown:" + notThrownExceptions);
         }
     }

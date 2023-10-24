@@ -25,6 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
+import java.util.concurrent.ExecutionException;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -151,7 +153,7 @@ class ProjectDeveloperTest {
     @Test
     @Transactional
     @Rollback
-    void projectDeveloperServiceInsertTest() {
+    void projectDeveloperServiceInsertTest() throws ExecutionException, InterruptedException {
         ProjectEntity projectEntity;
         DeveloperEntity developerEntity;
         ProjectDeveloperEntity newProjectDeveloperEntity = new ProjectDeveloperEntity();
@@ -272,7 +274,7 @@ class ProjectDeveloperTest {
     @Test
     @Transactional
     @Rollback
-    void projectDeveloperServiceQueriesTest() {
+    void projectDeveloperServiceQueriesTest() throws ExecutionException, InterruptedException {
         DeveloperEntity developerEntity;
         ProjectEntity projectEntity;
         // - getProjectDevelopers

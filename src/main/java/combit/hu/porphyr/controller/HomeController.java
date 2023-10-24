@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @Controller
 public class HomeController {
@@ -36,15 +37,13 @@ public class HomeController {
     }
 
     @RequestMapping("/projects")
-    public String projects(Model model ) {
-        List<ProjectEntity> projectList;
-        projectList = projectService.getProjects();
-        model.addAttribute("projects", projectList );
+    public String projects(Model model ) throws ExecutionException, InterruptedException {
+        model.addAttribute("projects", projectService.getProjects() );
         return "projects";
     }
 
     @RequestMapping("/insertSimpleData")
-    public String newProjects(Model model){
+    public String newProjects(Model model) throws ExecutionException, InterruptedException {
         projectService.insertNewProject(new ProjectEntity("Első projekt","Első projekt leírása."));
         projectService.insertNewProject(new ProjectEntity("Második projekt","Második projekt leírása."));
         projectService.insertNewProject(new ProjectEntity("Harmadik projekt","Harmadik projekt leírása."));
@@ -56,7 +55,7 @@ public class HomeController {
     }
 
     @RequestMapping("/developers")
-    public String developers(Model model ) {
+    public String developers(Model model ) throws ExecutionException, InterruptedException{
         List<DeveloperEntity> developerList;
         developerList = developerService.getDevelopers();
         model.addAttribute("developers", developerList );

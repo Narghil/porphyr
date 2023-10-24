@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -109,7 +110,7 @@ class DeveloperTests {
     @Test
     @Transactional
     @Rollback
-    void developerServiceInsertTest() {
+    void developerServiceInsertTest() throws ExecutionException, InterruptedException {
         Long developerId;
         DeveloperEntity developerForInsert;
         DeveloperEntity actualDeveloper;
@@ -145,7 +146,7 @@ class DeveloperTests {
     @Test
     @Transactional
     @Rollback
-    void developerServiceModifyTest() {
+    void developerServiceModifyTest() throws ExecutionException, InterruptedException {
         Long developerId;
         final DeveloperEntity developerWithEmptyId = new DeveloperEntity();
         final DeveloperEntity developerWithAnyNames;
@@ -201,7 +202,7 @@ class DeveloperTests {
     @Test
     @Transactional
     @Rollback
-    void developerServiceDeleteTest() {
+    void developerServiceDeleteTest() throws ExecutionException, InterruptedException {
         Long developerId;
         final DeveloperEntity developerWithEmptyId;
         final DeveloperEntity developerWithProject;
@@ -246,7 +247,7 @@ class DeveloperTests {
     @Test
     @Transactional
     @Rollback
-    void developerServiceQueriesTest() {
+    void developerServiceQueriesTest() throws ExecutionException, InterruptedException {
         DeveloperEntity actualDeveloper;
         //----------------------- Minden developer lekérdezése: getDevelopers() --------------------------
         assertEquals(4, spiedDeveloperService.getDevelopers().size());
