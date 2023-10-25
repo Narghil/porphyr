@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title th:text="#{MainPageTitle}">MainPageTitle</title>
+  <title th:text="#{ModifyProjectTitle}">Modify Project</title>
 
   <link href='https://fonts.googleapis.com/css?family=Calibri' rel='stylesheet' type='text/css' />
   <link href='https://fonts.googleapis.com/css?family=Exo' rel='stylesheet' type='text/css' />
@@ -16,38 +16,28 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 
   <link rel="stylesheet" th:href="@{css/main.css}" href="../static/css/main.css"/>
+
 </head>
+
 <body>
 
-<div class="container">
-
-  <div class="container">
-    <nav class="navbar bg-light navbar-light">
-      <a class="navbar-brand">Projektek listája</a>
-    </nav>
-
-    <p></p>
-
-    <article th:each="project : ${projects}">
-    <p>
-      <span th:text="${project.id}">projekt ID</span>
-      .&nbsp;&nbsp;
-      <span th:text="${project.name}">projekt neve</span>
-      &nbsp;:&nbsp;
-      <span th:utext="${project.description}">projekt leírása</span>
-      &nbsp;
-      <a th:href="@{'/project_modify/' + ${project.id}}">Módosítás</a>
-      &nbsp;
-      <a th:href="@{'/project_delete/' + ${project.id}}">Törlés</a>
-    </p>
-  </article>
-
-  <footer>
-    <p> <a class="link" href="/project_new">Új projekt</a> </p>
-    <p th:text="#{footerText}">footerText</p>
-  </footer>
-
-</div>
+  <div>
+    <form name="modifyproject" th:action="@{/modifyProject}" th:object="${project}" method="post" class="form">
+      <h3>Új projekt adatai:</h3><br />
+      <label for="name">ID:</label>
+      <input readonly type="text" id="id" name="id" th:field="*{id}" placeholder="ID" />
+      <br />
+      <label for="name">Név:&#9</label>
+      <input type="text" id="name" name="name" th:field="*{name}" placeholder="Projekt neve" />
+      <br />
+      <label for="description">Leírás:</label>
+      <input type="text" id="description" name="description" th:field="*{description}" placeholder="Projekt leírása" />
+      <br/>
+      <br />
+      <button type="submit">Rögzítés</button>
+    </form>
+  </div>
 
 </body>
+
 </html>

@@ -1,7 +1,6 @@
 package combit.hu.porphyr.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
@@ -37,7 +36,7 @@ import java.util.List;
 @Table(name = "PROJECTS")
 @Data
 public class ProjectEntity {
-    @Setter(AccessLevel.NONE)
+    @Setter //--(AccessLevel.NONE)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private @Nullable Long id;
