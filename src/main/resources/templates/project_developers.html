@@ -14,29 +14,32 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 
   <link rel="stylesheet" data-th-href="@{css/main.css}" href="../static/css/main.css"/>
-
 </head>
 <body>
 
-<div class="container-sm">
-  <header>
-    <p data-th-text="#{MainPageTitle}">headerText</p>
-  </header>
-
-  <nav class="navbar bg-light justify-content-center p-3">
-    <a class="btn btn-outline-primary" data-th-href="@{'/projects'}">Projektek</a>
-    <span class="placeholder col-1"></span>
-    <a class="btn btn-outline-primary" data-th-href="@{'/developers'}">Fejlesztők</a>
+<div class="container">
+  <nav class="navbar bg-light navbar-light">
+    <a class="navbar-brand"><span data-th-text="${project.id} + '.: ' + ${project.name}+ ' fejlesztői:'">Project fejlesztői</span></a>
   </nav>
 
-  <br/>
+  <div class="container">
+    <article data-th-each="projectDeveloper : ${project.developers}">
+      <p>
+        <span data-th-text="${projectDeveloper.developerEntity.id}">Fejlesztő ID</span>
+        .&nbsp;&nbsp;
+        <span data-th-text="${projectDeveloper.developerEntity.name}">Fejlesztő neve</span>
+        &nbsp;&nbsp;
+        <a data-th-href="@{'/project_developers_tasks/' + ${project.id} +'/' + ${projectDeveloper.developerEntity.id}}">Feladatok</a>
+        &nbsp;&nbsp;
+        <a data-th-href="@{'/project_developers_delete/' + ${project.id} +'/' + ${projectDeveloper.developerEntity.id}}">Törlés</a>
+      </p>
+    </article>
+  </div>
+
   <footer>
+    <p> <a class="link" data-th-href="@{'/project_developers_new/' + ${project.id}}">Új fejlesztő hozzárendelése a projekthez</a> </p>
     <p data-th-text="#{footerText}">footerText</p>
   </footer>
-
-  <img src="new.gif" width="20" alt="" class="mb-1"/>
-
-  </button>
 
 </div>
 

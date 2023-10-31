@@ -4,6 +4,7 @@ import combit.hu.porphyr.domain.ProjectEntity;
 import combit.hu.porphyr.domain.ProjectTaskEntity;
 import lombok.NonNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,6 +17,7 @@ public interface ProjectTaskRepository extends CrudRepository<ProjectTaskEntity,
     @Nullable ProjectTaskEntity findAllById( final @NonNull Long id);
     @Nullable ProjectTaskEntity findAllByProjectEntityAndName(final @NonNull ProjectEntity projectEntity, final @NonNull String name);
     @Nullable ProjectTaskEntity findAllByProjectEntityAndNameAndIdNot(final @NonNull ProjectEntity projectEntity, final @NonNull String name, final @NonNull Long id);
+
     void saveAndFlush( final @NonNull ProjectTaskEntity projectTaskEntity);
 }
 

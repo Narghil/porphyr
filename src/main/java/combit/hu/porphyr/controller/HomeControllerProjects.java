@@ -1,24 +1,20 @@
 package combit.hu.porphyr.controller;
 
-import javax.servlet.http.HttpServletRequest;
-
 import combit.hu.porphyr.domain.ProjectEntity;
 import combit.hu.porphyr.service.ProjectService;
 import combit.hu.porphyr.service.ServiceException;
-import lombok.Getter;
 import lombok.NonNull;
-import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.concurrent.ExecutionException;
+import static combit.hu.porphyr.controller.HomeControllerHelpers.ProjectPOJO;
 
 @Controller
 public class HomeControllerProjects {
@@ -33,11 +29,12 @@ public class HomeControllerProjects {
     static final @NonNull String REDIRECT_TO_PROJECTS = "redirect:/projects";
     static final @NonNull String REDIRECT_TO_ROOT = "redirect:/";
 
+    //------------------ Új projekt felvitele ---------------------------------
     @RequestMapping("/project_new")
     public String newProject(Model model) {
         final @NonNull ProjectPOJO newProject = new ProjectPOJO();
-        newProject.setName("Teszt Projekt");
-        newProject.setDescription("Teszt projekt leírása");
+        newProject.setName("Teszt <b>Projekt</b>");
+        newProject.setDescription("Teszt <b>projekt</b> leírása");
         model.addAttribute("newProject", newProject);
         return "project_new";
     }
@@ -46,7 +43,7 @@ public class HomeControllerProjects {
     public String insertNewProject(
         @ModelAttribute
         ProjectPOJO project
-    ) throws Exception
+    ) throws InterruptedException, ExecutionException
     {
         final @NonNull ProjectEntity newProject = new ProjectEntity();
         newProject.setName(project.getName());
@@ -55,6 +52,7 @@ public class HomeControllerProjects {
         return REDIRECT_TO_PROJECTS;
     }
 
+    //------------------ Projekt törlése ---------------------------------
     @RequestMapping("/project_delete/{id}")
     public String deleteProject(
         @PathVariable(value = "id")
@@ -70,14 +68,13 @@ public class HomeControllerProjects {
         return REDIRECT_TO_PROJECTS;
     }
 
-    //---------------------------------------------
-
+    //------------------ Projekt módosítása ---------------------------------
     @RequestMapping("/project_modify/{id}")
     public String modifyProjectBefore(
         Model model,
         @PathVariable(value = "id")
         Long id
-    ) throws Exception {
+    ) throws InterruptedException,ExecutionException {
         String result = "project_modify";
         final @Nullable ProjectEntity project = projectService.getProjectById(id);
         if (project != null) {
@@ -96,7 +93,7 @@ public class HomeControllerProjects {
     public String modifyProject(
         @ModelAttribute
         ProjectPOJO project
-    ) throws Exception
+    ) throws InterruptedException, ExecutionException
     {
         if (project.getId() != null) {
             final @Nullable ProjectEntity modifiedProject = projectService.getProjectById(project.getId());
@@ -111,19 +108,5 @@ public class HomeControllerProjects {
             throw new ServiceException(ServiceException.Exceptions.NULL_VALUE);
         }
         return REDIRECT_TO_PROJECTS;
-    }
-
-    @ExceptionHandler(Exception.class)
-    public String exceptionHandler(HttpServletRequest rA, Exception ex, Model model) {
-        return new HomeControllerExceptionHandler().exceptionHandler( rA, ex, model );
-    }
-
-    //------------ Helpers ----------------------
-    @Setter
-    @Getter
-    static final class ProjectPOJO {
-        private @Nullable Long id;
-        private @NonNull String name;
-        private @Nullable String description;
     }
 }

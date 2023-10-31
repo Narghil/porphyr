@@ -1,15 +1,13 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymleaf.org">
+<html lang="hu">
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title th:text="${pageTitle}">Napi SFJ</title>
+    <title data-th-text="${pageTitle}">Napi SFJ</title>
 
-    <link rel="stylesheet" th:href="@{css/main.css}" href="../static/css/main.css"/>
+    <link rel="stylesheet" data-th-href="@{css/main.css}" href="../static/css/main.css"/>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
 
     <link href='https://fonts.googleapis.com/css?family=Calibri' rel='stylesheet' type='text/css' />
@@ -23,7 +21,6 @@
 <body>
 
 <div class="container">
-
     <nav class="navbar navbar-default">
         <div class="container-fluid">
             <div class="navbar-header">
@@ -36,27 +33,22 @@
                 <a class="navbar-brand" href="#">napiSFJ.com</a>
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-5">
-                <p class="navbar-text navbar-right" th:text="#{yourip}">IP címed: <a href="#" class="navbar-link">127.0.0.1</a></p>
+                <p class="navbar-text navbar-right" data-th-text="#{your_ip}">IP címed: <a href="#" class="navbar-link">127.0.0.1</a></p>
             </div>
         </div>
     </nav>
 
-
     <article>
         <header>
-            <h1 th:text="${error}">Ez itt a gond</h1>
+            <h1 data-th-text="${error}">Ez itt a gond</h1>
         </header>
-
         <section >
-            <p th:text="${message}">Ez az üzenet.</p>
+            <p data-th-text="${message}">Ez az üzenet.</p>
         </section>
-
-
-
     </article>
 
     <footer>
-        <p th:text="#{footerText}">Készült a Combit Zrt megbízásából</p>
+        <p data-th-text="#{footerText}">Készült a Combit Zrt megbízásából</p>
     </footer>
 
 </div>

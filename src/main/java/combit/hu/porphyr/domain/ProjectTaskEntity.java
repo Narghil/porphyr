@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
@@ -52,6 +53,9 @@ public class ProjectTaskEntity {
     @Column(columnDefinition = "CLOB")
     private @Nullable String description;
 
+    @Column(name = "spend_time")
+    private @Nullable Long spendTime;
+
     @ManyToOne
     @JoinColumn(name = "project_id")
     @JsonManagedReference
@@ -64,6 +68,10 @@ public class ProjectTaskEntity {
     @JsonBackReference
     private @NonNull List<ProjectTaskDeveloperEntity> projectTaskDevelopers;
 
+    @Setter
+    @Getter
+    private @NonNull Long developerSpendTime;
+
     public ProjectTaskEntity(
         final @NonNull ProjectEntity projectEntity,
         final @NonNull String name,
@@ -73,11 +81,13 @@ public class ProjectTaskEntity {
         this.name = name;
         this.description = description;
         this.projectTaskDevelopers = new ArrayList<>();
+        this.spendTime = 0L;
     }
 
     public ProjectTaskEntity() {
         this.projectTaskDevelopers = new ArrayList<>();
         projectEntity = new ProjectEntity();
         name = "";
+        this.spendTime = 0L;
     }
 }

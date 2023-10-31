@@ -8,10 +8,8 @@ import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -64,11 +62,4 @@ public class HomeControllerRoot {
         model.addAttribute("developers", developerList);
         return "developers";
     }
-
-    @ExceptionHandler(Exception.class)
-    public String exceptionHandler(HttpServletRequest rA, Exception ex, Model model) {
-        return new HomeControllerExceptionHandler().exceptionHandler( rA, ex, model );
-    }
-
-
 }

@@ -317,4 +317,39 @@ public class ProjectTaskDeveloperService {
         }
         return result;
     }
+
+    /**
+     * ProjectTask-ok lekérdezése, a PT-PD összerendelések közül, Project és Developer szerint.
+     */
+    public synchronized @NonNull List<ProjectTaskDeveloperEntity> getProjectTaskDeveloperByProjectIdAndDeveloperId(
+        final @NonNull Long projectId,
+        final @NonNull Long developerId
+    ) throws ExecutionException, InterruptedException {
+        final class CallableCore implements Callable<List<ProjectTaskDeveloperEntity>> {
+            final @NonNull Long projectId;
+            final @NonNull Long developerId;
+
+            public CallableCore(
+                final @NonNull Long projectId,
+                final @NonNull Long developerId
+            ) {
+                this.projectId = projectId;
+                this.developerId = developerId;
+            }
+
+            @Override
+            public List<ProjectTaskDeveloperEntity> call() {
+                return projectTaskDeveloperRepository.findProjectTasksDeveloperByProjectIdAndDeveloperId(projectId, developerId);
+            }
+        }
+        @NonNull List<ProjectTaskDeveloperEntity> result = new ArrayList<>();
+        try {
+            result = forkJoinPool.submit(new CallableCore(projectId, developerId)).get();
+        } catch (ExecutionException executionException) {
+            ServiceException.handleExecutionException(executionException);
+        }
+        return result;
+    }
+
+
 }

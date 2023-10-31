@@ -64,6 +64,12 @@ public class ProjectDeveloperEntity {
     @JsonBackReference
     private @NonNull List<ProjectTaskDeveloperEntity> projectTaskDevelopers;
 
+    public ProjectDeveloperEntity( final @NonNull ProjectEntity project, final @NonNull DeveloperEntity developer){
+        projectEntity = project;
+        developerEntity = developer;
+        projectTaskDevelopers = new ArrayList<>();
+    }
+
     public ProjectDeveloperEntity() {
         projectEntity = new ProjectEntity();
         developerEntity = new DeveloperEntity();
