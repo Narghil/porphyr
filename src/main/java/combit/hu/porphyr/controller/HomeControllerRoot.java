@@ -1,7 +1,6 @@
 package combit.hu.porphyr.controller;
 
 import combit.hu.porphyr.domain.DeveloperEntity;
-import combit.hu.porphyr.domain.ProjectEntity;
 import combit.hu.porphyr.service.DeveloperService;
 import combit.hu.porphyr.service.ProjectService;
 import lombok.NonNull;
@@ -29,8 +28,6 @@ public class HomeControllerRoot {
         this.developerService = developerService;
     }
 
-    static final @NonNull String REDIRECT_TO_ROOT = "redirect:/";
-
     @RequestMapping("/")
     public String root(Model model) {
         return "porphyr";
@@ -38,21 +35,9 @@ public class HomeControllerRoot {
 
     @RequestMapping("/projects")
     public String projects(Model model) throws ExecutionException, InterruptedException {
-        final @NonNull String projects = "projects";
-        model.addAttribute(projects, projectService.getProjects());
-        return projects;
-    }
-
-    @RequestMapping("/insertSimpleData")
-    public String insertSimpleData(Model model) throws ExecutionException, InterruptedException {
-        projectService.insertNewProject(new ProjectEntity("Első projekt", "Első projekt leírása."));
-        projectService.insertNewProject(new ProjectEntity("Második projekt", "Második projekt leírása."));
-        projectService.insertNewProject(new ProjectEntity("Harmadik projekt", "Harmadik projekt leírása."));
-
-        developerService.insertNewDeveloper(new DeveloperEntity("Első fejlesztő"));
-        developerService.insertNewDeveloper(new DeveloperEntity("Második fejlesztő"));
-        developerService.insertNewDeveloper(new DeveloperEntity("Harmadik fejlesztő"));
-        return REDIRECT_TO_ROOT;
+        model.addAttribute("error", HomeControllerHelpers.getWebError());
+        model.addAttribute("projectsList", projectService.getProjects());
+        return "projects";
     }
 
     @RequestMapping("/developers")

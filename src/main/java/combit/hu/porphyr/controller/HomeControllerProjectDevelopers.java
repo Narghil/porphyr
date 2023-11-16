@@ -8,11 +8,13 @@ import combit.hu.porphyr.service.DeveloperService;
 import combit.hu.porphyr.service.ProjectDeveloperService;
 import combit.hu.porphyr.service.ProjectService;
 import combit.hu.porphyr.service.ProjectTaskDeveloperService;
+import combit.hu.porphyr.service.ServiceException;
 import lombok.NonNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -21,6 +23,8 @@ import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 import combit.hu.porphyr.controller.HomeControllerHelpers.ProjectPOJO;
+
+import static combit.hu.porphyr.controller.HomeControllerHelpers.*;
 
 @Controller
 public class HomeControllerProjectDevelopers {
@@ -52,17 +56,42 @@ public class HomeControllerProjectDevelopers {
 
     static final @NonNull String REDIRECT_TO_PROJECTS = "redirect:/projects";
     static final @NonNull String REDIRECT_TO_PROJECTDEVELOPERS = "redirect:/project_developers";
-    static final @NonNull String REDIRECT_TO_PROJECTDEVELOPERS_TASKS = "redirect:/project_developers_tasks";
+    // REDIRECT_TO_PROJECTDEVELOPERS_TASKS : "redirect:/project_developers_tasks"
+
+    //------------------ Műveletválasztó ----------------------------------------
+    @RequestMapping("/selectProjectDeveloperOperation")
+    public String selectOperation(
+        @ModelAttribute
+        SelectedOperationData selectedOperation
+    ) {
+        @NonNull String result;
+        selectedOperationData.setProjectId(selectedOperation.getProjectId());
+        selectedOperationData.setDeveloperId(selectedOperation.getDeveloperId());
+
+        switch (selectedOperation.getOperation()) {
+            case TASKS: {
+                result = "redirect:/project_developers_tasks";
+                break;
+            }
+            case DELETE: {
+                result = "redirect:/project_developers_delete";
+                break;
+            }
+            default:
+                throw new ServiceException(ServiceException.Exceptions.NULL_VALUE);
+        }
+        return result;
+    }
 
     //------------------ Projekt fejlesztőinek listája  ---------------------------------
-    @RequestMapping("/project_developers/{id}")
+    @RequestMapping("/project_developers")
     public String projectDevelopers(
-        Model model,
-        @PathVariable(value = "id")
-        Long id
+        Model model
     ) throws ExecutionException, InterruptedException {
         String result = "project_developers";
+        final @NonNull Long id = selectedOperationData.getProjectId();
         final @Nullable ProjectEntity project = projectService.getProjectById(id);
+        final @NonNull List<DeveloperEntity> allDevelopers = developerService.getDevelopers();
         if (project != null) {
             final @Nullable ProjectPOJO projectPOJO = new ProjectPOJO();
             projectPOJO.setId(project.getId());
@@ -70,6 +99,11 @@ public class HomeControllerProjectDevelopers {
             projectPOJO.setDescription(project.getDescription());
             projectPOJO.setDevelopers(project.getProjectDevelopers());
             model.addAttribute("project", projectPOJO);
+            model.addAttribute("error", HomeControllerHelpers.getWebError());
+            model.addAttribute(
+                "assignAbleDevelopers",
+                allDevelopers.size() - projectPOJO.getDevelopers().size()
+            );
         } else {
             result = REDIRECT_TO_PROJECTS;
         }
@@ -77,60 +111,69 @@ public class HomeControllerProjectDevelopers {
     }
 
     //------------------ Új fejlesztő felvétele a projekthez---------------------------------
-    @RequestMapping("/project_developers_new/{id}")
+    @RequestMapping("/project_developers_new")
     public String newProjectDeveloper(
-        Model model,
-        @PathVariable(value = "id")
-        Long id
+        Model model
     ) throws InterruptedException, ExecutionException {
+        final @NonNull Long projectId = selectedOperationData.getProjectId();
         //A projekthez nem tartozó fejlesztők listájának összeállítása
-        final @NonNull ProjectEntity project = Objects.requireNonNull(projectService.getProjectById(id));
+        final @NonNull ProjectEntity project = Objects.requireNonNull(projectService.getProjectById(projectId));
         final @NonNull List<ProjectDeveloperEntity> projectDevelopers = project.getProjectDevelopers();
         final @NonNull List<DeveloperEntity> allDevelopers = developerService.getDevelopers();
+        final @NonNull SelectedOperationData formProjectIdDeveloperId = new SelectedOperationData();
 
+        formProjectIdDeveloperId.setProjectId(projectId);
         for (ProjectDeveloperEntity projectDeveloper : projectDevelopers) {
             allDevelopers.removeIf(aDeveloper -> (
                 aDeveloper.getId() != null && aDeveloper.getId().equals(projectDeveloper.getDeveloperEntity().getId()))
             );
         }
         model.addAttribute("freeDevelopers", allDevelopers);
-        model.addAttribute("projectId", id);
         model.addAttribute("projectName", project.getName());
+        model.addAttribute("newProjectIdDeveloperId", formProjectIdDeveloperId);
         return "project_developers_new";
     }
 
-    @RequestMapping("/insertNewProjectDeveloper/{projectId}/{developerId}")
+    @RequestMapping("/insertNewProjectDeveloper")
     public String insertNewProjectDeveloper(
-        @PathVariable(value = "projectId")
-        Long projectId,
-        @PathVariable(value = "developerId")
-        Long developerId
+        @ModelAttribute
+        SelectedOperationData newProjectIdDeveloperId
     ) throws InterruptedException, ExecutionException {
-        projectDeveloperService.insertNewProjectDeveloper(
-            new ProjectDeveloperEntity(
-                Objects.requireNonNull(projectService.getProjectById(projectId)),
-                Objects.requireNonNull(developerService.getDeveloperById(developerId))
-            )
-        );
-        return REDIRECT_TO_PROJECTDEVELOPERS + "/" + projectId;
+        try {
+            projectDeveloperService.insertNewProjectDeveloper(
+                new ProjectDeveloperEntity(
+                    Objects.requireNonNull(projectService.getProjectById(newProjectIdDeveloperId.getProjectId())),
+                    Objects.requireNonNull(developerService.getDeveloperById(newProjectIdDeveloperId.getDeveloperId()))
+                )
+            );
+        } catch (ServiceException serviceException) {
+            HomeControllerHelpers.webError.setError("ON", ERROR_TITLE, serviceException.getMessage());
+        }
+        return REDIRECT_TO_PROJECTDEVELOPERS;
     }
 
     //------------------------ Fejlesztő eltávolítása a projektből
-    @RequestMapping("/project_developers_delete/{projectId}/{developerId}")
+    @RequestMapping("/project_developers_delete")
     public @NonNull String deleteProjectDeveloper(
-        @PathVariable(value = "projectId")
-        Long projectId,
-        @PathVariable(value = "developerId")
-        Long developerId
     ) throws InterruptedException, ExecutionException {
-        projectDeveloperService.deleteProjectDeveloper(
-            Objects.requireNonNull(
-                projectDeveloperService.getProjectDeveloperByProjectAndDeveloper(
-                    Objects.requireNonNull(projectService.getProjectById(projectId)),
-                    Objects.requireNonNull(developerService.getDeveloperById(developerId))
-                ))
-        );
-        return REDIRECT_TO_PROJECTDEVELOPERS + "/" + projectId;
+        final @Nullable ProjectEntity project = projectService.getProjectById(selectedOperationData.getProjectId());
+        final @Nullable DeveloperEntity developer = developerService.getDeveloperById(selectedOperationData.getDeveloperId());
+        if (project != null && developer != null) {
+            final @Nullable ProjectDeveloperEntity projectDeveloper =
+                projectDeveloperService.getProjectDeveloperByProjectAndDeveloper(project, developer);
+            if (projectDeveloper != null) {
+                try {
+                    projectDeveloperService.deleteProjectDeveloper(projectDeveloper);
+                } catch (ServiceException serviceException) {
+                    HomeControllerHelpers.webError.setError("ON", ERROR_TITLE, serviceException.getMessage());
+                }
+            } else {
+                throw new ServiceException(ServiceException.Exceptions.NULL_VALUE);
+            }
+        } else {
+            throw new ServiceException(ServiceException.Exceptions.NULL_VALUE);
+        }
+        return REDIRECT_TO_PROJECTDEVELOPERS;
     }
 
     //------------------------ Fejlesztő feladatai a projektben
@@ -145,11 +188,14 @@ public class HomeControllerProjectDevelopers {
         ProjectEntity project = projectService.getProjectById(projectId);
         DeveloperEntity developer = developerService.getDeveloperById(developerId);
 
-        List<ProjectTaskDeveloperEntity> tasks = projectTaskDeveloperService.getProjectTaskDeveloperByProjectIdAndDeveloperId( projectId, developerId) ;
+        List<ProjectTaskDeveloperEntity> tasks = projectTaskDeveloperService.getProjectTaskDeveloperByProjectIdAndDeveloperId(
+            projectId,
+            developerId
+        );
 
-        model.addAttribute("tasks", tasks );
-        model.addAttribute( "project", project);
-        model.addAttribute( "developer", developer);
+        model.addAttribute("tasks", tasks);
+        model.addAttribute("project", project);
+        model.addAttribute("developer", developer);
         return "project_developers_tasks";
     }
 }

@@ -9,12 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.concurrent.ExecutionException;
-import static combit.hu.porphyr.controller.HomeControllerHelpers.ProjectPOJO;
+
+import static combit.hu.porphyr.controller.HomeControllerHelpers.*;
 
 @Controller
 public class HomeControllerProjects {
@@ -27,15 +27,52 @@ public class HomeControllerProjects {
     }
 
     static final @NonNull String REDIRECT_TO_PROJECTS = "redirect:/projects";
-    static final @NonNull String REDIRECT_TO_ROOT = "redirect:/";
+    static final @NonNull String REDIRECT_TO_MODIFY = "redirect:/project_modify";
+    static final @NonNull String REDIRECT_TO_NEW = "redirect:/project_new";
+
+    //------------------ Műveletválasztó ----------------------------------------
+    @RequestMapping("/selectProjectOperation")
+    public String selectOperation(
+        @ModelAttribute
+        SelectedOperationData selectedOperation
+    ) {
+        @NonNull String result;
+        selectedOperationData.setProjectId(selectedOperation.getProjectId());
+
+        switch (selectedOperation.getOperation()) {
+            case DEVELOPERS: {
+                result = "redirect:/project_developers";
+                break;
+            }
+            case TASKS: {
+                result = "redirect:/project_tasks";
+                break;
+            }
+            case MODIFY: {
+                result = REDIRECT_TO_MODIFY;
+                break;
+            }
+            case DELETE: {
+                result = "redirect:/project_delete";
+                break;
+            }
+            default:
+                throw new ServiceException(ServiceException.Exceptions.NULL_VALUE);
+        }
+        return result;
+    }
 
     //------------------ Új projekt felvitele ---------------------------------
+    @RequestMapping("/project_new_start")
+    public String startNewProject(Model model) {
+        projectPOJO.set(null, "Teszt projekt", "Teszt projekt leírása");
+        return REDIRECT_TO_NEW;
+    }
+
     @RequestMapping("/project_new")
     public String newProject(Model model) {
-        final @NonNull ProjectPOJO newProject = new ProjectPOJO();
-        newProject.setName("Teszt <b>Projekt</b>");
-        newProject.setDescription("Teszt <b>projekt</b> leírása");
-        model.addAttribute("newProject", newProject);
+        model.addAttribute("newProject", projectPOJO);
+        model.addAttribute("error", HomeControllerHelpers.getWebError());
         return "project_new";
     }
 
@@ -45,23 +82,33 @@ public class HomeControllerProjects {
         ProjectPOJO project
     ) throws InterruptedException, ExecutionException
     {
+        @NonNull String result = REDIRECT_TO_PROJECTS;
         final @NonNull ProjectEntity newProject = new ProjectEntity();
         newProject.setName(project.getName());
         newProject.setDescription(project.getDescription());
-        projectService.insertNewProject(newProject);
-        return REDIRECT_TO_PROJECTS;
+        try {
+            projectService.insertNewProject(newProject);
+        } catch (ServiceException serviceException) {
+            HomeControllerHelpers.webError.setError("ON", ERROR_TITLE, serviceException.getMessage());
+            projectPOJO.set(project);
+            result = REDIRECT_TO_NEW;
+        }
+        return result;
     }
 
     //------------------ Projekt törlése ---------------------------------
-    @RequestMapping("/project_delete/{id}")
+    @RequestMapping("/project_delete")
     public String deleteProject(
-        @PathVariable(value = "id")
-        Long id
     ) throws InterruptedException, ExecutionException //Here SonarLint does not accepts "Exception."
     {
+        final @NonNull Long id = selectedOperationData.getProjectId();
         final @Nullable ProjectEntity project = projectService.getProjectById(id);
         if (project != null) {
-            projectService.deleteProject(project);
+            try {
+                projectService.deleteProject(project);
+            } catch (ServiceException serviceException) {
+                HomeControllerHelpers.webError.setError("ON", ERROR_TITLE, serviceException.getMessage());
+            }
         }else {
             throw new ServiceException(ServiceException.Exceptions.NULL_VALUE);
         }
@@ -69,23 +116,25 @@ public class HomeControllerProjects {
     }
 
     //------------------ Projekt módosítása ---------------------------------
-    @RequestMapping("/project_modify/{id}")
-    public String modifyProjectBefore(
-        Model model,
-        @PathVariable(value = "id")
-        Long id
+    @RequestMapping("/project_modify")
+    public String loadDataBeforeModifyProject(
+        Model model
     ) throws InterruptedException,ExecutionException {
         String result = "project_modify";
-        final @Nullable ProjectEntity project = projectService.getProjectById(id);
-        if (project != null) {
-            final @Nullable ProjectPOJO projectPOJO = new ProjectPOJO();
-            projectPOJO.setId(project.getId());
-            projectPOJO.setName(project.getName());
-            projectPOJO.setDescription(project.getDescription());
-            model.addAttribute("project", projectPOJO);
-        } else {
-            result = REDIRECT_TO_ROOT;
+        if (projectPOJO.getId() == null) {
+            final @NonNull Long id = selectedOperationData.getProjectId();
+            final @Nullable ProjectEntity project = projectService.getProjectById(id);
+            if (project != null) {
+                projectPOJO.set(project);
+            } else {
+                HomeControllerHelpers.webError.setError("ON", ERROR_TITLE,
+                    ServiceException.Exceptions.NULL_VALUE.getDescription()
+                )
+                ;
+            }
         }
+        model.addAttribute("project", projectPOJO);
+
         return result;
     }
 
@@ -95,18 +144,25 @@ public class HomeControllerProjects {
         ProjectPOJO project
     ) throws InterruptedException, ExecutionException
     {
+        @NonNull String result = REDIRECT_TO_PROJECTS;
         if (project.getId() != null) {
             final @Nullable ProjectEntity modifiedProject = projectService.getProjectById(project.getId());
             if( modifiedProject != null ) {
                 modifiedProject.setName(project.getName());
                 modifiedProject.setDescription(project.getDescription());
-                projectService.modifyProject(modifiedProject);
+                try {
+                    projectService.modifyProject(modifiedProject);
+                    projectPOJO.setId(null);
+                } catch (ServiceException serviceException) {
+                    HomeControllerHelpers.webError.setError("ON", ERROR_TITLE, serviceException.getMessage());
+                    result = REDIRECT_TO_MODIFY + '/' + projectPOJO.getId();
+                }
             } else {
                 throw new ServiceException(ServiceException.Exceptions.NULL_VALUE);
             }
         } else {
             throw new ServiceException(ServiceException.Exceptions.NULL_VALUE);
         }
-        return REDIRECT_TO_PROJECTS;
+        return result;
     }
 }

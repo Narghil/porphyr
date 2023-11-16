@@ -21,9 +21,9 @@
 
   <div>
     <form name="modifyProject" data-th-action="@{/modifyProject}" data-th-object="${project}" method="post" class="form">
-      <h3>Új projekt adatai:</h3><br />
+      <h3>Módosítás:</h3><br />
       <label for="id">ID:</label>
-      <input readonly type="text" id="id" name="id" data-th-field="*{id}" placeholder="ID" />
+      <input readonly type="text" id="id" data-th-field="*{id}" name="id" placeholder="ID" />
       <br />
       <label for="name">Név:&#9</label>
       <input type="text" id="name" name="name" data-th-field="*{name}" placeholder="Projekt neve" />

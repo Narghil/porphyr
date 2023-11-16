@@ -15,7 +15,11 @@
 
   <link rel="stylesheet" data-th-href="@{css/main.css}" href="../static/css/main.css"/>
 </head>
-<body>
+
+<body
+    onload="if( (document.getElementById('setMessageModal').innerText) == 'ON')
+      { document.getElementById('setMessageModal').click(); }"
+>
 
 <div class="container">
   <header>
@@ -23,67 +27,109 @@
   </header>
   <nav class="navbar bg-light navbar-light" style="padding-left:1rem">
     <a class="navbar-brand">Projektek listája</a>
+    <a class="btn btn-outline-secondary" data-th-href="@{/}">
+      <span>Főmenü</span>
+    </a>
   </nav>
 
   <div class="container p-3">
+    <!-- Header -->
     <div class="row mb-2">
       <div class="col col-lg-1 text-center text-decoration-underline">
         <span>ID</span>
       </div>
       <div class="col col-lg-2 text-center text-decoration-underline">
-        <span>projekt neve</span>
+        <span>Név</span>
       </div>
-      <div class="col col-lg-8 text-center text-decoration-underline">
-        <span>projekt leírása</span>
+      <div class="col col-lg-7 text-center text-decoration-underline">
+        <span>Leírás</span>
       </div>
-      <div class="col col-lg-1 text-center text-decoration-underline">
+      <div class="col col-lg-2 text-center text-decoration-underline">
         <span>Műveletek</span>
       </div>
     </div>
-    <article data-th-each="project : ${projects}">
+    <article data-th-each="project : ${projectsList}">
+      <!-- Data -->
       <div class="row">
         <div style="text-align:right" class="col col-lg-1 border">
           <span data-th-text="${project.id}">ID</span>
         </div>
         <div class="col col-lg-2 border">
-          <span data-th-text="${project.name}">projekt neve</span>
+          <span data-th-text="${project.name}">Név</span>
         </div>
-        <div class="col col-lg-8 border">
-          <span data-th-text="${project.description}">projekt leírása</span>
+        <div class="col col-lg-7 border">
+          <span data-th-text="${project.description}">Leírás</span>
         </div>
-        <div class="col col-lg-1 border" style="text-align:center">
-          <button type="button" class="btn btn-sm p-1 btn-outline-primary"
-                  data-bs-toggle="tooltip" data-bs-placement="top" title="Fejlesztők"
-                  data-th-href="@{'/project_developers/' + ${project.id}}">
-            <img src="icons/developers.svg" width="20" alt=""/>
-          </button>
-          <button type="button" class="btn btn-sm p-1 btn-outline-primary"
-                  data-bs-toggle="tooltip" data-bs-placement="top" title="Feladatok"
-                  data-th-href="@{'/project_tasks/' + ${project.id}}">
-            <img src="tasks.svg" width="20" alt=""/>
-          </button>
-          <button type="button" class="btn btn-sm p-1 btn-outline-primary"
-                  data-bs-toggle="tooltip" data-bs-placement="top" title="Módosítás"
-                  data-th-href="@{'/project_modify/' + ${project.id}}">
-            <img src="icons/modify.svg" width="20" alt=""/>
-          </button>
-          <button type="button" class="btn btn-sm p-1 btn-outline-primary"
-                  data-bs-toggle="tooltip" data-bs-placement="top" title="Törlés"
-                  data-th-href="@{'/project_delete/' + ${project.id}}">
-            <img src="icons/delete.svg" width="20" alt=""/>
-          </button>
+        <!-- Function icons -->
+        <div class="col col-lg-2 border" style="text-align:center">
+          <a class="btn btn-sm p-1 btn-outline-light"
+                  data-bs-toggle="tooltip" data-bs-placement="top" title="Fejlesztők">
+            <img data-th-src="@{~/icons/developers.svg}" src="../static/icons/developers.svg" width="20" alt=""
+                 data-th-onclick="'setFields( ' + #{DEVELOPERS} + ',' + ${project.id} + ')'" />
+          </a>
+          <a class="btn btn-sm p-1 btn-outline-light"
+                  data-bs-toggle="tooltip" data-bs-placement="top" title="Feladatok">
+            <img data-th-src="@{~/icons/tasks.svg}" src="../static/icons/tasks.svg" width="20" alt=""
+                 data-th-onclick="'setFields( ' + #{TASKS} + ',' + ${project.id} + ')'" />
+          </a>
+          <a class="btn btn-sm p-1 btn-outline-light"
+                  data-bs-toggle="tooltip" data-bs-placement="top" title="Módosítás">
+            <img data-th-src="@{~/icons/modify.svg}" src="../static/icons/modify.svg" width="20" alt=""
+                 data-th-onclick="'setFields( ' + #{MODIFY} + ',' + ${project.id} + ')'" />
+          </a>
+          <a class="btn btn-sm p-1 btn-outline-light"
+                  data-bs-toggle="tooltip" data-bs-placement="top" title="Törlés">
+            <img data-th-src="@{~/icons/delete.svg}" src="../static/icons/delete.svg" width="20" alt=""
+                 data-th-onclick="'setFields( ' + #{DELETE} + ',' + ${project.id} + ')'" />
+          </a>
         </div>
       </div>
     </article>
+
+    <script>
+      function setFields( operation, projectId) {
+          document.getElementById("operation").setAttribute('value', operation );
+          document.getElementById("projectId").setAttribute('value', projectId );
+          document.getElementById("submit_button").click();
+      }
+    </script>
+
+    <form hidden data-th-action="@{/selectProjectOperation}" data-th-object="${selectedOperation}">
+      <label for="operation"></label>
+      <input type="number" class="form-control" id="operation" name="operation">
+      <label for="projectId"></label>
+      <input type="number" class="form-control" id="projectId" name="projectId">
+      <button id="submit_button"></button>
+    </form>
+
   </div>
-  <button type="button" class="btn btn-outline-primary" data-th-href="@{'/project_new'}">
-    <img src="new.gif" width="20" alt="" class="mb-1"/>
-    Új projekt
-  </button>
+  <a class="btn btn-outline-secondary" data-th-href="@{'/project_new_start'}">
+    <img data-th-src="@{icons/new.svg}" src="../static/icons/new.svg" width="20" alt="" class="mb-1"/>
+    <span>Új projekt</span>
+  </a>
 
   <footer class="mt-3">
     <p data-th-text="#{footerText}">footerText</p>
   </footer>
+
+  <!-- Modal window -->
+  <button hidden id="setMessageModal" data-toggle="modal" data-target="#messageModal" data-th-text="${error.onOff}">
+    OFF
+  </button>
+
+  <div class="modal fade" id="messageModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="modal-title" data-th-text="${error.title}">Fejléc</div>
+        </div>
+        <div class="modal-body" data-th-text="${error.message}">Üzenet</div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
 </div>
 

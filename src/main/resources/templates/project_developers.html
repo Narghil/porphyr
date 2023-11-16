@@ -15,33 +15,122 @@
 
   <link rel="stylesheet" data-th-href="@{css/main.css}" href="../static/css/main.css"/>
 </head>
-<body>
+
+<body
+    onload="if( (document.getElementById('setMessageModal').innerText) == 'ON')
+      { document.getElementById('setMessageModal').click(); }"
+>
 
 <div class="container">
-  <nav class="navbar bg-light navbar-light">
-    <a class="navbar-brand"><span data-th-text="${project.id} + '.: ' + ${project.name}+ ' fejlesztői:'">Project fejlesztői</span></a>
+  <header>
+    <p data-th-text="#{MainPageTitle}">headerText</p>
+  </header>
+  <nav class="navbar bg-light navbar-light" style="padding-left:1rem">
+    <a class="navbar-brand"><span data-th-text="${project.name}+ ' fejlesztői:'">Project fejlesztői</span></a>
+    <a class="btn btn-outline-secondary" data-th-href="@{/projects}">
+      <span>Vissza a projektekhez</span>
+    </a>
   </nav>
 
-  <div class="container">
-    <article data-th-each="projectDeveloper : ${project.developers}">
-      <p>
-        <span data-th-text="${projectDeveloper.developerEntity.id}">Fejlesztő ID</span>
-        .&nbsp;&nbsp;
-        <span data-th-text="${projectDeveloper.developerEntity.name}">Fejlesztő neve</span>
-        &nbsp;&nbsp;
-        <a data-th-href="@{'/project_developers_tasks/' + ${project.id} +'/' + ${projectDeveloper.developerEntity.id}}">Feladatok</a>
-        &nbsp;&nbsp;
-        <a data-th-href="@{'/project_developers_delete/' + ${project.id} +'/' + ${projectDeveloper.developerEntity.id}}">Törlés</a>
-      </p>
+  <div class="container p-3">
+    <!-- Header -->
+    <div class="row mb-2">
+      <div class="col col-lg-1 text-center" style="text-decoration:underline">
+        <span>ID</span>
+      </div>
+      <div class="col col-lg-9 text-center" style="text-decoration:underline">
+        <span>Név</span>
+      </div>
+      <div class="col col-lg-2 text-center" style="text-decoration:underline">
+        <span>Műveletek</span>
+      </div>
+    </div>
+    <article data-th-each="projectDeveloper: ${project.developers}">
+      <!-- Data -->
+      <div class="row">
+        <div class="col col-lg-1 border" style="text-align:right">
+          <span data-th-text="${projectDeveloper.developerEntity.id}">ID</span>
+        </div>
+        <div class="col col-lg-9 border">
+          <span data-th-text="${projectDeveloper.developerEntity.name}">Fejlesztő neve</span>
+        </div>
+        <!-- Function icons -->
+        <div class="col col-lg-2 border" style="text-align:center">
+          <a class="btn btn-sm p-1 btn-outline-light"
+             data-bs-toggle="tooltip" data-bs-placement="top" title="A fejlesztő feladatai a projektben">
+            <img data-th-src="@{~/icons/tasks.svg}" src="../static/icons/tasks.svg" width="20" alt=""
+                 data-th-onclick="'setFields( ' + #{TASKS} + ',' + ${project.id} + ',' + ${projectDeveloper.developerEntity.id} + ')'"
+            />
+          </a>
+          <a class="btn btn-sm p-1 btn-outline-light"
+             data-bs-toggle="tooltip" data-bs-placement="top" title="A fejlesztő eltávolítása a projektből">
+            <img data-th-src="@{~/icons/delete.svg}" src="../static/icons/delete.svg" width="20" alt=""
+                 data-th-onclick="'setFields( ' + #{DELETE} + ',' + ${project.id} + ',' + ${projectDeveloper.developerEntity.id} + ')'"
+          />
+          </a>
+        </div>
+      </div>
     </article>
   </div>
 
-  <footer>
-    <p> <a class="link" data-th-href="@{'/project_developers_new/' + ${project.id}}">Új fejlesztő hozzárendelése a projekthez</a> </p>
+  <div data-th-switch="${assignAbleDevelopers}">
+    <div data-th-case="'0'">
+      A projekthez minden lehetséges fejlesztő hozzá van rendelve.
+    </div>
+    <div data-th-case="*">
+      <a class="btn btn-outline-secondary" data-th-href="@{'/project_developers_new'}">
+        <img data-th-src="@{icons/new.svg}" src="../static/icons/new.svg" width="20" alt="" class="mb-1"/>
+        <span>Új fejlesztő hozzárendelése a projekthez</span>
+      </a>
+    </div>
+  </div>
+
+  <footer class="mt-3">
     <p data-th-text="#{footerText}">footerText</p>
   </footer>
 
+  <!-- Modal window -->
+  <button hidden id="setMessageModal" data-toggle="modal" data-target="#messageModal" data-th-text="${error.onOff}">
+    OFF
+  </button>
+
+  <div class="modal fade" id="messageModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="modal-title" data-th-text="${error.title}">Fejléc</div>
+        </div>
+        <div class="modal-body" data-th-text="${error.message}">Üzenet</div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- -->
+  <script>
+    function setFields( operation, projectId, developerId) {
+        document.getElementById("operation").setAttribute('value', operation );
+        document.getElementById("projectId").setAttribute('value', projectId );
+        document.getElementById("developerId").setAttribute('value', developerId );
+        document.getElementById("submit_button").click();
+    }
+  </script>
+
+  <form hidden data-th-action="@{/selectProjectDeveloperOperation}" data-th-object="${selectedOperation}">
+    <label for="operation"></label>
+    <input type="number" class="form-control" id="operation" name="operation">
+    <label for="projectId"></label>
+    <input type="number" class="form-control" id="projectId" name="projectId">
+    <label for="developerId"></label>
+    <input type="number" class="form-control" id="developerId" name="developerId">
+    <button id="submit_button"></button>
+  </form>
+
+
 </div>
+
 
 </body>
 </html>

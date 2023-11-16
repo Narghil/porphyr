@@ -1,0 +1,26 @@
+Főmenü									- OK
+	Projektek							- OK
+		Fejlesztők						- OK
+			Feladatok (projekten belül)	- NOT FOUND
+				Új hozzárendelése		
+				hozzárend.idő mód.
+				Hozzárendelés törlése
+			Eltávolítás a projektből	- OK
+			Hozzárendelés a projekthez	- OK
+		Feladatok						- NOT FOUND
+			Fejlesztők listája
+				Új hozzárendelése
+				Hozzárendelés törlése
+			Új
+			Módosítás
+			Eltávolítás
+			Fejlesztő hozzárendelése
+		Módosítás						- Under Construction
+		Törlés							- OK
+		Új								- OK
+	Fejlesztők							- Under Construction
+		Feladatok (mind)
+			Új feladat hozzárendelése
+			hozzárend.idő módosítása
+			Feladat eltávolítása
+		

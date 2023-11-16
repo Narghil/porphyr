@@ -17,20 +17,60 @@
 
 </head>
 
-<body>
+<body
+    onload="if( (document.getElementById('setMessageModal').innerText) == 'ON')
+      { document.getElementById('setMessageModal').click(); }"
+>
 
-  <div>
+  <div class="container">
+    <header>
+      <p data-th-text="#{MainPageTitle}">headerText</p>
+    </header>
+    <nav class="navbar bg-light navbar-light" style="padding-left:1rem">
+      <a class="navbar-brand">Új projekt felvétele</a>
+      <a class="btn btn-outline-secondary" data-th-href="@{/projects}">
+        <span>Vissza a projektekhez</span>
+      </a>
+    </nav>
+
     <form name="newProject" data-th-action="@{/insertNewProject}" data-th-object="${newProject}" method="post" class="form">
-      <h3>Új projekt adatai:</h3><br />
-      <label for="name">Név:</label>
-      <input type="text" id="name" name="name" data-th-field="*{name}" placeholder="Projekt neve" />
       <br />
-      <label for="description">Leírás:</label>
-      <input type="text" id="description" name="description" data-th-field="*{description}" placeholder="Projekt leírása" />
-      <br/>
-      <br />
-      <button type="submit">Rögzítés</button>
+      <div class="input-group mb-3">
+        <label for="name" class="form-label"></label>
+        <span class="input-group-text" style="width:4em">Név:</span>
+        <input type="text" class="form-control" id="name" name="name" data-th-field="*{name}" placeholder="Projekt neve" />
+      </div>
+      <div class="input-group mb-3">
+        <label for="description" class="form-label"></label>
+        <span class="input-group-text" style="width:4em">Leírás:</span>
+        <textarea class="form-control" id="description" name="description" data-th-field="*{description}" placeholder="Projekt leírása"></textarea>
+      </div>
+      <button type="submit" class="btn btn-outline-secondary">Projekt rögzítése</button>
     </form>
+    <br/>
+    <footer class="mt-3">
+      <p data-th-text="#{footerText}">footerText</p>
+    </footer>
+
+    <!-- Modal window -->
+    <button hidden id="setMessageModal" data-toggle="modal" data-target="#messageModal" data-th-text="${error.onOff}">
+      OFF
+    </button>
+
+    <div class="modal fade" id="messageModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <div class="modal-title" data-th-text="${error.title}">Fejléc</div>
+          </div>
+          <div class="modal-body" data-th-text="${error.message}">Üzenet</div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
 </body>
