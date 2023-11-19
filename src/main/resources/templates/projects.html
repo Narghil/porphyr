@@ -28,6 +28,7 @@
   <nav class="navbar bg-light navbar-light" style="padding-left:1rem">
     <a class="navbar-brand">Projektek listája</a>
     <a class="btn btn-outline-secondary" data-th-href="@{/}">
+      <img data-th-src="@{icons/back.svg}" src="../static/icons/back.svg" width="20" alt="" class="mb-1"/>
       <span>Főmenü</span>
     </a>
   </nav>
@@ -73,14 +74,9 @@
                  data-th-onclick="'setFields( ' + #{TASKS} + ',' + ${project.id} + ')'" />
           </a>
           <a class="btn btn-sm p-1 btn-outline-light"
-                  data-bs-toggle="tooltip" data-bs-placement="top" title="Módosítás">
+                  data-bs-toggle="tooltip" data-bs-placement="top" title="Módosítás, törlés">
             <img data-th-src="@{~/icons/modify.svg}" src="../static/icons/modify.svg" width="20" alt=""
                  data-th-onclick="'setFields( ' + #{MODIFY} + ',' + ${project.id} + ')'" />
-          </a>
-          <a class="btn btn-sm p-1 btn-outline-light"
-                  data-bs-toggle="tooltip" data-bs-placement="top" title="Törlés">
-            <img data-th-src="@{~/icons/delete.svg}" src="../static/icons/delete.svg" width="20" alt=""
-                 data-th-onclick="'setFields( ' + #{DELETE} + ',' + ${project.id} + ')'" />
           </a>
         </div>
       </div>

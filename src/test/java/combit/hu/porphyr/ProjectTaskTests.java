@@ -6,6 +6,7 @@ import combit.hu.porphyr.repository.ProjectRepository;
 import combit.hu.porphyr.repository.ProjectTaskRepository;
 import combit.hu.porphyr.service.ProjectTaskService;
 import combit.hu.porphyr.service.ServiceException;
+import lombok.NonNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,20 +34,22 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("service_test")
 class ProjectTaskTests {
     @Autowired
-    private EntityManager entityManager;
+    private @NonNull EntityManager entityManager;
 
     @Autowired
-    private ProjectTaskRepository projectTaskRepository;
+    private @NonNull ProjectTaskRepository projectTaskRepository;
 
     @Autowired
-    private ProjectRepository projectRepository;
+    private @NonNull ProjectRepository projectRepository;
 
     private ProjectTaskRepository spyProjectTaskRepository;
-
-    final private ProjectTaskService spiedProjectTaskService = new ProjectTaskService();
+    private ProjectTaskService spiedProjectTaskService;
 
     @BeforeAll
     void setupAll() {
+        spiedProjectTaskService = new ProjectTaskService(
+            entityManager, projectTaskRepository, projectRepository
+        );
         spyProjectTaskRepository = Mockito.mock(
             ProjectTaskRepository.class, AdditionalAnswers.delegatesTo(projectTaskRepository)
         );
@@ -88,7 +91,7 @@ class ProjectTaskTests {
         assertDoesNotThrow(() -> spyProjectTaskRepository.saveAndFlush(testProjectTask));
         assertNotNull(projectEntity);
         actualProjectTask = spyProjectTaskRepository.findAllByProjectEntityAndName(projectEntity, "New ProjectTask");
-        assertEquals( testProjectTask , actualProjectTask);
+        assertEquals(testProjectTask, actualProjectTask);
         // ------------------ ProjectTask módosítása ---------------
         // -- Helyes adatok és visszaolvasás
         testProjectTask.setName("Modified ProjectTask");
@@ -99,7 +102,7 @@ class ProjectTaskTests {
             projectEntity,
             "Modified ProjectTask"
         );
-        assertEquals( testProjectTask , actualProjectTask);
+        assertEquals(testProjectTask, actualProjectTask);
         // ------------------- ProjectTask törlése -----------------
         // -- Helyes adatok és visszaolvasás
         assertDoesNotThrow(() -> spyProjectTaskRepository.delete(testProjectTask));
@@ -205,7 +208,9 @@ class ProjectTaskTests {
         projectTaskWithAnyCases.setProjectEntity(new ProjectEntity("Not Saved project", ""));
         assertEquals(
             ServiceException.Exceptions.PROJECTTASK_MODIFY_PROJECT_NOT_SAVED.getDescription(),
-            assertThrows(ServiceException.class, () -> spiedProjectTaskService.modifyProjectTask(projectTaskWithAnyCases)
+            assertThrows(
+                ServiceException.class,
+                () -> spiedProjectTaskService.modifyProjectTask(projectTaskWithAnyCases)
             ).getMessage()
         );
         // - nem létező project-re mutat
@@ -216,7 +221,9 @@ class ProjectTaskTests {
         projectTaskWithAnyCases.setProjectEntity(deletedProjectEntity);
         assertEquals(
             ServiceException.Exceptions.PROJECTTASK_MODIFY_PROJECT_NOT_EXISTS.getDescription(),
-            assertThrows(ServiceException.class, () -> spiedProjectTaskService.modifyProjectTask(projectTaskWithAnyCases)
+            assertThrows(
+                ServiceException.class,
+                () -> spiedProjectTaskService.modifyProjectTask(projectTaskWithAnyCases)
             ).getMessage()
         );
         // - Üres név
@@ -225,14 +232,18 @@ class ProjectTaskTests {
         projectTaskWithAnyNames.setName("");
         assertEquals(
             ServiceException.Exceptions.PROJECTTASK_MODIFY_EMPTY_NAME.getDescription(),
-            assertThrows(ServiceException.class, () -> spiedProjectTaskService.modifyProjectTask(projectTaskWithAnyNames)
+            assertThrows(
+                ServiceException.class,
+                () -> spiedProjectTaskService.modifyProjectTask(projectTaskWithAnyNames)
             ).getMessage()
         );
         // - Ilyen nevű task már van a projektben
         projectTaskWithAnyNames.setName("1. projekt 1. feladat");
         assertEquals(
             ServiceException.Exceptions.PROJECTTASK_MODIFY_SAME_PROJECT_AND_NAME.getDescription(),
-            assertThrows(ServiceException.class, () -> spiedProjectTaskService.modifyProjectTask(projectTaskWithAnyNames)
+            assertThrows(
+                ServiceException.class,
+                () -> spiedProjectTaskService.modifyProjectTask(projectTaskWithAnyNames)
             ).getMessage()
         );
         // - Helyes adatokkal
@@ -271,7 +282,9 @@ class ProjectTaskTests {
         assertNotNull(projectTaskWithDeveloper);
         assertEquals(
             ServiceException.Exceptions.PROJECTTASK_DELETE_DEVELOPERS_ASSIGNED.getDescription(),
-            assertThrows(ServiceException.class, () -> spiedProjectTaskService.deleteProjectTask(projectTaskWithDeveloper)
+            assertThrows(
+                ServiceException.class,
+                () -> spiedProjectTaskService.deleteProjectTask(projectTaskWithDeveloper)
             ).getMessage()
 
         );

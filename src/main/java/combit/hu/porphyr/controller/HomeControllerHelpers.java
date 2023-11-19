@@ -88,11 +88,15 @@ public class HomeControllerHelpers{
         private int operation;
         private @NonNull Long projectId;
         private @NonNull Long developerId;
+        private @NonNull Long taskId;
+        private @Nullable Long longData;
 
         public SelectedOperationData(){
             operation = 0;
             projectId = 0L;
             developerId = 0L;
+            taskId = 0L;
+            longData = 0L;
         }
     }
     public static final @NonNull SelectedOperationData selectedOperationData = new SelectedOperationData();

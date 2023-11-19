@@ -6,6 +6,7 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.Synchronized;
 import org.jetbrains.annotations.Nullable;
+// import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,15 +25,19 @@ import java.util.concurrent.ForkJoinPool;
 @ThreadSafe
 public class DeveloperService {
 
-    @Autowired
     @Setter(onMethod_ = {@Synchronized})
     @GuardedBy("this")
-    private EntityManager entityManager;
+    private @NonNull EntityManager entityManager;
+
+    @Setter(onMethod_ = {@Synchronized})
+    @GuardedBy("this")
+    private @NonNull DeveloperRepository developerRepository;
 
     @Autowired
-    @Setter(onMethod_ = {@Synchronized})
-    @GuardedBy("this")
-    private DeveloperRepository developerRepository;
+    public DeveloperService(final @NonNull EntityManager entityManager, final @NonNull DeveloperRepository developerRepository) {
+        this.entityManager = entityManager;
+        this.developerRepository = developerRepository;
+    }
 
     private static final @NonNull ForkJoinPool forkJoinPool = ForkJoinPool.commonPool();
 

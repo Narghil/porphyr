@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
@@ -56,7 +55,8 @@ public class HomeControllerProjectDevelopers {
 
     static final @NonNull String REDIRECT_TO_PROJECTS = "redirect:/projects";
     static final @NonNull String REDIRECT_TO_PROJECTDEVELOPERS = "redirect:/project_developers";
-    // REDIRECT_TO_PROJECTDEVELOPERS_TASKS : "redirect:/project_developers_tasks"
+    static final @NonNull String REDIRECT_TO_PROJECTDEVELOPERS_TASKS = "redirect:/project_developers_tasks";
+    static final @NonNull String REDIRECT_TO_PROJECTDEVELOPERS_DELETE = "redirect:/project_developers_delete";
 
     //------------------ Műveletválasztó ----------------------------------------
     @RequestMapping("/selectProjectDeveloperOperation")
@@ -70,11 +70,11 @@ public class HomeControllerProjectDevelopers {
 
         switch (selectedOperation.getOperation()) {
             case TASKS: {
-                result = "redirect:/project_developers_tasks";
+                result = REDIRECT_TO_PROJECTDEVELOPERS_TASKS;
                 break;
             }
             case DELETE: {
-                result = "redirect:/project_developers_delete";
+                result = REDIRECT_TO_PROJECTDEVELOPERS_DELETE;
                 break;
             }
             default:
@@ -177,25 +177,46 @@ public class HomeControllerProjectDevelopers {
     }
 
     //------------------------ Fejlesztő feladatai a projektben
-    @RequestMapping("/project_developers_tasks/{projectId}/{developerId}")
+    @RequestMapping("/project_developers_tasks")
     public @NonNull String tasksOfProjectDeveloper(
-        Model model,
-        @PathVariable(value = "projectId")
-        Long projectId,
-        @PathVariable(value = "developerId")
-        Long developerId
+        Model model
     ) throws InterruptedException, ExecutionException {
+        final @NonNull Long projectId = selectedOperationData.getProjectId();
+        final @NonNull Long developerId = selectedOperationData.getDeveloperId();
+
         ProjectEntity project = projectService.getProjectById(projectId);
         DeveloperEntity developer = developerService.getDeveloperById(developerId);
 
         List<ProjectTaskDeveloperEntity> tasks = projectTaskDeveloperService.getProjectTaskDeveloperByProjectIdAndDeveloperId(
-            projectId,
-            developerId
+            projectId, developerId
         );
 
+        model.addAttribute("error", HomeControllerHelpers.getWebError());
         model.addAttribute("tasks", tasks);
         model.addAttribute("project", project);
         model.addAttribute("developer", developer);
+        model.addAttribute("selectedOperationData", selectedOperationData);
         return "project_developers_tasks";
+    }
+
+    @RequestMapping("/project_developers_tasks_modify_time")
+    public @NonNull String projectDevelopersTasksSpendTime(
+        @ModelAttribute
+        SelectedOperationData spendTimeData
+    ) throws InterruptedException, ExecutionException {
+        if (spendTimeData.getLongData() != null) {
+            final ProjectTaskDeveloperEntity projectDeveloperTask =
+                projectTaskDeveloperService.getProjectTaskDeveloperById(spendTimeData.getTaskId());
+            if (projectDeveloperTask != null) {
+                projectDeveloperTask.setSpendTime(spendTimeData.getLongData());
+                projectTaskDeveloperService.modifyProjectTaskDeveloper(projectDeveloperTask);
+            } else {
+                throw new ServiceException(ServiceException.Exceptions.NULL_VALUE);
+            }
+        } else {
+            throw new ServiceException(ServiceException.Exceptions.NULL_VALUE);
+        }
+
+        return REDIRECT_TO_PROJECTDEVELOPERS_TASKS;
     }
 }

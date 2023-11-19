@@ -1,41 +1,103 @@
 <!DOCTYPE html>
 <html lang="hu">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title data-th-text="#{ModifyProjectTitle}">Modify Project</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title data-th-text="#{ModifyProjectTitle}">Modify Project</title>
 
-  <link href='https://fonts.googleapis.com/css?family=Calibri' rel='stylesheet' type='text/css' />
-  <link href='https://fonts.googleapis.com/css?family=Exo' rel='stylesheet' type='text/css' />
+    <link href='https://fonts.googleapis.com/css?family=Calibri' rel='stylesheet' type='text/css'/>
+    <link href='https://fonts.googleapis.com/css?family=Exo' rel='stylesheet' type='text/css'/>
 
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 
-  <link rel="stylesheet" data-th-href="@{css/main.css}" href="../static/css/main.css"/>
+    <link rel="stylesheet" data-th-href="@{css/main.css}" href="../static/css/main.css"/>
 
 </head>
 
-<body>
+<body
+    onload="if( (document.getElementById('setMessageModal').innerText) == 'ON')
+      { document.getElementById('setMessageModal').click(); }"
+>
 
-  <div>
-    <form name="modifyProject" data-th-action="@{/modifyProject}" data-th-object="${project}" method="post" class="form">
-      <h3>Módosítás:</h3><br />
-      <label for="id">ID:</label>
-      <input readonly type="text" id="id" data-th-field="*{id}" name="id" placeholder="ID" />
-      <br />
-      <label for="name">Név:&#9</label>
-      <input type="text" id="name" name="name" data-th-field="*{name}" placeholder="Projekt neve" />
-      <br />
-      <label for="description">Leírás:</label>
-      <input type="text" id="description" name="description" data-th-field="*{description}" placeholder="Projekt leírása" />
-      <br/>
-      <br />
-      <button type="submit">Rögzítés</button>
+<div class="container">
+    <header>
+        <p data-th-text="#{MainPageTitle}">headerText</p>
+    </header>
+    <nav class="navbar bg-light navbar-light" style="padding-left:1rem">
+        <a class="navbar-brand">Projekt módosítása, törlése</a>
+        <a class="btn btn-outline-secondary" data-th-href="@{/projects}">
+            <img data-th-src="@{~/icons/back.svg}" src="../static/icons/back.svg" width="20" alt="">
+            <span>Vissza a projektekhez</span>
+        </a>
+    </nav>
+
+    <form name="modifyForm" data-th-action="@{/modifyProject}" data-th-object="${project}" method="post" class="form">
+        <span hidden>
+            <label for="id"></label>
+            <input type="text" class="form-control" id="id" name="id" data-th-field="*{id}"/>
+        </span>
+        <br/>
+        <div class="input-group mb-3">
+            <label for="name" class="form-label"></label>
+            <span class="input-group-text" style="width:4em">Név:</span>
+            <input type="text" class="form-control" id="name" name="name" data-th-field="*{name}"
+                   placeholder="Projekt neve"
+                   onkeydown="changedData()"
+            />
+        </div>
+        <div class="input-group mb-3">
+            <label for="description" class="form-label"></label>
+            <span class="input-group-text" style="width:4em">Leírás:</span>
+            <textarea class="form-control" id="description" name="description" data-th-field="*{description}"
+                      placeholder="Projekt leírása"
+                      onkeydown="changedData()"
+            >
+      </textarea>
+        </div>
+        <button disabled type="submit" id="submitButton" class="btn btn-outline-secondary">
+            <img data-th-src="@{~/icons/accept.svg}" src="../static/icons/accept.svg" width="20" alt="">
+            Új adatok rögzítése
+        </button>
+        &nbsp;&nbsp;&nbsp;
+        <a class="btn btn-outline-secondary" id="deleteButton" data-th-href="@{/project_delete}">
+            <img data-th-src="@{~/icons/delete.svg}" src="../static/icons/delete.svg" width="20" alt="">
+            Törlés
+        </a>
     </form>
-  </div>
+    <br/>
+    <footer class="mt-3">
+        <p data-th-text="#{footerText}">footerText</p>
+    </footer>
+</div>
+
+<script>
+    function changedData() {
+        document.getElementById("submitButton").disabled=false;
+    }
+</script>
+
+<!-- Modal window for errors -->
+<button hidden id="setMessageModal" data-toggle="modal" data-target="#messageModal" data-th-text="${error.onOff}">
+    OFF
+</button>
+
+<div class="modal fade" id="messageModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" data-th-text="${error.title}">Fejléc</div>
+            </div>
+            <div class="modal-body" data-th-text="${error.message}">Üzenet</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End modal window-->
 
 </body>
-
 </html>

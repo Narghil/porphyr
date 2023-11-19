@@ -49,11 +49,8 @@ public class HomeControllerProjects {
                 break;
             }
             case MODIFY: {
+                projectPOJO.setId(null);
                 result = REDIRECT_TO_MODIFY;
-                break;
-            }
-            case DELETE: {
-                result = "redirect:/project_delete";
                 break;
             }
             default:
@@ -101,18 +98,20 @@ public class HomeControllerProjects {
     public String deleteProject(
     ) throws InterruptedException, ExecutionException //Here SonarLint does not accepts "Exception."
     {
+        @NonNull String result = REDIRECT_TO_PROJECTS;
         final @NonNull Long id = selectedOperationData.getProjectId();
         final @Nullable ProjectEntity project = projectService.getProjectById(id);
         if (project != null) {
             try {
                 projectService.deleteProject(project);
             } catch (ServiceException serviceException) {
+                result = REDIRECT_TO_MODIFY;
                 HomeControllerHelpers.webError.setError("ON", ERROR_TITLE, serviceException.getMessage());
             }
         }else {
             throw new ServiceException(ServiceException.Exceptions.NULL_VALUE);
         }
-        return REDIRECT_TO_PROJECTS;
+        return result;
     }
 
     //------------------ Projekt módosítása ---------------------------------
@@ -133,6 +132,7 @@ public class HomeControllerProjects {
                 ;
             }
         }
+        model.addAttribute("error", getWebError());
         model.addAttribute("project", projectPOJO);
 
         return result;
@@ -155,7 +155,7 @@ public class HomeControllerProjects {
                     projectPOJO.setId(null);
                 } catch (ServiceException serviceException) {
                     HomeControllerHelpers.webError.setError("ON", ERROR_TITLE, serviceException.getMessage());
-                    result = REDIRECT_TO_MODIFY + '/' + projectPOJO.getId();
+                    result = REDIRECT_TO_MODIFY;
                 }
             } else {
                 throw new ServiceException(ServiceException.Exceptions.NULL_VALUE);

@@ -11,6 +11,7 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.Synchronized;
 import org.jetbrains.annotations.Nullable;
+//-- import org.springframework.beans.factory.annotation.Autowired --
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,30 +30,40 @@ import java.util.concurrent.ForkJoinPool;
 @ThreadSafe
 public class ProjectDeveloperService {
 
-    @Autowired
     @Setter(onMethod_ = {@Synchronized})
     @GuardedBy("this")
-    private EntityManager entityManager;
+    private @NonNull EntityManager entityManager;
+
+    @Setter(onMethod_ = {@Synchronized})
+    @GuardedBy("this")
+    private @NonNull ProjectDeveloperRepository projectDeveloperRepository;
+
+    @Setter(onMethod_ = {@Synchronized})
+    @GuardedBy("this")
+    private @NonNull ProjectRepository projectRepository;
+
+    @Setter(onMethod_ = {@Synchronized})
+    @GuardedBy("this")
+    private @NonNull ProjectTaskDeveloperRepository projectTaskDeveloperRepository;
+
+    @Setter(onMethod_ = {@Synchronized})
+    @GuardedBy("this")
+    private @NonNull DeveloperRepository developerRepository;
 
     @Autowired
-    @Setter(onMethod_ = {@Synchronized})
-    @GuardedBy("this")
-    private ProjectDeveloperRepository projectDeveloperRepository;
-
-    @Autowired
-    @Setter(onMethod_ = {@Synchronized})
-    @GuardedBy("this")
-    private ProjectRepository projectRepository;
-
-    @Autowired
-    @Setter(onMethod_ = {@Synchronized})
-    @GuardedBy("this")
-    private ProjectTaskDeveloperRepository projectTaskDeveloperRepository;
-
-    @Autowired
-    @Setter(onMethod_ = {@Synchronized})
-    @GuardedBy("this")
-    private DeveloperRepository developerRepository;
+    public ProjectDeveloperService(
+        final @NonNull EntityManager entityManager,
+        final @NonNull ProjectDeveloperRepository projectDeveloperRepository,
+        final @NonNull ProjectRepository projectRepository,
+        final @NonNull ProjectTaskDeveloperRepository projectTaskDeveloperRepository,
+        final @NonNull DeveloperRepository developerRepository
+    ) {
+        this.entityManager = entityManager;
+        this.projectDeveloperRepository = projectDeveloperRepository;
+        this.projectRepository = projectRepository;
+        this.projectTaskDeveloperRepository = projectTaskDeveloperRepository;
+        this.developerRepository = developerRepository;
+    }
 
     private static final @NonNull ForkJoinPool forkJoinPool = ForkJoinPool.commonPool();
 

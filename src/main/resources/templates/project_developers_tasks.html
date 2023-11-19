@@ -1,52 +1,152 @@
 <!DOCTYPE html>
 <html lang="hu">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title data-th-text="#{MainPageTitle}">MainPageTitle</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title data-th-text="#{MainPageTitle}">MainPageTitle</title>
 
-  <link href='https://fonts.googleapis.com/css?family=Calibri' rel='stylesheet' type='text/css' />
-  <link href='https://fonts.googleapis.com/css?family=Exo' rel='stylesheet' type='text/css' />
+    <link href='https://fonts.googleapis.com/css?family=Calibri' rel='stylesheet' type='text/css'/>
+    <link href='https://fonts.googleapis.com/css?family=Exo' rel='stylesheet' type='text/css'/>
 
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 
-  <link rel="stylesheet" data-th-href="@{css/main.css}" href="../static/css/main.css"/>
+    <link rel="stylesheet" data-th-href="@{css/main.css}" href="../static/css/main.css"/>
 </head>
-<body>
+<body
+    onload="if( (document.getElementById('setMessageModal').innerText) == 'ON')
+      { document.getElementById('setMessageModal').click(); }"
+>
 
 <div class="container">
-  <nav class="navbar bg-light navbar-light">
-    <a class="navbar-brand"><span data-th-text="${project.id} + '.: ' + ${project.name} + ' / ' + ${developer.id} + '.:' + ${developer.name} + ' feladatai:'">
-      Project / fejlesztő feladatai:</span></a>
-  </nav>
 
-  <div class="container">
-    <article data-th-each="task : ${tasks}">
-      <p>
-        <span data-th-text="${task.projectTaskEntity.id}">Feladat ID</span>
-        .:&nbsp;&nbsp;&nbsp;
-        <span data-th-text="${task.projectTaskEntity.name}">feladat neve</span>
-        &nbsp;:&nbsp;
-        <span data-th-text="${task.projectTaskEntity.description}">feladat leírása</span>
-        <br/> MAKE A FORM HERE! <br/>
-        <span>Felhasznált idő:&nbsp;</span>
-        <span data-th-text="${task.spendTime}">N.A.</span>
-        <span><a href="#">Módosítás</a></span>
-        <br/> FORM END HERE <br/>
-        <a data-th-href="@{'/project_developers_tasks_delete/' + ${project.id} +'/' + ${developer.id} + '/' + ${task.id} }">Törlés</a>
-      </p>
-    </article>
-  </div>
+    <header>
+        <p data-th-text="#{MainPageTitle}">headerText</p>
+    </header>
+    <nav class="navbar bg-light navbar-light" style="padding-left:1rem">
+        <a class="navbar-brand"><span data-th-text="${project.name}+ ', ' + ${developer.name} + ' feladatai:'">Project fejlesztői</span></a>
+        <a class="btn btn-outline-secondary" data-th-href="@{/project_developers}">
+            <span>Vissza a projekt fejlesztőihez</span>
+        </a>
+    </nav>
 
-  <footer>
-    <p> <a class="link" data-th-href="@{'/project_developers_tasks_new/' + ${project.id}}">Új feladat hozzárendelése a fejlesztőhöz</a> </p>
-    <p data-th-text="#{footerText}">footerText</p>
-  </footer>
+    <div class="container p-3">
+        <!-- Header -->
+        <div class="row mb-2">
+            <div class="col col-lg-3 text-center" style="text-decoration:underline">
+                <span>Név</span>
+            </div>
+            <div class="col col-lg-7 text-center" style="text-decoration:underline">
+                <span>Leírás</span>
+            </div>
+            <div class="col col-lg-1 text-center" style="text-decoration:underline">
+                <span>M. idő</span>
+            </div>
+            <div class="col col-lg-1 text-center" style="text-decoration:none">
+                <span>&nbsp;</span>
+            </div>
+        </div>
+        <!-- Data -->
+        <article data-th-each="task : ${tasks}">
+            <div class="row">
+                <div class="col col-lg-3 border" style="text-align:left">
+                    <span class="form-control" style="border-style:none;"
+                          data-th-text="${task.projectTaskEntity.name}">Feladat&nbsp;neve</span>
+                </div>
+                <div class="col col-lg-7 border">
+                    <label hidden for="description"></label>
+                    <textarea disabled class="form-control" id="description"
+                              data-th-text="${task.projectTaskEntity.description}"
+                              style="background-color:white; height:40px; border-style:none;"
+                    >Feladat leírása</textarea>
+                </div>
+                <div class="col col-lg-1 border" style="text-align:right">
+                    <label hidden for="none"></label>
+                    <input type="number" class="form-control"
+                           data-th-value="${task.spendTime}"
+                           min="0" id='none'
+                           data-th-id="'spendTime' + ${task.id}"
+                           data-th-name="'spendTime' + ${task.id}"
+                           style="text-align:right; border-style:none;" placeholder="0"
+                           data-th-onchange="'setTime(event,' + ${task.id} + ')'"
+                           data-th-onkeydown="'setTime(event,' + ${task.id} + ')'"
+                    />
+                </div>
+                <div class="col col-lg-1 border" style="text-align:center">
+                    <span class="btn btn-sm p-1 btn-outline-light"
+                          data-bs-toggle="tooltip" data-bs-placement="top" title="Az idő rögzítése">
+                        <img data-th-src="@{~/icons/accept.svg}" src="../static/icons/accept.svg" width="20" alt=""
+                             data-th-onclick="'setFields( ' + ${task.id} + ' )'"
+                        ></span>
+                </div>
+                <!-- Function icons -->
+            </div>
+        </article>
+    </div>
+
+    <footer>
+        <p><a class="btn btn-outline-secondary" data-th-href="@{'/project_developers_tasks_new'}">
+            <img data-th-src="@{icons/new.svg}" src="../static/icons/new.svg" width="20" alt="" class="mb-1"/>
+            Új feladat hozzárendelése a fejlesztőhöz
+        </a></p>
+        <p data-th-text="#{footerText}">footerText</p>
+    </footer>
 </div>
 
+
+<!-- Modal window -->
+<button hidden id="setMessageModal" data-toggle="modal" data-target="#messageModal" data-th-text="${error.onOff}">
+    OFF
+</button>
+
+<div class="modal fade" id="messageModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" data-th-text="${error.title}">Fejléc</div>
+            </div>
+            <div class="modal-body" data-th-text="${error.message}">Üzenet</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Data Form -->
+<form hidden name="taskSpendTime" data-th-action="@{/project_developers_tasks_modify_time}"
+      data-th-object="${selectedOperationData}" method="post" class="form">
+    <div class="input-group mb-3">
+        <label for="taskId"></label>
+        <input type="text" class="form-control" id="taskId" name="taskId"
+               data-th-field="*{taskId}" placeholder="ProjektTaskDeveloper ID"/>
+    </div>
+    <div class="input-group mb-3">
+        <label for="longData"></label>
+        <input type="number" class="form-control" id="longData" name="longData"
+               data-th-field="*{longData}" placeholder="0"/>
+    </div>
+    <button type="submit" id="submitButton" class="btn btn-outline-secondary">Idő rögzítése</button>
+</form>
+
+<script>
+    function setFields( taskId ) {
+        var timeFieldName = "spendTime" + taskId;
+        var timeFieldValue = document.getElementById( timeFieldName ).getAttribute('value');
+
+        document.getElementById("taskId").setAttribute('value', taskId );
+        document.getElementById("longData").setAttribute('value', timeFieldValue );
+        document.getElementById("submitButton").click();
+    }
+
+    function setTime( event, taskId ){
+        var input = event.target;
+        var timeFieldName = "spendTime" + taskId;
+        document.getElementById(timeFieldName).setAttribute('value', input.value );
+    }
+</script>
 
 </body>
 </html>

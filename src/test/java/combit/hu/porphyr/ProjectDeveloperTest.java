@@ -36,30 +36,36 @@ import static org.mockito.Mockito.verify;
 @ActiveProfiles("service_test")
 class ProjectDeveloperTest {
     @Autowired
-    private EntityManager entityManager;
+    private @NonNull EntityManager entityManager;
 
     @Autowired
-    private ProjectDeveloperRepository projectDeveloperRepository;
+    private @NonNull ProjectDeveloperRepository projectDeveloperRepository;
 
     @Autowired
-    private ProjectRepository projectRepository;
+    private @NonNull ProjectRepository projectRepository;
 
     @Autowired
-    private DeveloperRepository developerRepository;
+    private @NonNull ProjectTaskDeveloperRepository projectTaskDeveloperRepository;
 
     @Autowired
-    private ProjectTaskDeveloperRepository projectTaskDeveloperRepository;
+    private @NonNull DeveloperRepository developerRepository;
 
     private ProjectDeveloperRepository spyProjectDeveloperRepository;
-    final private ProjectDeveloperService spiedProjectDeveloperService = new ProjectDeveloperService();
+    private ProjectDeveloperService spiedProjectDeveloperService;
 
     @BeforeAll
     void setupAll() {
+        spiedProjectDeveloperService = new ProjectDeveloperService(
+            entityManager,
+            projectDeveloperRepository,
+            projectRepository,
+            projectTaskDeveloperRepository,
+            developerRepository
+        );
         spyProjectDeveloperRepository = Mockito.mock(
             ProjectDeveloperRepository.class, AdditionalAnswers.delegatesTo(projectDeveloperRepository)
         );
         spiedProjectDeveloperService.setProjectDeveloperRepository(spyProjectDeveloperRepository);
-
         spiedProjectDeveloperService.setEntityManager(entityManager);
         spiedProjectDeveloperService.setProjectRepository(projectRepository);
         spiedProjectDeveloperService.setDeveloperRepository(developerRepository);
@@ -138,9 +144,9 @@ class ProjectDeveloperTest {
         projectEntity = projectRepository.findAllById(1L);
         assertNotNull(projectEntity);
         assertNotNull(developerEntity);
-        assert (projectDeveloperRepository.findAll().size() > 0);
-        assert (projectDeveloperRepository.findAllByDeveloperEntity(developerEntity).size() > 0);
-        assert (projectDeveloperRepository.findAllByProjectEntity(projectEntity).size() > 0);
+        assert (!projectDeveloperRepository.findAll().isEmpty());
+        assert (!projectDeveloperRepository.findAllByDeveloperEntity(developerEntity).isEmpty());
+        assert (!projectDeveloperRepository.findAllByProjectEntity(projectEntity).isEmpty());
         actualProjectDeveloperEntity = projectDeveloperRepository.findAllByProjectEntityAndDeveloperEntity(
             projectEntity,
             developerEntity
@@ -224,12 +230,15 @@ class ProjectDeveloperTest {
         assertNotNull(projectEntity);
         assertNotNull(developerEntity);
         newProjectDeveloperEntity.setProjectAndDeveloper(projectEntity, developerEntity);
-        assertDoesNotThrow( () -> spiedProjectDeveloperService.insertNewProjectDeveloper(newProjectDeveloperEntity));
+        assertDoesNotThrow(() -> spiedProjectDeveloperService.insertNewProjectDeveloper(newProjectDeveloperEntity));
         verify(spyProjectDeveloperRepository, times(1)).saveAndFlush(newProjectDeveloperEntity);
         //Visszaolvasás
         entityManager.clear();
         assertNotNull(newProjectDeveloperEntity.getId());
-        assertEquals( newProjectDeveloperEntity , spiedProjectDeveloperService.getProjectDeveloperById( newProjectDeveloperEntity.getId()));
+        assertEquals(
+            newProjectDeveloperEntity,
+            spiedProjectDeveloperService.getProjectDeveloperById(newProjectDeveloperEntity.getId())
+        );
         // - Minden hibát ellenőriztünk
         assertDoesNotThrow(() -> ServiceException.isAllExceptionsThrown(ServiceException.ExceptionGroups.PROJECTDEVELOPERS_INSERT));
     }
@@ -262,11 +271,11 @@ class ProjectDeveloperTest {
         // - törlés jó adatokkal
         final ProjectDeveloperEntity projectDeveloperEntityToDelete = spyProjectDeveloperRepository.findAllById(7L);
         assertNotNull(projectDeveloperEntityToDelete);
-        assertDoesNotThrow( ()-> spiedProjectDeveloperService.deleteProjectDeveloper(projectDeveloperEntityToDelete));
-        verify( spyProjectDeveloperRepository, times(1)).deleteById(7L);
+        assertDoesNotThrow(() -> spiedProjectDeveloperService.deleteProjectDeveloper(projectDeveloperEntityToDelete));
+        verify(spyProjectDeveloperRepository, times(1)).deleteById(7L);
         // - visszaolvasás
         ProjectDeveloperEntity actualProjectDeveloperEntity = spyProjectDeveloperRepository.findAllById(7L);
-        assertNull( actualProjectDeveloperEntity);
+        assertNull(actualProjectDeveloperEntity);
         // - Minden hibát ellenőriztünk
         assertDoesNotThrow(() -> ServiceException.isAllExceptionsThrown(ServiceException.ExceptionGroups.PROJECTDEVELOPERS_DELETE));
     }
@@ -278,18 +287,21 @@ class ProjectDeveloperTest {
         DeveloperEntity developerEntity;
         ProjectEntity projectEntity;
         // - getProjectDevelopers
-        assertEquals( 7 , spiedProjectDeveloperService.getProjectDevelopers().size() );
+        assertEquals(7, spiedProjectDeveloperService.getProjectDevelopers().size());
         // - getProjectDevelopersByDeveloper
         developerEntity = developerRepository.findAllById(2L);
         assertNotNull(developerEntity);
-        assertEquals( 2, spiedProjectDeveloperService.getProjectDevelopersByDeveloper(developerEntity).size());
+        assertEquals(2, spiedProjectDeveloperService.getProjectDevelopersByDeveloper(developerEntity).size());
         // - getProjectDevelopersByProject
         projectEntity = projectRepository.findAllById(1L);
         assertNotNull(projectEntity);
-        assertEquals( 3, spiedProjectDeveloperService.getProjectDevelopersByProject(projectEntity).size());
+        assertEquals(3, spiedProjectDeveloperService.getProjectDevelopersByProject(projectEntity).size());
         // - getProjectDeveloperById
-        assertNotNull( spiedProjectDeveloperService.getProjectDeveloperById(1L));
+        assertNotNull(spiedProjectDeveloperService.getProjectDeveloperById(1L));
         // - getProjectDeveloperByProjectAndDeveloper
-        assertNotNull( spiedProjectDeveloperService.getProjectDeveloperByProjectAndDeveloper(projectEntity,developerEntity));
+        assertNotNull(spiedProjectDeveloperService.getProjectDeveloperByProjectAndDeveloper(
+            projectEntity,
+            developerEntity
+        ));
     }
 }

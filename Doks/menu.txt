@@ -1,23 +1,22 @@
-Főmenü									- OK
-	Projektek							- OK
-		Fejlesztők						- OK
-			Feladatok (projekten belül)	- NOT FOUND
+Főmenü									- OK                        porphyr.html
+	Projektek							- OK                        projects.html
+		Fejlesztők						- OK                        project_developers.htmm
+			Feladatok (projekten belül)	- Under Construction        project_developers_tasks.html
 				Új hozzárendelése		
-				hozzárend.idő mód.
-				Hozzárendelés törlése
-			Eltávolítás a projektből	- OK
-			Hozzárendelés a projekthez	- OK
+				Szerkesztés (idő, törl.)-
+			Eltávolítás a projektből	- OK                        /project_developers_delete
+			Hozzárendelés a projekthez	- OK                        project_developers_new.html
 		Feladatok						- NOT FOUND
 			Fejlesztők listája
 				Új hozzárendelése
 				Hozzárendelés törlése
 			Új
+			Szerkesztés: Módosítás, törlés, 
 			Módosítás
 			Eltávolítás
 			Fejlesztő hozzárendelése
-		Módosítás						- Under Construction
-		Törlés							- OK
-		Új								- OK
+		Szerkesztés (mód, törl.)		- OK                        project_modify.html
+		Új								- OK                        project_new.html
 	Fejlesztők							- Under Construction
 		Feladatok (mind)
 			Új feladat hozzárendelése

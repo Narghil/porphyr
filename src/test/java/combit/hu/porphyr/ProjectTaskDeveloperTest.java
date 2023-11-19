@@ -8,6 +8,7 @@ import combit.hu.porphyr.repository.ProjectTaskDeveloperRepository;
 import combit.hu.porphyr.repository.ProjectTaskRepository;
 import combit.hu.porphyr.service.ProjectTaskDeveloperService;
 import combit.hu.porphyr.service.ServiceException;
+import lombok.NonNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,22 +35,25 @@ import static org.mockito.Mockito.verify;
 @ActiveProfiles("service_test")
 class ProjectTaskDeveloperTest {
     @Autowired
-    private EntityManager entityManager;
+    private @NonNull EntityManager entityManager;
 
     @Autowired
-    private ProjectTaskDeveloperRepository projectTaskDeveloperRepository;
+    private @NonNull ProjectTaskDeveloperRepository projectTaskDeveloperRepository;
 
     @Autowired
-    private ProjectTaskRepository projectTaskRepository;
+    private @NonNull ProjectTaskRepository projectTaskRepository;
 
     @Autowired
-    private ProjectDeveloperRepository projectDeveloperRepository;
+    private @NonNull ProjectDeveloperRepository projectDeveloperRepository;
 
     private ProjectTaskDeveloperRepository spyProjectTaskDeveloperRepository;
-    final private ProjectTaskDeveloperService spiedProjectTaskDeveloperService = new ProjectTaskDeveloperService();
+    private ProjectTaskDeveloperService spiedProjectTaskDeveloperService;
 
     @BeforeAll
     void setupAll() {
+        spiedProjectTaskDeveloperService = new ProjectTaskDeveloperService(
+            entityManager, projectTaskDeveloperRepository, projectTaskRepository, projectDeveloperRepository
+        );
         spyProjectTaskDeveloperRepository = Mockito.mock(
             ProjectTaskDeveloperRepository.class, AdditionalAnswers.delegatesTo(projectTaskDeveloperRepository)
         );
@@ -291,7 +295,7 @@ class ProjectTaskDeveloperTest {
         spiedProjectTaskDeveloperService.deleteProjectTaskDeveloper(deleteProjectTaskDeveloper);
         entityManager.clear();
         Long deletedEntityId = deleteProjectTaskDeveloper.getId();
-        assertNotNull( deletedEntityId );
+        assertNotNull(deletedEntityId);
         verify(spyProjectTaskDeveloperRepository, times(1)).deleteById(deletedEntityId);
         assertNull(spyProjectTaskDeveloperRepository.findAllById(7L));
         // - Minden hibalehetőség tesztelve volt:
@@ -315,7 +319,10 @@ class ProjectTaskDeveloperTest {
             projectTaskEntity, projectDeveloperEntity
         ));
         // -  getProjectTaskDevelopersByProjectTask
-        assertEquals(2, spiedProjectTaskDeveloperService.getProjectTaskDevelopersByProjectTask(projectTaskEntity).size());
+        assertEquals(
+            2,
+            spiedProjectTaskDeveloperService.getProjectTaskDevelopersByProjectTask(projectTaskEntity).size()
+        );
         // -  getProjectTaskDevelopersByProjectDeveloper
         assertEquals(
             1,

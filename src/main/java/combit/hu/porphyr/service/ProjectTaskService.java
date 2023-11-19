@@ -8,6 +8,7 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.Synchronized;
 import org.jetbrains.annotations.Nullable;
+//-- import org.springframework.beans.factory.annotation.Autowired --
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,20 +27,28 @@ import java.util.concurrent.ForkJoinPool;
 @Transactional
 @ThreadSafe
 public class ProjectTaskService {
-    @Autowired
     @Setter(onMethod_ = {@Synchronized})
     @GuardedBy("this")
-    private EntityManager entityManager;
+    private @NonNull EntityManager entityManager;
+
+    @Setter(onMethod_ = {@Synchronized})
+    @GuardedBy("this")
+    private @NonNull ProjectTaskRepository projectTaskRepository;
+
+    @Setter(onMethod_ = {@Synchronized})
+    @GuardedBy("this")
+    private @NonNull ProjectRepository projectRepository;
 
     @Autowired
-    @Setter(onMethod_ = {@Synchronized})
-    @GuardedBy("this")
-    private ProjectTaskRepository projectTaskRepository;
-
-    @Autowired
-    @Setter(onMethod_ = {@Synchronized})
-    @GuardedBy("this")
-    private ProjectRepository projectRepository;
+    public ProjectTaskService(
+        final @NonNull EntityManager entityManager,
+        final @NonNull ProjectTaskRepository projectTaskRepository,
+        final @NonNull ProjectRepository projectRepository
+    ){
+        this.entityManager = entityManager;
+        this.projectTaskRepository = projectTaskRepository;
+        this.projectRepository = projectRepository;
+    }
 
     private final @NonNull ForkJoinPool forkJoinPool = ForkJoinPool.commonPool();
 

@@ -4,6 +4,7 @@ import combit.hu.porphyr.domain.ProjectEntity;
 import combit.hu.porphyr.repository.ProjectRepository;
 import combit.hu.porphyr.service.ProjectService;
 import combit.hu.porphyr.service.ServiceException;
+import lombok.NonNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,16 +31,17 @@ import static org.mockito.Mockito.verify;
 @ActiveProfiles("service_test")
 class ProjectTests {
     @Autowired
-    private EntityManager entityManager;
+    private @NonNull EntityManager entityManager;
 
     @Autowired
-    private ProjectRepository projectRepository;
+    private @NonNull ProjectRepository projectRepository;
 
     private ProjectRepository spyProjectRepository;
-    final private ProjectService spiedProjectService = new ProjectService();
+    private ProjectService spiedProjectService;
 
     @BeforeAll
     void setupAll() {
+        spiedProjectService = new ProjectService(entityManager, projectRepository);
         spyProjectRepository = Mockito.mock(
             ProjectRepository.class, AdditionalAnswers.delegatesTo(projectRepository)
         );

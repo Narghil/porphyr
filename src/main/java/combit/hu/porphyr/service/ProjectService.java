@@ -6,6 +6,7 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.Synchronized;
 import org.jetbrains.annotations.Nullable;
+//-- import org.springframework.beans.factory.annotation.Autowired --
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,15 +24,22 @@ import java.util.concurrent.ForkJoinPool;
 @Transactional
 @ThreadSafe
 public class ProjectService {
-    @Autowired
     @Setter(onMethod_ = {@Synchronized})
     @GuardedBy("this")
     private @NonNull EntityManager entityManager;
 
-    @Autowired
     @Setter(onMethod_ = {@Synchronized})
     @GuardedBy("this")
     private @NonNull ProjectRepository projectRepository;
+
+    @Autowired
+    public ProjectService(
+        final @NonNull EntityManager entityManager,
+        final @NonNull ProjectRepository projectRepository
+    ) {
+        this.entityManager = entityManager;
+        this.projectRepository = projectRepository;
+    }
 
     private static final @NonNull ForkJoinPool forkJoinPool = ForkJoinPool.commonPool();
 
@@ -63,8 +71,8 @@ public class ProjectService {
         }
         try {
             forkJoinPool.submit(new RunnableCore(newProjectEntity)).get();
-        } catch( ExecutionException exception){
-            ServiceException.handleExecutionException( exception );
+        } catch (ExecutionException exception) {
+            ServiceException.handleExecutionException(exception);
         }
     }
 
@@ -101,9 +109,9 @@ public class ProjectService {
                 }
             }
         }
-        try{
+        try {
             forkJoinPool.submit(new RunnableCore(modifiedProjectEntity)).get();
-        } catch( ExecutionException ee ){
+        } catch (ExecutionException ee) {
             ServiceException.handleExecutionException(ee);
         }
     }
@@ -118,7 +126,7 @@ public class ProjectService {
     public synchronized void deleteProject(final @NonNull ProjectEntity projectEntity)
         throws ExecutionException, InterruptedException {
 
-        final class RunnableCore implements Runnable{
+        final class RunnableCore implements Runnable {
             private final @NonNull ProjectEntity projectEntity;
 
             public RunnableCore(final @NonNull ProjectEntity projectEntity) {
@@ -126,7 +134,7 @@ public class ProjectService {
             }
 
             @Override
-            public void run(){
+            public void run() {
                 Long projectId = projectEntity.getId();
                 if (projectId == null) {
                     throw new ServiceException(ServiceException.Exceptions.PROJECT_DELETE_NOT_SAVED);
@@ -147,7 +155,7 @@ public class ProjectService {
         }
         try {
             forkJoinPool.submit(new RunnableCore(projectEntity)).get();
-        } catch( ExecutionException ee ){
+        } catch (ExecutionException ee) {
             ServiceException.handleExecutionException(ee);
         }
     }
@@ -163,9 +171,9 @@ public class ProjectService {
             }
         }
         @NonNull List<ProjectEntity> result = new ArrayList<>();
-        try{
+        try {
             result = forkJoinPool.submit(new CallableCore()).get();
-        } catch( ExecutionException ee ){
+        } catch (ExecutionException ee) {
             ServiceException.handleExecutionException(ee);
         }
         return result;
@@ -189,9 +197,9 @@ public class ProjectService {
             }
         }
         @Nullable ProjectEntity result = null;
-        try{
+        try {
             result = forkJoinPool.submit(new CallableCore(id)).get();
-        } catch( ExecutionException ee ){
+        } catch (ExecutionException ee) {
             ServiceException.handleExecutionException(ee);
         }
         return result;
@@ -216,9 +224,9 @@ public class ProjectService {
             }
         }
         @Nullable ProjectEntity result = null;
-        try{
+        try {
             result = forkJoinPool.submit(new CallableCore(name)).get();
-        } catch( ExecutionException ee ){
+        } catch (ExecutionException ee) {
             ServiceException.handleExecutionException(ee);
         }
         return result;
