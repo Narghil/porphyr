@@ -27,7 +27,7 @@
         <a class="navbar-brand">Fejlesztő hozzárendelése a <span data-th-text="${projectName}">Projekt Neve</span>
             projekthez </a>
         <a class="btn btn-outline-secondary" data-th-href="@{~/project_developers}">
-            <span>Vissza a projekt fejlesztőihez</span>
+            <img data-th-src="@{icons/back.svg}" src="../static/icons/back.svg" width="20" alt="" class="mb-1"/>            <span>Vissza a projekt fejlesztőihez</span>
         </a>
     </nav>
 
@@ -36,7 +36,7 @@
               data-th-action="@{/insertNewProjectDeveloper}"
               data-th-object="${newProjectIdDeveloperId}" method="post" class="form"
         >
-            <div>
+            <div hidden>
                 <label for="projectId" class="form-label"></label>
                 <input type="text" class="form-control" id="projectId" name="projectId"
                        data-th-field="*{projectId}"/>
@@ -52,7 +52,10 @@
                 </select>
             </div>
             <div class="input-group mb-3">
-                <button type="submit" class="btn btn-outline-secondary">Hozzárendelés</button>
+                <button type="submit" class="btn btn-outline-secondary">
+                    <img data-th-src="@{icons/accept.svg}" src="../static/icons/accept.svg" width="20" alt="" class="mb-1"/>
+                    Hozzárendelés
+                </button>
             </div>
         </form>
     </div>

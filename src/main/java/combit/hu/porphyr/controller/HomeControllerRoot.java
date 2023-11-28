@@ -3,7 +3,6 @@ package combit.hu.porphyr.controller;
 import combit.hu.porphyr.domain.DeveloperEntity;
 import combit.hu.porphyr.service.DeveloperService;
 import combit.hu.porphyr.service.ProjectService;
-import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
