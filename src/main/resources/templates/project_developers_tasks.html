@@ -39,10 +39,10 @@
             <div class="col col-lg-3 text-center" style="text-decoration:underline">
                 <span>Név</span>
             </div>
-            <div class="col col-lg-6 text-center" style="text-decoration:underline">
+            <div class="col col-lg-5 text-center" style="text-decoration:underline">
                 <span>Leírás</span>
             </div>
-            <div class="col col-lg-1 text-center" style="text-decoration:underline">
+            <div class="col col-lg-2 text-center" style="text-decoration:underline">
                 <span>M. idő</span>
             </div>
             <div class="col col-lg-2 text-center" style="text-decoration:underline">
@@ -56,14 +56,14 @@
                     <span class="form-control" style="border-style:none;"
                           data-th-text="${task.projectTaskEntity.name}">Feladat&nbsp;neve</span>
                 </div>
-                <div class="col col-lg-6 border">
+                <div class="col col-lg-5 border">
                     <label hidden for="description"></label>
                     <textarea disabled class="form-control" id="description"
                               data-th-text="${task.projectTaskEntity.description}"
                               style="background-color:white; height:40px; border-style:none;"
                     >Feladat leírása</textarea>
                 </div>
-                <div class="col col-lg-1 border" style="text-align:right">
+                <div class="col col-lg-2 border" style="text-align:right">
                     <label hidden for="none"></label>
                     <input type="number" class="form-control"
                            data-th-value="${task.spendTime}"
@@ -94,10 +94,17 @@
     </div>
 
     <footer>
-        <p><a class="btn btn-outline-secondary" data-th-href="@{'/project_developers_tasks_new'}">
-            <img data-th-src="@{icons/new.svg}" src="../static/icons/new.svg" width="20" alt="" class="mb-1"/>
-            Új feladat hozzárendelése a fejlesztőhöz
-        </a></p>
+        <div data-th-switch="${assignAbleProjectTasks}">
+            <div data-th-case="'0'">
+                <p>A fejlesztőhöz a projektből minden lehetséges feladat hozzá van rendelve.</p>
+            </div>
+            <div data-th-case="*">
+                <p><a class="btn btn-outline-secondary" data-th-href="@{'/project_developers_tasks_new'}">
+                    <img data-th-src="@{icons/new.svg}" src="../static/icons/new.svg" width="20" alt="" class="mb-1"/>
+                    Új feladat hozzárendelése a fejlesztőhöz
+                </a></p>
+            </div>
+        </div>
         <p data-th-text="#{footerText}">footerText</p>
     </footer>
 </div>
@@ -128,7 +135,7 @@
     <div class="input-group mb-3">
         <label for="taskId"></label>
         <input type="text" class="form-control" id="taskId" name="taskId"
-               data-th-field="*{taskId}" placeholder="ProjektTaskDeveloper ID"/>
+               data-th-field="*{projectTaskId}" placeholder="ProjektTaskDeveloper ID"/>
     </div>
     <div class="input-group mb-3">
         <label for="longData"></label>

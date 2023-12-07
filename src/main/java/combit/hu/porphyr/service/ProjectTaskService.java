@@ -200,6 +200,26 @@ public class ProjectTaskService {
     }
 
     /**
+     * Egy projekthez tartozó valamennyi feladat lekérdezése, Project szerint
+     */
+    public synchronized @NonNull List<ProjectTaskEntity> getProjectTasksByProjectEntity( final @NonNull ProjectEntity projectEntity )
+        throws ExecutionException, InterruptedException {
+        final class CallableCore implements Callable<List<ProjectTaskEntity>> {
+            @Override
+            public List<ProjectTaskEntity> call() {
+                return projectTaskRepository.findAllByProjectEntity(projectEntity);
+            }
+        }
+        @NonNull List<ProjectTaskEntity> result = new ArrayList<>();
+        try {
+            result = forkJoinPool.submit(new CallableCore()).get();
+        } catch (ExecutionException executionException) {
+            ServiceException.handleExecutionException(executionException);
+        }
+        return result;
+    }
+
+    /**
      * Egy ProjectTask lekérdezése ID szerint
      */
     public synchronized @Nullable ProjectTaskEntity getProjectTaskById(final @NonNull Long projectTaskId)

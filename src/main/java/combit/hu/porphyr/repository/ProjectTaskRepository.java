@@ -13,6 +13,7 @@ import java.util.List;
 public interface ProjectTaskRepository extends CrudRepository<ProjectTaskEntity, Long> {
 
     @NonNull List<ProjectTaskEntity> findAll();
+    @NonNull List<ProjectTaskEntity> findAllByProjectEntity( final @NonNull ProjectEntity projectEntity );
     @Nullable ProjectTaskEntity findAllById( final @NonNull Long id);
     @Nullable ProjectTaskEntity findAllByProjectEntityAndName(final @NonNull ProjectEntity projectEntity, final @NonNull String name);
     @Nullable ProjectTaskEntity findAllByProjectEntityAndNameAndIdNot(final @NonNull ProjectEntity projectEntity, final @NonNull String name, final @NonNull Long id);

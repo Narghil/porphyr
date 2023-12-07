@@ -320,5 +320,16 @@ class ProjectTaskTests {
             projectEntity,
             "1. projekt 1. feladat"
         ));
+        //getProjectTasksByProjectId
+        assertEquals(2, spiedProjectTaskService.getProjectTasksByProjectEntity(projectEntity).size());
+        projectEntity = projectRepository.findAllById(2L);
+        assertNotNull(projectEntity);
+        assertEquals(2, spiedProjectTaskService.getProjectTasksByProjectEntity(projectEntity).size());
+        projectEntity = projectRepository.findAllById(3L);
+        assertNotNull(projectEntity);
+        assertEquals(0, spiedProjectTaskService.getProjectTasksByProjectEntity(projectEntity).size());
+        projectEntity = projectRepository.findAllById(4L);
+        assertNotNull(projectEntity);
+        assertEquals(1, spiedProjectTaskService.getProjectTasksByProjectEntity(projectEntity).size());
     }
 }
