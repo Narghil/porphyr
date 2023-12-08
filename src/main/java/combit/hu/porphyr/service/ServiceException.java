@@ -1,5 +1,6 @@
 package combit.hu.porphyr.service;
 
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.Synchronized;
 import org.jetbrains.annotations.TestOnly;
@@ -75,7 +76,9 @@ public class ServiceException extends IllegalArgumentException {
         NULL_VALUE( ExceptionGroups.UNDEFINED, "Adathiba: Üres érték, nem várt helyen.", 0)
         ;
 
+        @Getter
         private final ExceptionGroups exceptionGroup ;
+        @Getter
         private final String description;
         private Integer counter;
 
@@ -84,8 +87,8 @@ public class ServiceException extends IllegalArgumentException {
             this.description = description;
             this.counter = counter;
         }
-        public String getDescription(){ return description; }
-        public ExceptionGroups getExceptionGroup(){ return exceptionGroup; }
+        // public String getDescription() return description
+        // public ExceptionGroups getExceptionGroup() return exceptionGroup
         @Synchronized
         public void incrementCounter(){ counter++ ;}
         @Synchronized

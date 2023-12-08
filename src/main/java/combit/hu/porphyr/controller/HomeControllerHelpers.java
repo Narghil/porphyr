@@ -12,16 +12,17 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.web.context.annotation.SessionScope;
 
 import java.util.List;
+
 import static lombok.AccessLevel.PRIVATE;
 
 @SessionScope
 @NoArgsConstructor(access = PRIVATE)
-public class HomeControllerHelpers{
+public class HomeControllerHelpers {
 
-    public static final int DEVELOPERS=1;
-    public static final int TASKS=2;
-    public static final int MODIFY=3;
-    public static final int DELETE=4;
+    public static final int DEVELOPERS = 1;
+    public static final int TASKS = 2;
+    public static final int MODIFY = 3;
+    public static final int DELETE = 4;
     static final @NonNull String ERROR_TITLE = "Hiba!";
 
     @Setter
@@ -39,13 +40,13 @@ public class HomeControllerHelpers{
             this.description = description;
         }
 
-        public void set( final @NonNull ProjectPOJO project){
-                this.id = project.getId();
-                this.name = project.getName();
-                this.description = project.getDescription();
+        public void set(final @NonNull ProjectPOJO project) {
+            this.id = project.getId();
+            this.name = project.getName();
+            this.description = project.getDescription();
         }
 
-        public void set( final @NonNull ProjectEntity project){
+        public void set(final @NonNull ProjectEntity project) {
             this.id = project.getId();
             this.name = project.getName();
             this.description = project.getDescription();
@@ -57,6 +58,7 @@ public class HomeControllerHelpers{
     @Setter
     @Getter
     @AllArgsConstructor
+    @ToString
     public static class WebError {
         private @Nullable String onOff;
         private @Nullable String title;
@@ -67,23 +69,26 @@ public class HomeControllerHelpers{
             this.title = title;
             this.message = message;
         }
+
+        public WebError( WebError oldWebError ){
+            this.onOff = oldWebError.onOff;
+            this.title = oldWebError.title;
+            this.message = oldWebError.message;
+        }
     }
 
     public static final @NonNull WebError webError = new WebError("OFF", "", "");
 
     public static WebError getWebError() {
-        WebError result = new WebError(
-            webError.getOnOff(), webError.getTitle(), webError.getMessage()
-        );
-        webError.setOnOff("OFF");
-        webError.setTitle("");
-        webError.setMessage("");
+        WebError result = new WebError( webError );
+        webError.setError("OFF","","");
         return result;
     }
 
     @Setter
     @Getter
     @AllArgsConstructor
+    @ToString
     public static class SelectedOperationData {
         private int operation;
         private @NonNull Long projectId;
@@ -93,7 +98,7 @@ public class HomeControllerHelpers{
         private @NonNull Long projectTaskDeveloperId;
         private @Nullable Long longData;
 
-        public SelectedOperationData(){
+        public SelectedOperationData() {
             operation = 0;
             projectId = 0L;
             developerId = 0L;
@@ -103,8 +108,8 @@ public class HomeControllerHelpers{
             longData = 0L;
         }
     }
-    public static final @NonNull SelectedOperationData selectedOperationData = new SelectedOperationData();
 
+    public static final @NonNull SelectedOperationData selectedOperationData = new SelectedOperationData();
 }
 
 
