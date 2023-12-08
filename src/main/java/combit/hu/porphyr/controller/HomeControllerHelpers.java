@@ -79,7 +79,7 @@ public class HomeControllerHelpers {
 
     public static final @NonNull WebError webError = new WebError("OFF", "", "");
 
-    public static WebError getWebError() {
+    public static @NonNull WebError getWebError() {
         WebError result = new WebError( webError );
         webError.setError("OFF","","");
         return result;

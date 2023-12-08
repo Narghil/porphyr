@@ -32,17 +32,17 @@ public class ApiController {
     }
 
     @RequestMapping("/projects_rest")
-    public String projects() throws JsonProcessingException, ExecutionException, InterruptedException {
+    public @NonNull String projects() throws JsonProcessingException, ExecutionException, InterruptedException {
         return( ow.writeValueAsString(projectService.getProjects()));
     }
 
     @RequestMapping("/developers_rest")
-    public String developers() throws JsonProcessingException, ExecutionException, InterruptedException  {
+    public @NonNull String developers() throws JsonProcessingException, ExecutionException, InterruptedException  {
         return( ow.writeValueAsString(developerService.getDevelopers()));
     }
 
     @RequestMapping("/observe")
-    public String observe(){
+    public @NonNull String observe(){
         return( "Observing is not implemented" );
     }
 

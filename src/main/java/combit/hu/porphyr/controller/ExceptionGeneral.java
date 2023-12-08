@@ -1,6 +1,7 @@
 package combit.hu.porphyr.controller;
 
 import combit.hu.porphyr.service.ServiceException;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
@@ -23,7 +24,7 @@ public class ExceptionGeneral {
 	}
 
 	@ExceptionHandler(Exception.class)
-	public String exception(Exception ex, Model model, HttpServletRequest rA) {
+	public @NonNull String exception(Exception ex, Model model, HttpServletRequest rA) {
 		if (ex instanceof ServiceException) {
 			model.addAttribute("requestURI", rA.getRequestURI());
 			model.addAttribute("errMessage", ex.getMessage());

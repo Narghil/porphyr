@@ -32,8 +32,8 @@ public class HomeControllerProjects {
 
     //------------------ Műveletválasztó ----------------------------------------
     @RequestMapping("/selectProjectOperation")
-    public String selectOperation(
-        @ModelAttribute
+    public @NonNull String selectOperation(
+        @ModelAttribute @NonNull
         SelectedOperationData selectedOperation
     ) {
         @NonNull String result;
@@ -61,21 +61,21 @@ public class HomeControllerProjects {
 
     //------------------ Új projekt felvitele ---------------------------------
     @RequestMapping("/project_new_start")
-    public String startNewProject(Model model) {
+    public @NonNull String startNewProject(Model model) {
         projectPOJO.set(null, "Teszt projekt", "Teszt projekt leírása");
         return REDIRECT_TO_NEW;
     }
 
     @RequestMapping("/project_new")
-    public String newProject(Model model) {
+    public @NonNull String newProject(Model model) {
         model.addAttribute("newProject", projectPOJO);
         model.addAttribute("error", HomeControllerHelpers.getWebError());
         return "project_new";
     }
 
     @PostMapping("/insertNewProject")
-    public String insertNewProject(
-        @ModelAttribute
+    public @NonNull String insertNewProject(
+        @ModelAttribute @NonNull
         ProjectPOJO project
     ) throws InterruptedException, ExecutionException
     {
@@ -95,7 +95,7 @@ public class HomeControllerProjects {
 
     //------------------ Projekt törlése ---------------------------------
     @RequestMapping("/project_delete")
-    public String deleteProject(
+    public@NonNull String deleteProject(
     ) throws InterruptedException, ExecutionException //Here SonarLint does not accepts "Exception."
     {
         @NonNull String result = REDIRECT_TO_PROJECTS;
@@ -116,7 +116,7 @@ public class HomeControllerProjects {
 
     //------------------ Projekt módosítása ---------------------------------
     @RequestMapping("/project_modify")
-    public String loadDataBeforeModifyProject(
+    public @NonNull String loadDataBeforeModifyProject(
         Model model
     ) throws InterruptedException,ExecutionException {
         String result = "project_modify";
@@ -139,8 +139,8 @@ public class HomeControllerProjects {
     }
 
     @PostMapping("/modifyProject")
-    public String modifyProject(
-        @ModelAttribute
+    public @NonNull String modifyProject(
+        @ModelAttribute @NonNull
         ProjectPOJO project
     ) throws InterruptedException, ExecutionException
     {

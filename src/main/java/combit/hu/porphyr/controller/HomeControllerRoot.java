@@ -3,6 +3,7 @@ package combit.hu.porphyr.controller;
 import combit.hu.porphyr.domain.DeveloperEntity;
 import combit.hu.porphyr.service.DeveloperService;
 import combit.hu.porphyr.service.ProjectService;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,14 +34,14 @@ public class HomeControllerRoot {
     }
 
     @RequestMapping("/projects")
-    public String projects(Model model) throws ExecutionException, InterruptedException {
+    public @NonNull String projects(Model model) throws ExecutionException, InterruptedException {
         model.addAttribute("error", HomeControllerHelpers.getWebError());
         model.addAttribute("projectsList", projectService.getProjects());
         return "projects";
     }
 
     @RequestMapping("/developers")
-    public String developers(Model model) throws ExecutionException, InterruptedException {
+    public @NonNull String developers(Model model) throws ExecutionException, InterruptedException {
         List<DeveloperEntity> developerList;
         developerList = developerService.getDevelopers();
         model.addAttribute("developers", developerList);

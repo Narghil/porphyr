@@ -62,8 +62,8 @@ public class HomeControllerProjectDevelopersTasks {
 
     //------------------ Műveletválasztó ----------------------------------------
     @RequestMapping("/selectProjectDeveloperTaskOperation")
-    public String selectOperation(
-        @ModelAttribute
+    public @NonNull String selectOperation(
+        @ModelAttribute @NonNull
         SelectedOperationData selectedOperation
     ) throws InterruptedException, ExecutionException {
         @NonNull String result;
@@ -163,7 +163,7 @@ public class HomeControllerProjectDevelopersTasks {
 
     //---------------------------- Új projektfeladat hozzárendelése a fejlesztőhöz.
     @RequestMapping("/project_developers_tasks_new")
-    public String insertNewProjectDeveloperTask(
+    public @NonNull String insertNewProjectDeveloperTask(
         Model model
     ) throws InterruptedException, ExecutionException {
         final @NonNull Long projectId = selectedOperationData.getProjectId();
@@ -204,8 +204,8 @@ public class HomeControllerProjectDevelopersTasks {
     }
 
     @RequestMapping("/insertNewProjectTaskDeveloper")
-    public String insertNewProjectTaskDeveloper(
-        @ModelAttribute
+    public @NonNull String insertNewProjectTaskDeveloper(
+        @ModelAttribute @NonNull
         SelectedOperationData formData
     ) throws InterruptedException, ExecutionException {
         try {

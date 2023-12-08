@@ -4,6 +4,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.ErrorController;
@@ -26,7 +27,7 @@ public class ErrorPageController implements ErrorController {
 	}
 
 	@RequestMapping("/error")
-	public String error(Model model, HttpServletRequest request) {
+	public @NonNull String error(Model model, HttpServletRequest request) {
 		WebRequest webRequest = new ServletWebRequest(request);
 		ErrorAttributeOptions errorAttributeOptions = ErrorAttributeOptions.defaults()
 			.including(ErrorAttributeOptions.Include.MESSAGE);

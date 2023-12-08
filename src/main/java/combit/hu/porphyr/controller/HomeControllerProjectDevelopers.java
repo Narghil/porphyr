@@ -51,8 +51,8 @@ public class HomeControllerProjectDevelopers {
 
     //------------------ Műveletválasztó ----------------------------------------
     @RequestMapping("/selectProjectDeveloperOperation")
-    public String selectOperation(
-        @ModelAttribute
+    public @NonNull String selectOperation(
+        @ModelAttribute @NonNull
         SelectedOperationData selectedOperation
     ) throws ExecutionException, InterruptedException {
         @NonNull String result;
@@ -77,7 +77,7 @@ public class HomeControllerProjectDevelopers {
 
     //------------------ Projekt fejlesztőinek listája  ---------------------------------
     @RequestMapping("/project_developers")
-    public String projectDevelopers(
+    public @NonNull String projectDevelopers(
         Model model
     ) throws ExecutionException, InterruptedException {
         String result = "project_developers";
@@ -105,7 +105,7 @@ public class HomeControllerProjectDevelopers {
 
     //------------------ Új fejlesztő felvétele a projekthez---------------------------------
     @RequestMapping("/project_developers_new")
-    public String newProjectDeveloper(
+    public @NonNull String newProjectDeveloper(
         Model model
     ) throws InterruptedException, ExecutionException {
         final @NonNull Long projectId = selectedOperationData.getProjectId();
@@ -128,8 +128,8 @@ public class HomeControllerProjectDevelopers {
     }
 
     @RequestMapping("/insertNewProjectDeveloper")
-    public String insertNewProjectDeveloper(
-        @ModelAttribute
+    public @NonNull String insertNewProjectDeveloper(
+        @ModelAttribute @NonNull
         SelectedOperationData newProjectIdDeveloperId
     ) throws InterruptedException, ExecutionException {
         try {
