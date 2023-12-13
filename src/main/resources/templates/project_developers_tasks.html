@@ -111,23 +111,7 @@
 
 
 <!-- Modal window -->
-<button hidden id="setMessageModal" data-toggle="modal" data-target="#messageModal" data-th-text="${error.onOff}">
-    OFF
-</button>
-
-<div class="modal fade" id="messageModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-title" data-th-text="${error.title}">Fejléc</div>
-            </div>
-            <div class="modal-body" data-th-text="${error.message}">Üzenet</div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
-            </div>
-        </div>
-    </div>
-</div>
+<section data-th-replace="common/error_modal_window::error_modal_window"></section>
 
 <!-- Data Form -->
 <form hidden name="taskSpendTime" data-th-action="@{/selectProjectDeveloperTaskOperation}"

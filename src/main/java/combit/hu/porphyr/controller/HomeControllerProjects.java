@@ -58,7 +58,6 @@ public class HomeControllerProjects {
         }
         return result;
     }
-
     //------------------ Új projekt felvitele ---------------------------------
     @RequestMapping("/project_new_start")
     public @NonNull String startNewProject(Model model) {
