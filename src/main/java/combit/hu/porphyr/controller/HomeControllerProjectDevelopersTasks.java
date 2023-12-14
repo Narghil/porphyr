@@ -18,11 +18,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
-import static combit.hu.porphyr.controller.HomeControllerHelpers.*;
+import static combit.hu.porphyr.controller.HomeControllerConstants.*;
 
 @Controller
 public class HomeControllerProjectDevelopersTasks {
@@ -58,20 +59,26 @@ public class HomeControllerProjectDevelopersTasks {
         this.projectTaskDeveloperService = projectTaskDeveloperService;
     }
 
+    @Resource(name="getWebErrorBean")
+    WebErrorBean webErrorBean;
+    @Resource(name="getSelectedOperationDataBean")
+    SelectedOperationDataBean selectedOperationDataBean;
+
     static final @NonNull String REDIRECT_TO_PROJECTDEVELOPERS_TASKS = "redirect:/project_developers_tasks";
 
     //------------------ Műveletválasztó ----------------------------------------
     @RequestMapping("/selectProjectDeveloperTaskOperation")
     public @NonNull String selectOperation(
-        @ModelAttribute @NonNull
-        SelectedOperationData selectedOperation
+        @ModelAttribute
+        @NonNull
+        SelectedOperationDataBean selectedOperation
     ) throws InterruptedException, ExecutionException {
         @NonNull String result;
-        selectedOperationData.setOperation(selectedOperation.getOperation());
-        selectedOperationData.setProjectTaskDeveloperId(selectedOperation.getProjectTaskDeveloperId());
+        selectedOperationDataBean.setOperation(selectedOperation.getOperation());
+        selectedOperationDataBean.setProjectTaskDeveloperId(selectedOperation.getProjectTaskDeveloperId());
         switch (selectedOperation.getOperation()) {
             case MODIFY: {
-                selectedOperationData.setLongData(selectedOperation.getLongData());
+                selectedOperationDataBean.setLongData(selectedOperation.getLongData());
                 projectDevelopersTasksSpendTime();
                 result = REDIRECT_TO_PROJECTDEVELOPERS_TASKS;
                 break;
@@ -93,29 +100,26 @@ public class HomeControllerProjectDevelopersTasks {
     public @NonNull String tasksOfProjectDeveloper(
         Model model
     ) throws InterruptedException, ExecutionException {
-        final @NonNull Long projectId = selectedOperationData.getProjectId();
-        final @NonNull Long developerId = selectedOperationData.getDeveloperId();
+        final @NonNull Long projectId = selectedOperationDataBean.getProjectId();
+        final @NonNull Long developerId = selectedOperationDataBean.getDeveloperId();
 
         ProjectEntity project = projectService.getProjectById(projectId);
         DeveloperEntity developer = developerService.getDeveloperById(developerId);
 
-        List<ProjectTaskDeveloperEntity> projectTaskDevelopers = projectTaskDeveloperService.getProjectTaskDeveloperByProjectIdAndDeveloperId(
-            projectId, developerId
-        );
+        List<ProjectTaskDeveloperEntity> projectTaskDevelopers =
+            projectTaskDeveloperService.getProjectTaskDeveloperByProjectIdAndDeveloperId(projectId, developerId);
 
         List<ProjectTaskEntity> allProjectTasks = projectTaskService.getProjectTasksByProjectEntity(
             Objects.requireNonNull(project)
         );
         List<ProjectTaskDeveloperEntity> allProjectTasksDeveloper =
-            projectTaskDeveloperService.getProjectTaskDeveloperByProjectIdAndDeveloperId(
-                projectId, developerId
-            );
+            projectTaskDeveloperService.getProjectTaskDeveloperByProjectIdAndDeveloperId(projectId, developerId);
 
-        model.addAttribute("error", HomeControllerHelpers.getWebError());
+        model.addAttribute("error", webErrorBean.getWebErrorData());
         model.addAttribute("projectTaskDevelopers", projectTaskDevelopers);
         model.addAttribute("project", project);
         model.addAttribute("developer", developer);
-        model.addAttribute("selectedOperationData", selectedOperationData);
+        model.addAttribute("selectedOperationData", selectedOperationDataBean);
         model.addAttribute(
             "assignAbleProjectTasks",
             allProjectTasks.size() - allProjectTasksDeveloper.size()
@@ -127,15 +131,15 @@ public class HomeControllerProjectDevelopersTasks {
     //-------------------------- Idő módosítása a feladatban
     public void projectDevelopersTasksSpendTime(
     ) throws InterruptedException, ExecutionException {
-        if (selectedOperationData.getLongData() != null) {
+        if (selectedOperationDataBean.getLongData() != null) {
             final ProjectTaskDeveloperEntity projectTaskDeveloper =
-                projectTaskDeveloperService.getProjectTaskDeveloperById(selectedOperationData.getProjectTaskDeveloperId());
+                projectTaskDeveloperService.getProjectTaskDeveloperById(selectedOperationDataBean.getProjectTaskDeveloperId());
             if (projectTaskDeveloper != null) {
-                projectTaskDeveloper.setSpendTime(selectedOperationData.getLongData());
+                projectTaskDeveloper.setSpendTime(selectedOperationDataBean.getLongData());
                 try {
                     projectTaskDeveloperService.modifyProjectTaskDeveloper(projectTaskDeveloper);
                 } catch (ServiceException serviceException) {
-                    HomeControllerHelpers.webError.setError("ON", ERROR_TITLE, serviceException.getMessage());
+                    webErrorBean.setError("ON", ERROR_TITLE, serviceException.getMessage());
                 }
             } else {
                 throw new ServiceException(ServiceException.Exceptions.NULL_VALUE);
@@ -149,12 +153,12 @@ public class HomeControllerProjectDevelopersTasks {
     public void removeProjectTaskFromProjectDeveloper(
     ) throws InterruptedException, ExecutionException {
         final ProjectTaskDeveloperEntity projectTaskDeveloper =
-            projectTaskDeveloperService.getProjectTaskDeveloperById(selectedOperationData.getProjectTaskDeveloperId());
+            projectTaskDeveloperService.getProjectTaskDeveloperById(selectedOperationDataBean.getProjectTaskDeveloperId());
         if (projectTaskDeveloper != null) {
             try {
                 projectTaskDeveloperService.deleteProjectTaskDeveloper(projectTaskDeveloper);
             } catch (ServiceException serviceException) {
-                HomeControllerHelpers.webError.setError("ON", ERROR_TITLE, serviceException.getMessage());
+                webErrorBean.setError("ON", ERROR_TITLE, serviceException.getMessage());
             }
         } else {
             throw new ServiceException(ServiceException.Exceptions.NULL_VALUE);
@@ -166,20 +170,20 @@ public class HomeControllerProjectDevelopersTasks {
     public @NonNull String insertNewProjectDeveloperTask(
         Model model
     ) throws InterruptedException, ExecutionException {
-        final @NonNull Long projectId = selectedOperationData.getProjectId();
+        final @NonNull Long projectId = selectedOperationDataBean.getProjectId();
         final @Nullable ProjectEntity projectEntity = projectService.getProjectById(projectId);
         if (projectEntity == null) {
             throw new ServiceException(ServiceException.Exceptions.NULL_VALUE);
         }
-        final @NonNull Long developerId = selectedOperationData.getDeveloperId();
+        final @NonNull Long developerId = selectedOperationDataBean.getDeveloperId();
         final @Nullable DeveloperEntity developerEntity = developerService.getDeveloperById(projectId);
         if (developerEntity == null) {
             throw new ServiceException(ServiceException.Exceptions.NULL_VALUE);
         }
-        selectedOperationData.setProjectDeveloperId(
+        selectedOperationDataBean.setProjectDeveloperId(
             Objects.requireNonNull(Objects.requireNonNull(projectDeveloperService.getProjectDeveloperByProjectAndDeveloper(
-                Objects.requireNonNull(projectService.getProjectById(selectedOperationData.getProjectId())),
-                Objects.requireNonNull(developerService.getDeveloperById(selectedOperationData.getDeveloperId()))
+                Objects.requireNonNull(projectService.getProjectById(selectedOperationDataBean.getProjectId())),
+                Objects.requireNonNull(developerService.getDeveloperById(selectedOperationDataBean.getDeveloperId()))
             )).getId())
         );
         //A projekten belül, a fejlesztőhöz nem tartozó feladatok listájának összeállítsa
@@ -198,15 +202,16 @@ public class HomeControllerProjectDevelopersTasks {
         model.addAttribute("freeProjectTasks", projectTasks);
         model.addAttribute("projectName", projectEntity.getName());
         model.addAttribute("developerName", developerEntity.getName());
-        model.addAttribute("formData", new SelectedOperationData());
+        model.addAttribute("formData", selectedOperationDataBean);
 
         return "project_developers_tasks_new";
     }
 
     @RequestMapping("/insertNewProjectTaskDeveloper")
     public @NonNull String insertNewProjectTaskDeveloper(
-        @ModelAttribute @NonNull
-        SelectedOperationData formData
+        @ModelAttribute
+        @NonNull
+        SelectedOperationDataBean formData
     ) throws InterruptedException, ExecutionException {
         try {
             ProjectTaskEntity projectTaskEntity = projectTaskService.getProjectTaskById(formData.getProjectTaskId());
@@ -216,11 +221,11 @@ public class HomeControllerProjectDevelopersTasks {
             ProjectTaskDeveloperEntity projectTaskDeveloperEntity = new ProjectTaskDeveloperEntity();
             projectTaskDeveloperEntity.setProjectTaskEntity(projectTaskEntity);
             projectTaskDeveloperEntity.setProjectDeveloperEntity(Objects.requireNonNull(
-                projectDeveloperService.getProjectDeveloperById(selectedOperationData.getProjectDeveloperId())
+                projectDeveloperService.getProjectDeveloperById(selectedOperationDataBean.getProjectDeveloperId())
             ));
             projectTaskDeveloperService.insertNewProjectTaskDeveloper(projectTaskDeveloperEntity);
         } catch (ServiceException serviceException) {
-            HomeControllerHelpers.webError.setError("ON", ERROR_TITLE, serviceException.getMessage());
+            webErrorBean.setError("ON", ERROR_TITLE, serviceException.getMessage());
         }
         return REDIRECT_TO_PROJECTDEVELOPERS_TASKS;
     }

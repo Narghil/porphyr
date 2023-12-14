@@ -35,7 +35,7 @@ import java.util.List;
 @Entity
 @Table(name = "PROJECTS")
 @Data
-public class ProjectEntity {
+public class ProjectEntity{
     @Setter //--(AccessLevel.NONE)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id

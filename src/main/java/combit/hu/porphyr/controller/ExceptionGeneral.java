@@ -27,7 +27,7 @@ public class ExceptionGeneral {
 	public @NonNull String exception(Exception ex, Model model, HttpServletRequest rA) {
 		if (ex instanceof ServiceException) {
 			model.addAttribute("requestURI", rA.getRequestURI());
-			model.addAttribute("errMessage", ex.getMessage());
+			model.addAttribute("errMessage", "EXCEPTION:" + ex.getMessage());
 			return "exceptionHandler";
 		} else {
 			WebRequest webRequest = new ServletWebRequest(rA);
@@ -36,7 +36,7 @@ public class ExceptionGeneral {
 			Map<String, Object> error = errorAttributes.getErrorAttributes(webRequest, errorAttributeOptions);
 
 			model.addAttribute("timestamp", error.get("timestamp"));
-			model.addAttribute("error", error.get("error"));
+			model.addAttribute("error", "EXCEPTION: " + error.get("error"));
 			model.addAttribute("message", error.get("message"));
 			model.addAttribute("path", error.get("path"));
 			model.addAttribute("status", error.get("status"));
@@ -44,4 +44,5 @@ public class ExceptionGeneral {
 			return "detailedError";
 		}
 	}
+
 }

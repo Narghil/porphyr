@@ -19,9 +19,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
-import combit.hu.porphyr.controller.HomeControllerHelpers.ProjectPOJO;
+import javax.annotation.Resource;
 
-import static combit.hu.porphyr.controller.HomeControllerHelpers.*;
+import static combit.hu.porphyr.controller.HomeControllerConstants.*;
 
 @Controller
 public class HomeControllerProjectDevelopers {
@@ -45,6 +45,11 @@ public class HomeControllerProjectDevelopers {
         this.projectDeveloperService = projectDeveloperService;
     }
 
+    @Resource(name="getWebErrorBean")
+    WebErrorBean webErrorBean;
+    @Resource(name="getSelectedOperationDataBean")
+    SelectedOperationDataBean selectedOperationDataBean;
+
     static final @NonNull String REDIRECT_TO_PROJECTS = "redirect:/projects";
     static final @NonNull String REDIRECT_TO_PROJECTDEVELOPERS = "redirect:/project_developers";
     static final @NonNull String REDIRECT_TO_PROJECTDEVELOPERS_TASKS = "redirect:/project_developers_tasks";
@@ -53,11 +58,12 @@ public class HomeControllerProjectDevelopers {
     @RequestMapping("/selectProjectDeveloperOperation")
     public @NonNull String selectOperation(
         @ModelAttribute @NonNull
-        SelectedOperationData selectedOperation
+        SelectedOperationDataBean selectedOperation
     ) throws ExecutionException, InterruptedException {
         @NonNull String result;
-        selectedOperationData.setProjectId(selectedOperation.getProjectId());
-        selectedOperationData.setDeveloperId(selectedOperation.getDeveloperId());
+
+        selectedOperationDataBean.setProjectId(selectedOperation.getProjectId());
+        selectedOperationDataBean.setDeveloperId(selectedOperation.getDeveloperId());
 
         switch (selectedOperation.getOperation()) {
             case TASKS: {
@@ -81,21 +87,22 @@ public class HomeControllerProjectDevelopers {
         Model model
     ) throws ExecutionException, InterruptedException {
         String result = "project_developers";
-        final @NonNull Long id = selectedOperationData.getProjectId();
+        final @NonNull Long id = selectedOperationDataBean.getProjectId();
         final @Nullable ProjectEntity project = projectService.getProjectById(id);
         final @NonNull List<DeveloperEntity> allDevelopers = developerService.getDevelopers();
         if (project != null) {
-            final @Nullable ProjectPOJO projectPOJO = new ProjectPOJO();
-            projectPOJO.setId(project.getId());
-            projectPOJO.setName(project.getName());
-            projectPOJO.setDescription(project.getDescription());
-            projectPOJO.setDevelopers(project.getProjectDevelopers());
+            final @Nullable ProjectEntity editedProject = selectedOperationDataBean.getEditedProject();
+            editedProject.setId(project.getId());
+            editedProject.setName(project.getName());
+            editedProject.setDescription(project.getDescription());
+            editedProject.setProjectDevelopers(project.getProjectDevelopers());
 
-            model.addAttribute("error", HomeControllerHelpers.getWebError());
-            model.addAttribute("project", projectPOJO);
+            model.addAttribute("error", webErrorBean.getWebErrorData());
+            model.addAttribute("project", editedProject);
+            model.addAttribute( "project_developers", editedProject.getProjectDevelopers());
             model.addAttribute(
                 "assignAbleDevelopers",
-                allDevelopers.size() - projectPOJO.getDevelopers().size()
+                allDevelopers.size() - editedProject.getProjectDevelopers().size()
             );
         } else {
             result = REDIRECT_TO_PROJECTS;
@@ -108,12 +115,12 @@ public class HomeControllerProjectDevelopers {
     public @NonNull String newProjectDeveloper(
         Model model
     ) throws InterruptedException, ExecutionException {
-        final @NonNull Long projectId = selectedOperationData.getProjectId();
+        final @NonNull Long projectId = selectedOperationDataBean.getProjectId();
         //A projekthez nem tartozó fejlesztők listájának összeállítása
         final @NonNull ProjectEntity project = Objects.requireNonNull(projectService.getProjectById(projectId));
         final @NonNull List<ProjectDeveloperEntity> projectDevelopers = project.getProjectDevelopers();
         final @NonNull List<DeveloperEntity> allDevelopers = developerService.getDevelopers();
-        final @NonNull SelectedOperationData formProjectIdDeveloperId = new SelectedOperationData();
+        final @NonNull SelectedOperationDataBean formProjectIdDeveloperId = new SelectedOperationDataBean();
 
         formProjectIdDeveloperId.setProjectId(projectId);
         for (ProjectDeveloperEntity projectDeveloper : projectDevelopers) {
@@ -130,7 +137,7 @@ public class HomeControllerProjectDevelopers {
     @RequestMapping("/insertNewProjectDeveloper")
     public @NonNull String insertNewProjectDeveloper(
         @ModelAttribute @NonNull
-        SelectedOperationData newProjectIdDeveloperId
+        SelectedOperationDataBean newProjectIdDeveloperId
     ) throws InterruptedException, ExecutionException {
         try {
             projectDeveloperService.insertNewProjectDeveloper(
@@ -140,7 +147,7 @@ public class HomeControllerProjectDevelopers {
                 )
             );
         } catch (ServiceException serviceException) {
-            HomeControllerHelpers.webError.setError("ON", ERROR_TITLE, serviceException.getMessage());
+            webErrorBean.setError("ON", ERROR_TITLE, serviceException.getMessage());
         }
         return REDIRECT_TO_PROJECTDEVELOPERS;
     }
@@ -148,8 +155,10 @@ public class HomeControllerProjectDevelopers {
     //------------------------ Fejlesztő eltávolítása a projektből
     public void deleteProjectDeveloper(
     ) throws InterruptedException, ExecutionException {
-        final @Nullable ProjectEntity project = projectService.getProjectById(selectedOperationData.getProjectId());
-        final @Nullable DeveloperEntity developer = developerService.getDeveloperById(selectedOperationData.getDeveloperId());
+        final @Nullable ProjectEntity project =
+            projectService.getProjectById(selectedOperationDataBean.getProjectId());
+        final @Nullable DeveloperEntity developer =
+            developerService.getDeveloperById(selectedOperationDataBean.getDeveloperId());
         if (project != null && developer != null) {
             final @Nullable ProjectDeveloperEntity projectDeveloper =
                 projectDeveloperService.getProjectDeveloperByProjectAndDeveloper(project, developer);
@@ -157,7 +166,7 @@ public class HomeControllerProjectDevelopers {
                 try {
                     projectDeveloperService.deleteProjectDeveloper(projectDeveloper);
                 } catch (ServiceException serviceException) {
-                    HomeControllerHelpers.webError.setError("ON", ERROR_TITLE, serviceException.getMessage());
+                    webErrorBean.setError("ON", ERROR_TITLE, serviceException.getMessage());
                 }
             } else {
                 throw new ServiceException(ServiceException.Exceptions.NULL_VALUE);
