@@ -1,10 +1,10 @@
-package combit.hu.porphyr.controller;
+package combit.hu.porphyr.controller.helpers;
 
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
-import org.jetbrains.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
@@ -15,9 +15,9 @@ import org.springframework.web.context.annotation.SessionScope;
 @ToString
 public class WebErrorBean {
 
-    private @Nullable String onOff;
-    private @Nullable String title;
-    private @Nullable String message;
+    private @NonNull String onOff;
+    private @NonNull String title;
+    private @NonNull String message;
 
     public void setError(final @NonNull String onOff, final @NonNull String title, final @NonNull String message) {
         this.onOff = onOff;
@@ -25,8 +25,11 @@ public class WebErrorBean {
         this.message = message;
     }
 
+    @Autowired
     public WebErrorBean() {
-        this.setError("OFF", "", "");
+        this.onOff = "OFF";
+        this.title = "";
+        this.message = "";
     }
 
     public WebErrorBean(WebErrorBean oldWebError) {

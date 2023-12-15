@@ -1,5 +1,7 @@
 package combit.hu.porphyr.controller;
 
+import combit.hu.porphyr.controller.helpers.SelectedOperationDataBean;
+import combit.hu.porphyr.controller.helpers.WebErrorBean;
 import combit.hu.porphyr.domain.DeveloperEntity;
 import combit.hu.porphyr.domain.ProjectEntity;
 import combit.hu.porphyr.domain.ProjectTaskDeveloperEntity;
@@ -23,7 +25,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
-import static combit.hu.porphyr.controller.HomeControllerConstants.*;
+import static combit.hu.porphyr.controller.helpers.HomeControllerConstants.*;
 
 @Controller
 public class HomeControllerProjectDevelopersTasks {

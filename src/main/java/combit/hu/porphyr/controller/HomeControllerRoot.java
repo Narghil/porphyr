@@ -1,7 +1,9 @@
 package combit.hu.porphyr.controller;
 
+import combit.hu.porphyr.controller.helpers.DataFromTemplate;
+import combit.hu.porphyr.controller.helpers.SelectedOperationDataBean;
+import combit.hu.porphyr.controller.helpers.WebErrorBean;
 import combit.hu.porphyr.domain.DeveloperEntity;
-import combit.hu.porphyr.domain.ProjectEntity;
 import combit.hu.porphyr.service.DeveloperService;
 import combit.hu.porphyr.service.ProjectService;
 import lombok.NonNull;
@@ -37,7 +39,7 @@ public class HomeControllerRoot {
 
     @RequestMapping("/")
     public String root(Model model) {
-        selectedOperationDataBean.setEditedProject( new ProjectEntity());
+        selectedOperationDataBean.setEditedProject( new DataFromTemplate());
         return "porphyr";
     }
 

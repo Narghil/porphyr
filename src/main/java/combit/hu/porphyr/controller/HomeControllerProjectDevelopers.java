@@ -1,5 +1,8 @@
 package combit.hu.porphyr.controller;
 
+import combit.hu.porphyr.controller.helpers.DataFromTemplate;
+import combit.hu.porphyr.controller.helpers.SelectedOperationDataBean;
+import combit.hu.porphyr.controller.helpers.WebErrorBean;
 import combit.hu.porphyr.domain.DeveloperEntity;
 import combit.hu.porphyr.domain.ProjectDeveloperEntity;
 import combit.hu.porphyr.domain.ProjectEntity;
@@ -21,7 +24,7 @@ import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Resource;
 
-import static combit.hu.porphyr.controller.HomeControllerConstants.*;
+import static combit.hu.porphyr.controller.helpers.HomeControllerConstants.*;
 
 @Controller
 public class HomeControllerProjectDevelopers {
@@ -91,18 +94,18 @@ public class HomeControllerProjectDevelopers {
         final @Nullable ProjectEntity project = projectService.getProjectById(id);
         final @NonNull List<DeveloperEntity> allDevelopers = developerService.getDevelopers();
         if (project != null) {
-            final @Nullable ProjectEntity editedProject = selectedOperationDataBean.getEditedProject();
+            final @Nullable DataFromTemplate editedProject = selectedOperationDataBean.getEditedProject();
             editedProject.setId(project.getId());
             editedProject.setName(project.getName());
             editedProject.setDescription(project.getDescription());
-            editedProject.setProjectDevelopers(project.getProjectDevelopers());
+            List<ProjectDeveloperEntity> projectDeveloperList = project.getProjectDevelopers();
 
             model.addAttribute("error", webErrorBean.getWebErrorData());
-            model.addAttribute("project", editedProject);
-            model.addAttribute( "project_developers", editedProject.getProjectDevelopers());
+            model.addAttribute("project", project);
+            model.addAttribute( "project_developers", projectDeveloperList);
             model.addAttribute(
                 "assignAbleDevelopers",
-                allDevelopers.size() - editedProject.getProjectDevelopers().size()
+                allDevelopers.size() - projectDeveloperList.size()
             );
         } else {
             result = REDIRECT_TO_PROJECTS;

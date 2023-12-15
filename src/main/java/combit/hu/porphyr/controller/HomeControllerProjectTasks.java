@@ -1,5 +1,7 @@
 package combit.hu.porphyr.controller;
 
+import combit.hu.porphyr.controller.helpers.SelectedOperationDataBean;
+import combit.hu.porphyr.controller.helpers.WebErrorBean;
 import combit.hu.porphyr.domain.ProjectEntity;
 import combit.hu.porphyr.service.ProjectService;
 import combit.hu.porphyr.service.ServiceException;

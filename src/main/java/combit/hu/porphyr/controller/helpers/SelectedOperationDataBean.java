@@ -1,6 +1,5 @@
-package combit.hu.porphyr.controller;
+package combit.hu.porphyr.controller.helpers;
 
-import combit.hu.porphyr.domain.ProjectEntity;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -23,7 +22,7 @@ public class SelectedOperationDataBean {
     private @NonNull Long projectDeveloperId;
     private @NonNull Long projectTaskDeveloperId;
     private @Nullable Long longData;
-    private @NonNull ProjectEntity editedProject;
+    private @NonNull DataFromTemplate editedProject;
 
     public SelectedOperationDataBean() {
         operation = 0;
@@ -33,7 +32,13 @@ public class SelectedOperationDataBean {
         projectDeveloperId = 0L;
         projectTaskDeveloperId = 0L;
         longData = 0L;
-        editedProject = new ProjectEntity();
+        editedProject = new DataFromTemplate();
+    }
+
+    public void setEditedProjectData(final @Nullable Long id, final @Nullable String name, final @Nullable String description) {
+        editedProject.setId(id);
+        editedProject.setName(name);
+        editedProject.setDescription(description);
     }
 
     @Bean
@@ -41,7 +46,6 @@ public class SelectedOperationDataBean {
     public SelectedOperationDataBean getSelectedOperationDataBean() {
         return new SelectedOperationDataBean();
     }
-
 }
 
 

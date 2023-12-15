@@ -1,9 +1,13 @@
 package combit.hu.porphyr.controller;
 
+import combit.hu.porphyr.controller.helpers.DataFromTemplate;
+import combit.hu.porphyr.controller.helpers.SelectedOperationDataBean;
+import combit.hu.porphyr.controller.helpers.WebErrorBean;
 import combit.hu.porphyr.domain.ProjectEntity;
 import combit.hu.porphyr.service.ProjectService;
 import combit.hu.porphyr.service.ServiceException;
 import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,10 +17,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.annotation.Resource;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
-import static combit.hu.porphyr.controller.HomeControllerConstants.DEVELOPERS;
-import static combit.hu.porphyr.controller.HomeControllerConstants.*;
+import static combit.hu.porphyr.controller.helpers.HomeControllerConstants.*;
 
 @Controller
 public class HomeControllerProjects {
@@ -28,9 +32,9 @@ public class HomeControllerProjects {
         this.projectService = projectService;
     }
 
-    @Resource(name="getWebErrorBean")
+    @Resource(name = "getWebErrorBean")
     WebErrorBean webErrorBean;
-    @Resource(name="getSelectedOperationDataBean")
+    @Resource(name = "getSelectedOperationDataBean")
     SelectedOperationDataBean selectedOperationDataBean;
 
     static final @NonNull String REDIRECT_TO_PROJECTS = "redirect:/projects";
@@ -70,16 +74,14 @@ public class HomeControllerProjects {
     //------------------ Új projekt felvitele ---------------------------------
     @RequestMapping("/project_new_start")
     public @NonNull String startNewProject(Model model) {
-        selectedOperationDataBean.getEditedProject().setId(null);
-        selectedOperationDataBean.getEditedProject().setName("");
-        selectedOperationDataBean.getEditedProject().setDescription("");
+        selectedOperationDataBean.setEditedProjectData(null,"","");
         return REDIRECT_TO_NEW;
     }
 
     @RequestMapping("/project_new")
     public @NonNull String newProject(Model model) {
-        model.addAttribute("newProject", selectedOperationDataBean.getEditedProject() );
-        model.addAttribute("error", selectedOperationDataBean.getEditedProject());
+        model.addAttribute("newProject", selectedOperationDataBean.getEditedProject());
+        model.addAttribute("error", webErrorBean.getWebErrorData());
         return "project_new";
     }
 
@@ -87,19 +89,17 @@ public class HomeControllerProjects {
     public @NonNull String insertNewProject(
         @ModelAttribute
         @NonNull
-        ProjectDataFromTemplate project
+        DataFromTemplate project
     ) throws InterruptedException, ExecutionException {
         @NonNull String result = REDIRECT_TO_PROJECTS;
         final @NonNull ProjectEntity newProject = new ProjectEntity();
-        newProject.setName(project.getName());
+        newProject.setName(Objects.requireNonNull(project.getName()));
         newProject.setDescription(project.getDescription());
         try {
             projectService.insertNewProject(newProject);
         } catch (ServiceException serviceException) {
             webErrorBean.setError("ON", ERROR_TITLE, serviceException.getMessage());
-            selectedOperationDataBean.getEditedProject().setId( project.getId());
-            selectedOperationDataBean.getEditedProject().setName(project.getName());
-            selectedOperationDataBean.getEditedProject().setDescription(project.getDescription());
+            selectedOperationDataBean.setEditedProjectData(project.getId(), project.getName(), project.getDescription());
             result = REDIRECT_TO_NEW;
         }
         return result;
@@ -128,26 +128,25 @@ public class HomeControllerProjects {
 
     //------------------ Projekt módosítása ---------------------------------
     @RequestMapping("/project_modify")
-    public @NonNull String loadDataBeforeModifyProject(
+    public @NotNull String loadDataBeforeModifyProject(
         Model model
     ) throws InterruptedException, ExecutionException {
         String result = "project_modify";
-        if (selectedOperationDataBean.getEditedProject().getId() == null) {
-            final @NonNull Long id = selectedOperationDataBean.getProjectId();
-            final @Nullable ProjectEntity project = projectService.getProjectById(id);
-            if (project != null) {
-                selectedOperationDataBean.getEditedProject().setId(project.getId());
-                selectedOperationDataBean.getEditedProject().setName(project.getName());
-                selectedOperationDataBean.getEditedProject().setDescription(project.getDescription());
-            } else {
-                webErrorBean.setError("ON", ERROR_TITLE,
-                    ServiceException.Exceptions.NULL_VALUE.getDescription()
-                )
-                ;
-            }
+        final @NotNull DataFromTemplate editedProject = selectedOperationDataBean.getEditedProject();
+        @Nullable Long id = editedProject.getId();
+        if (id == null) {
+            id = selectedOperationDataBean.getProjectId();
+        }
+        final @Nullable ProjectEntity project = projectService.getProjectById(id);
+        if (project != null) {
+            selectedOperationDataBean.setEditedProjectData(project.getId(), project.getName(), project.getDescription());
+        } else {
+            webErrorBean.setError("ON", ERROR_TITLE,
+                ServiceException.Exceptions.NULL_VALUE.getDescription()
+            );
         }
         model.addAttribute("error", webErrorBean.getWebErrorData());
-        model.addAttribute("project", selectedOperationDataBean.getEditedProject());
+        model.addAttribute("project", editedProject);
 
         return result;
     }
@@ -156,13 +155,13 @@ public class HomeControllerProjects {
     public @NonNull String modifyProject(
         @ModelAttribute
         @NonNull
-        ProjectDataFromTemplate project
+        DataFromTemplate project
     ) throws InterruptedException, ExecutionException {
         @NonNull String result = REDIRECT_TO_PROJECTS;
         if (project.getId() != null) {
             final @Nullable ProjectEntity modifiedProject = projectService.getProjectById(project.getId());
             if (modifiedProject != null) {
-                modifiedProject.setName(project.getName());
+                modifiedProject.setName( Objects.requireNonNull(project.getName()));
                 modifiedProject.setDescription(project.getDescription());
                 try {
                     projectService.modifyProject(modifiedProject);
