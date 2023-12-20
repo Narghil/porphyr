@@ -28,7 +28,7 @@ import java.util.concurrent.ExecutionException;
 import static combit.hu.porphyr.controller.helpers.HomeControllerConstants.*;
 
 @Controller
-public class HomeControllerProjectDevelopersTasks {
+public class HomeControllerProjectsDevelopersTasks {
 
     private ProjectService projectService;
     private DeveloperService developerService;

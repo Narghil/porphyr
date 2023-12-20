@@ -27,7 +27,7 @@ import javax.annotation.Resource;
 import static combit.hu.porphyr.controller.helpers.HomeControllerConstants.*;
 
 @Controller
-public class HomeControllerProjectDevelopers {
+public class HomeControllerProjectsDevelopers {
 
     private ProjectService projectService;
     private DeveloperService developerService;

@@ -111,8 +111,8 @@ public class HomeControllerProjects {
     ) throws InterruptedException, ExecutionException //Here SonarLint does not accepts "Exception."
     {
         @NonNull String result = REDIRECT_TO_PROJECTS;
-        final @NonNull Long id = selectedOperationDataBean.getProjectId();
-        final @Nullable ProjectEntity project = projectService.getProjectById(id);
+        final @NonNull Long projectId = selectedOperationDataBean.getProjectId();
+        final @Nullable ProjectEntity project = projectService.getProjectById(projectId);
         if (project != null) {
             try {
                 projectService.deleteProject(project);
@@ -133,11 +133,11 @@ public class HomeControllerProjects {
     ) throws InterruptedException, ExecutionException {
         String result = "project_modify";
         final @NotNull DataFromTemplate editedProject = selectedOperationDataBean.getEditedProject();
-        @Nullable Long id = editedProject.getId();
-        if (id == null) {
-            id = selectedOperationDataBean.getProjectId();
+        @Nullable Long editedProjectId = editedProject.getId();
+        if (editedProjectId == null) {
+            editedProjectId = selectedOperationDataBean.getProjectId();
         }
-        final @Nullable ProjectEntity project = projectService.getProjectById(id);
+        final @Nullable ProjectEntity project = projectService.getProjectById(editedProjectId);
         if (project != null) {
             selectedOperationDataBean.setEditedProjectData(project.getId(), project.getName(), project.getDescription());
         } else {
