@@ -23,6 +23,7 @@ public class SelectedOperationDataBean {
     private @NonNull Long projectTaskDeveloperId;
     private @Nullable Long longData;
     private @NonNull DataFromTemplate editedProject;
+    private @NonNull DataFromTemplate editedProjectTask;
 
     public SelectedOperationDataBean() {
         operation = 0;
@@ -33,12 +34,19 @@ public class SelectedOperationDataBean {
         projectTaskDeveloperId = 0L;
         longData = 0L;
         editedProject = new DataFromTemplate();
+        editedProjectTask = new DataFromTemplate();
     }
 
     public void setEditedProjectData(final @Nullable Long id, final @Nullable String name, final @Nullable String description) {
         editedProject.setId(id);
         editedProject.setName(name);
         editedProject.setDescription(description);
+    }
+
+    public void setEditedProjectTaskData(final @Nullable Long id, final @Nullable String name, final @Nullable String description) {
+        editedProjectTask.setId(id);
+        editedProjectTask.setName(name);
+        editedProjectTask.setDescription(description);
     }
 
     @Bean

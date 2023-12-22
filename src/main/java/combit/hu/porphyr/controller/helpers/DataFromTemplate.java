@@ -15,7 +15,7 @@ public class DataFromTemplate {
 
     public DataFromTemplate() {
         this.id = null;
-        this.name = " --- name --- ";
-        this.description = " --- description --- ";
+        this.name = "";
+        this.description = "";
     }
 }

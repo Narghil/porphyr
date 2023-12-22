@@ -16,6 +16,7 @@ import java.util.Map;
 
 @ControllerAdvice
 public class ExceptionGeneral {
+
 	private ErrorAttributes errorAttributes;
 
 	@Autowired

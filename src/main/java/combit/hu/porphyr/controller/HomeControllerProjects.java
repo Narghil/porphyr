@@ -38,8 +38,8 @@ public class HomeControllerProjects {
     SelectedOperationDataBean selectedOperationDataBean;
 
     static final @NonNull String REDIRECT_TO_PROJECTS = "redirect:/projects";
-    static final @NonNull String REDIRECT_TO_MODIFY = "redirect:/project_modify";
-    static final @NonNull String REDIRECT_TO_NEW = "redirect:/project_new";
+    static final @NonNull String REDIRECT_TO_PROJECT_MODIFY = "redirect:/project_modify";
+    static final @NonNull String REDIRECT_TO_PROJECT_NEW = "redirect:/project_new";
 
     //------------------ Műveletválasztó ----------------------------------------
     @RequestMapping("/selectProjectOperation")
@@ -62,7 +62,7 @@ public class HomeControllerProjects {
             }
             case MODIFY: {
                 selectedOperationDataBean.getEditedProject().setId(selectedOperation.getProjectId());
-                result = REDIRECT_TO_MODIFY;
+                result = REDIRECT_TO_PROJECT_MODIFY;
                 break;
             }
             default:
@@ -75,7 +75,7 @@ public class HomeControllerProjects {
     @RequestMapping("/project_new_start")
     public @NonNull String startNewProject(Model model) {
         selectedOperationDataBean.setEditedProjectData(null,"","");
-        return REDIRECT_TO_NEW;
+        return REDIRECT_TO_PROJECT_NEW;
     }
 
     @RequestMapping("/project_new")
@@ -100,7 +100,7 @@ public class HomeControllerProjects {
         } catch (ServiceException serviceException) {
             webErrorBean.setError("ON", ERROR_TITLE, serviceException.getMessage());
             selectedOperationDataBean.setEditedProjectData(project.getId(), project.getName(), project.getDescription());
-            result = REDIRECT_TO_NEW;
+            result = REDIRECT_TO_PROJECT_NEW;
         }
         return result;
     }
@@ -117,7 +117,7 @@ public class HomeControllerProjects {
             try {
                 projectService.deleteProject(project);
             } catch (ServiceException serviceException) {
-                result = REDIRECT_TO_MODIFY;
+                result = REDIRECT_TO_PROJECT_MODIFY;
                 webErrorBean.setError("ON", ERROR_TITLE, serviceException.getMessage());
             }
         } else {
@@ -168,7 +168,7 @@ public class HomeControllerProjects {
                     selectedOperationDataBean.getEditedProject().setId(null);
                 } catch (ServiceException serviceException) {
                     webErrorBean.setError("ON", ERROR_TITLE, serviceException.getMessage());
-                    result = REDIRECT_TO_MODIFY;
+                    result = REDIRECT_TO_PROJECT_MODIFY;
                 }
             } else {
                 throw new ServiceException(ServiceException.Exceptions.NULL_VALUE);

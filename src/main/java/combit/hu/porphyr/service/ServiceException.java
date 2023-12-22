@@ -36,7 +36,7 @@ public class ServiceException extends IllegalArgumentException {
         DEVELOPER_DELETE_NOT_SAVED( ExceptionGroups.DEVELOPER_DELETE, "A fejlesztő még nincs elmentve, nem törölhető!", 0 ),
         DEVELOPER_DELETE_ASSIGNED_TO_PROJECTS( ExceptionGroups.DEVELOPER_DELETE, "A fejlesztő még dolgozik legalább egy projektben, nem törölhető!", 0 ),
 
-        PROJECTTASK_INSERT_PROJECT_NOT_SAVED( ExceptionGroups.PROJECTTASKS_INSERT, "A kiválasztott projektet még nincs elmentve, a feladat nem vihető fel!",0),
+        PROJECTTASK_INSERT_PROJECT_NOT_SAVED( ExceptionGroups.PROJECTTASKS_INSERT, "A kiválasztott projekt még nincs elmentve, a feladat nem vihető fel!",0),
         PROJECTTASK_INSERT_PROJECT_NOT_EXISTS( ExceptionGroups.PROJECTTASKS_INSERT, "A kiválasztott projektet törölték, a feladat nem vihető fel!",0),
         PROJECTTASK_INSERT_EMPTY_NAME( ExceptionGroups.PROJECTTASKS_INSERT, "A feladat neve nincs kitöltve, nem vihető fel!",0),
         PROJECTTASK_INSERT_SAME_PROJECT_AND_NAME( ExceptionGroups.PROJECTTASKS_INSERT, "Már van ilyen nevű feladat a projektben, nem vihető fel!",0),
@@ -120,7 +120,7 @@ public class ServiceException extends IllegalArgumentException {
                 stringBuilder.append(exception.name());
                 stringBuilder.append(" = ");
                 stringBuilder.append(exception.getCounter());
-                stringBuilder.append(System.getProperty("line.separator"));
+                stringBuilder.append(System.lineSeparator());
             }
         }
         return stringBuilder.toString();
