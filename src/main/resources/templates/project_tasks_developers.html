@@ -101,13 +101,13 @@
 
 <!-- Data Form -->
 <form hidden name="taskDeleteDeveloper" data-th-action="@{/selectProjectTasksDeveloperOperation}"
-      data-th-object="${selectedOperationData}" method="post" class="form">
+      data-th-object="${dataFromTemplate}" method="post" class="form">
     <label for="operation"></label>
     <input type="text" class="form-control" id="operation" name="operation" data-th-field="*{operation}"
            placeholder="Operation"/>
-    <label for="projectTaskDeveloperId"></label>
-    <input type="text" class="form-control" id="projectTaskDeveloperId" name="projectTaskDeveloperId"
-           data-th-field="*{projectTaskDeveloperId}" placeholder="projectTaskDeveloper ID"/>
+    <label for="id"></label>
+    <input type="text" class="form-control" id="id" name="id"
+           data-th-field="*{id}" placeholder="projectTaskDeveloper ID"/>
     <label for="longData"></label>
     <input type="number" class="form-control" id="longData" name="longData" data-th-field="*{longData}"
            placeholder="0"/>
@@ -116,19 +116,19 @@
 </form>
 
 <script>
-    function setFields( operation, projectTaskDeveloperId ) {
-        var timeFieldName = "spendTime" + projectTaskDeveloperId;
+    function setFields( operation, id ) {
+        var timeFieldName = "spendTime" + id;
         var timeFieldValue = document.getElementById( timeFieldName ).getAttribute('value');
 
         document.getElementById("operation").setAttribute('value', operation );
-        document.getElementById("projectTaskDeveloperId").setAttribute('value', projectTaskDeveloperId );
+        document.getElementById("id").setAttribute('value', id );
         document.getElementById("longData").setAttribute('value', timeFieldValue );
         document.getElementById("submitButton").click();
     }
 
-    function setTime( event, projectTaskDeveloperId ){
+    function setTime( event, id ){
         var input = event.target;
-        var timeFieldName = "spendTime" + projectTaskDeveloperId;
+        var timeFieldName = "spendTime" + id;
         document.getElementById(timeFieldName).setAttribute('value', input.value );
     }
 

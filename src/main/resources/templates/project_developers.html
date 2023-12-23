@@ -20,7 +20,7 @@
         <p data-th-text="#{MainPageTitle}">headerText</p>
     </header>
     <nav class="navbar bg-light navbar-light" style="padding-left:1rem">
-        <a class="navbar-brand"><span data-th-text="${project.name}+ ' fejlesztői:'">Project fejlesztői</span></a>
+        <a class="navbar-brand"><span data-th-text="${project_name}+ ' fejlesztői:'">Project fejlesztői</span></a>
         <a class="btn btn-outline-secondary" data-th-href="@{/projects}">
             <img data-th-src="@{icons/back.svg}" src="../static/icons/back.svg" width="20" alt="" class="mb-1"/>
             <span>Vissza a projektekhez</span>
@@ -40,7 +40,7 @@
                 <span>Műveletek</span>
             </div>
         </div>
-        <article data-th-each="projectDeveloper: ${project_developers}">
+        <article data-th-each="projectDeveloper: ${projectDevelopers}">
             <!-- Data -->
             <div class="row">
                 <div class="col col-lg-1 border" style="text-align:right">
@@ -54,13 +54,13 @@
                     <a class="btn btn-sm p-1 btn-outline-light"
                        data-bs-toggle="tooltip" data-bs-placement="top" title="A fejlesztő feladatai a projektben">
                         <img data-th-src="@{~/icons/tasks.svg}" src="../static/icons/tasks.svg" width="20" alt=""
-                             data-th-onclick="'setFields( ' + #{TASKS} + ',' + ${project.id} + ',' + ${projectDeveloper.developerEntity.id} + ')'"
+                             data-th-onclick="'setFields( ' + #{TASKS} + ','  + ${projectDeveloper.developerEntity.id} + ')'"
                         />
                     </a>
                     <a class="btn btn-sm p-1 btn-outline-light"
                        data-bs-toggle="tooltip" data-bs-placement="top" title="A fejlesztő eltávolítása a projektből">
                         <img data-th-src="@{~/icons/delete.svg}" src="../static/icons/delete.svg" width="20" alt=""
-                             data-th-onclick="'setFields( ' + #{DELETE} + ',' + ${project.id} + ',' + ${projectDeveloper.developerEntity.id} + ')'"
+                             data-th-onclick="'setFields( ' + #{DELETE} + ',' + ${projectDeveloper.developerEntity.id} + ')'"
                         />
                     </a>
                 </div>
@@ -89,22 +89,19 @@
 
     <!-- jS: setFields() -->
     <script>
-        function setFields( operation, projectId, developerId) {
+        function setFields( operation, Id) {
             document.getElementById("operation").setAttribute('value', operation );
-            document.getElementById("projectId").setAttribute('value', projectId );
-            document.getElementById("developerId").setAttribute('value', developerId );
+            document.getElementById("Id").setAttribute('value', Id );
             document.getElementById("submit_button").click();
         }
     </script>
 
-    <form hidden data-th-action="@{/selectProjectDeveloperOperation}" data-th-object="${selectedOperation}">
+    <form hidden data-th-action="@{/selectProjectDeveloperOperation}" data-th-object="${dataFromTemplate}">
         <label for="operation"></label>
         <input type="number" class="form-control" id="operation" name="operation">
-        <label for="projectId"></label>
-        <input type="number" class="form-control" id="projectId" name="projectId">
-        <label for="developerId"></label>
-        <input type="number" class="form-control" id="developerId" name="developerId">
-        <button id="submit_button"></button>
+        <label for="id"></label>
+        <input type="number" class="form-control" id="id" name="Id">
+        <button type="submit" id="submit_button"></button>
     </form>
 
 </div>

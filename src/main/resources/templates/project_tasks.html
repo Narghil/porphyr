@@ -101,16 +101,16 @@
     <script>
         function setFields( operation, projectTaskId ) {
             document.getElementById("operation").setAttribute('value', operation );
-            document.getElementById("projectTaskId").setAttribute('value', projectTaskId );
+            document.getElementById("id").setAttribute('value', projectTaskId );
             document.getElementById("submit_button").click();
         }
     </script>
 
-    <form hidden data-th-action="@{/selectProjectTaskOperation}" data-th-object="${selectedOperation}">
+    <form hidden data-th-action="@{/selectProjectTaskOperation}" data-th-object="${dataFromTemplate}">
         <label for="operation"></label>
         <input type="number" class="form-control" id="operation" name="operation">
-        <label for="projectTaskId"></label>
-        <input type="number" class="form-control" id="projectTaskId" name="projectTaskId">
+        <label for="id"></label>
+        <input type="number" class="form-control" id="id" name="id">
         <button id="submit_button"></button>
     </form>
 

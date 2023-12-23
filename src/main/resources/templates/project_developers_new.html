@@ -28,16 +28,11 @@
     <div class="container p-3">
         <form name="newProjectDeveloper"
               data-th-action="@{/insertNewProjectDeveloper}"
-              data-th-object="${newProjectIdDeveloperId}" method="post" class="form"
+              data-th-object="${dataFromTemplate}" method="post" class="form"
         >
-            <div hidden>
-                <label for="projectId" class="form-label"></label>
-                <input type="text" class="form-control" id="projectId" name="projectId"
-                       data-th-field="*{projectId}"/>
-            </div>
             <div class="input-group mb-3">
-                <label for="developerId" class="form-label"></label>
-                <select style="width:100%" data-th-field="*{developerId}" name="developerID" id="developerId">
+                <label for="id" class="form-label"></label>
+                <select style="width:100%" data-th-field="*{id}" name="id" id="id">
                     <option data-th-each="developer : ${freeDevelopers}"
                             data-th-value="${developer.id}"
                             data-th-text="${developer.name}">

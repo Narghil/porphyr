@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
 
+import static combit.hu.porphyr.Constants.OFF;
+
 @Component
 @Setter
 @Getter
@@ -27,7 +29,7 @@ public class WebErrorBean {
 
     @Autowired
     public WebErrorBean() {
-        this.onOff = "OFF";
+        this.onOff = OFF;
         this.title = "";
         this.message = "";
     }
@@ -40,7 +42,7 @@ public class WebErrorBean {
 
     public @NonNull WebErrorBean getWebErrorData() {
         WebErrorBean result = new WebErrorBean( this );
-        this.setError("OFF","","");
+        this.setError(OFF,"","");
         return result;
     }
 

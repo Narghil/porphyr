@@ -77,18 +77,18 @@
         </article>
 
         <script>
-            function setFields( operation, projectId) {
+            function setFields( operation, id) {
                 document.getElementById("operation").setAttribute('value', operation );
-                document.getElementById("projectId").setAttribute('value', projectId );
+                document.getElementById("id").setAttribute('value', id );
                 document.getElementById("submit_button").click();
             }
         </script>
 
-        <form hidden data-th-action="@{/selectProjectOperation}" data-th-object="${selectedOperation}">
+        <form hidden data-th-action="@{/selectProjectOperation}" data-th-object="${dataFromTemplate}">
             <label for="operation"></label>
             <input type="number" class="form-control" id="operation" name="operation">
-            <label for="projectId"></label>
-            <input type="number" class="form-control" id="projectId" name="projectId">
+            <label for="id"></label>
+            <input type="number" class="form-control" id="id" name="id">
             <button id="submit_button"></button>
         </form>
 

@@ -17,7 +17,9 @@ public class ServiceException extends IllegalArgumentException {
                                     DEVELOPER_INSERT, DEVELOPER_MODIFY, DEVELOPER_DELETE,
                                     PROJECTTASKS_INSERT, PROJECTTASKS_MODIFY, PROJECTTASKS_DELETE,
                                     PROJECTDEVELOPERS_INSERT, PROJECTDEVELOPERS_DELETE,
-                                    PROJECTTASKDEVELOPERS_INSERT, PROJECTTASKDEVELOPERS_MODIFY, PROJECTTASKDEVELOPERS_DELETE }
+                                    PROJECTTASKDEVELOPERS_INSERT, PROJECTTASKDEVELOPERS_MODIFY, PROJECTTASKDEVELOPERS_DELETE,
+                                    CONTROLLERS
+    }
     public enum Exceptions{
         PROJECT_INSERT_EMPTY_NAME( ExceptionGroups.PROJECT_INSERT, "A projekt neve nincs kitöltve, nem vihető fel!", 0),
         PROJECT_INSERT_SAME_NAME( ExceptionGroups.PROJECT_INSERT, "Van már ilyen nevű projekt, nem vihető fel még egyszer!", 0),
@@ -73,7 +75,13 @@ public class ServiceException extends IllegalArgumentException {
         PROJECTTASKDEVELOPER_DELETE_TIME_NOT_ZERO( ExceptionGroups.PROJECTTASKDEVELOPERS_DELETE, "Az eltöltött idő nem nulla, az összerendelés nem törölhető!", 0),
 
         UNDEFINED( ExceptionGroups.UNDEFINED, "Undefined", 0),
-        NULL_VALUE( ExceptionGroups.UNDEFINED, "Adathiba: Üres érték, nem várt helyen.", 0)
+        NULL_VALUE( ExceptionGroups.UNDEFINED, "Adathiba: Üres érték, nem várt helyen.", 0),
+
+        CONTROLLER_SELECTED_PROJECT_NOT_EXISTS( ExceptionGroups.CONTROLLERS, "A kiválasztott projekt nem érhető el vagy törölték.", 0),
+        CONTROLLER_SELECTED_DEVELOPER_NOT_EXISTS( ExceptionGroups.CONTROLLERS, "A kiválasztott fejlesztő nem érhető el vagy törölték.", 0),
+        CONTROLLER_SELECTED_PROJECTTASK_NOT_EXISTS( ExceptionGroups.CONTROLLERS, "A kiválasztott feladat nem érhető el vagy törölték.", 0),
+        CONTROLLER_SELECTED_PROJECTDEVELOPER_NOT_EXISTS( ExceptionGroups.CONTROLLERS, "A kiválasztott projekt-fejlesztő összerendelés nem érhető el vagy törölték.", 0),
+        CONTROLLER_SELECTED_PROJECTTASKDEVELOPER_NOT_EXISTS( ExceptionGroups.CONTROLLERS, "A kiválasztott feladat-fejlesztő összerendelés nem érhető el vagy törölték.", 0),
         ;
 
         @Getter

@@ -33,12 +33,12 @@
     <div class="container p-3">
         <form name="newProjectTaskDeveloper"
               data-th-action="@{/newProjectTaskDeveloper}"
-              data-th-object="${formData}" method="post" class="form"
+              data-th-object="${dataFromTemplate}" method="post" class="form"
         >
             <div class="input-group mb-3">
-                <label for="projectDeveloperId" class="form-label"></label>
-                <select style="width:100%" data-th-field="*{projectDeveloperId}" name="developerId"
-                        id="projectDeveloperId">
+                <label for="id" class="form-label"></label>
+                <select style="width:100%" data-th-field="*{id}" name="id"
+                        id="id">
                     <option data-th-each="projectDeveloper : ${selectableProjectDevelopers}"
                             data-th-value="${projectDeveloper.Id}"
                             data-th-text="${projectDeveloper.developerEntity.name}">

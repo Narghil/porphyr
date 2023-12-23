@@ -1,7 +1,6 @@
 package combit.hu.porphyr.controller;
 
-import combit.hu.porphyr.controller.helpers.DataFromTemplate;
-import combit.hu.porphyr.controller.helpers.SelectedOperationDataBean;
+import combit.hu.porphyr.controller.helpers.SessionData;
 import combit.hu.porphyr.controller.helpers.WebErrorBean;
 import combit.hu.porphyr.domain.DeveloperEntity;
 import combit.hu.porphyr.service.DeveloperService;
@@ -35,12 +34,12 @@ public class HomeControllerRoot {
     @Resource(name="getWebErrorBean")
     WebErrorBean webErrorBean;
 
-    @Resource(name="getSelectedOperationDataBean")
-    SelectedOperationDataBean selectedOperationDataBean;
+    @Resource(name = "getSessionData")
+    SessionData sessionData;
 
     @RequestMapping("/")
     public String root(Model model) {
-        selectedOperationDataBean.setEditedProject( new DataFromTemplate());
+        sessionData.setSelectedProjectId( 0L );
         return "porphyr";
     }
 
@@ -48,6 +47,7 @@ public class HomeControllerRoot {
     public @NonNull String projects(Model model) throws ExecutionException, InterruptedException {
         model.addAttribute("error", webErrorBean.getWebErrorData());
         model.addAttribute("projectsList", projectService.getProjects());
+        model.addAttribute( "dataFromTemplate", sessionData.getDataFromTemplate());
         return "projects";
     }
 
@@ -56,6 +56,7 @@ public class HomeControllerRoot {
         List<DeveloperEntity> developerList;
         developerList = developerService.getDevelopers();
         model.addAttribute("developers", developerList);
+        model.addAttribute( "dataFromTemplate", sessionData.getDataFromTemplate());
         return "developers";
     }
 }
