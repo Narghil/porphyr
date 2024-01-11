@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="hu" style="visibility:hidden">
+<head>
+    <title data-th-text="#{MainPageTitle}">MainPageTitle</title>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
+    <script>
+        function loadHead(){$("head").load("_head.html");}
+        window.addEventListener('load', function(){ document.documentElement.style.visibility = "visible"; })
+        $(window).on('load', loadHead() );
+    </script>
+</head>
+
+<body
+    onload="if( (document.getElementById('setMessageModal').innerText) == 'ON')
+              { document.getElementById('setMessageModal').click(); }"
+>
+
+<div class="container">
+    <header>
+        <p data-th-text="#{MainPageTitle}">headerText</p>
+    </header>
+    <nav class="navbar bg-light navbar-light" style="padding-left:1rem">
+        <a class="navbar-brand">Fejlesztő adatainak módosítása</a>
+        <a class="btn btn-outline-secondary" data-th-href="@{/developers}">
+            <span>Vissza a fejlesztőkhöz</span>
+        </a>
+    </nav>
+
+    <form name="newDeveloper" data-th-action="@{/modifyDeveloper}" data-th-object="${dataFromTemplate}" method="post"
+          class="form">
+        <br/>
+        <div hidden>
+            <label for="id"></label>
+            <span class="input-group-text" style="width:4em">ID:</span>
+            <input type="text" class="form-control" id="id" name="id" data-th-field="*{id}"
+                   placeholder="ID"/>
+        </div>
+        <div class="input-group mb-11">
+            <label for="name" class="form-label"></label>
+            <span class="input-group-text" style="width:4em">Név:</span>
+            <input type="text" class="form-control" id="name" name="name" data-th-field="*{name}"
+                   placeholder="Fejlesztő neve"/>
+        </div>
+        <br/>
+        <button type="submit" class="btn btn-outline-secondary">Új adatok rögzítése</button>
+    </form>
+    <br/>
+    <footer class="mt-3">
+        <p data-th-text="#{footerText}">footerText</p>
+    </footer>
+
+    <!-- Modal window -->
+    <section data-th-replace="~{common/error_modal_window::error_modal_window}"></section>
+
+</div>
+
+</body>
+
+</html>

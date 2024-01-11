@@ -43,6 +43,14 @@ public interface ProjectTaskDeveloperRepository extends CrudRepository<ProjectTa
     )
     @NonNull List<ProjectTaskDeveloperEntity> findProjectTasksDeveloperByProjectIdAndDeveloperId( Long projectId, Long developerId);
 
-
+    @Query( "SELECT ProjectTaskDeveloper " +
+        "FROM ProjectTaskEntity ProjectTask, ProjectDeveloperEntity ProjectDeveloper, ProjectTaskDeveloperEntity ProjectTaskDeveloper " +
+        "WHERE " +
+        "ProjectDeveloper.developerEntity.id = :developerId and " +
+        "ProjectDeveloper.id = ProjectTaskDeveloper.projectDeveloperEntity.id and " +
+        "ProjectTaskDeveloper.projectTaskEntity.id = ProjectTask.id and " +
+        "ProjectTask.projectEntity.id = ProjectDeveloper.projectEntity.id "
+    )
+    @NonNull List<ProjectTaskDeveloperEntity> findProjectTasksDeveloperByDeveloperId( Long developerId);
 
 }

@@ -1,0 +1,2 @@
+Tesztelni kell:
+- Valamennyi repository-ban és service-ben a lekérdező függvényeket (find*/get*)

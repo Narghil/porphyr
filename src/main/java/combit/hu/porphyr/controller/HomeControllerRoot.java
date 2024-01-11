@@ -55,6 +55,7 @@ public class HomeControllerRoot {
     public @NonNull String developers(Model model) throws ExecutionException, InterruptedException {
         List<DeveloperEntity> developerList;
         developerList = developerService.getDevelopers();
+        model.addAttribute("error", webErrorBean.getWebErrorData());
         model.addAttribute("developers", developerList);
         model.addAttribute( "dataFromTemplate", sessionData.getDataFromTemplate());
         return "developers";

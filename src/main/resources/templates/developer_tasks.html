@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="hu" style="visibility:hidden">
+<head>
+    <title data-th-text="#{MainPageTitle}">MainPageTitle</title>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
+    <script>
+        function loadHead(){$("head").load("_head.html");}
+        window.addEventListener('load', function(){ document.documentElement.style.visibility = "visible"; })
+        $(window).on('load', loadHead() );
+    </script>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Calibri' rel='stylesheet' type='text/css'/>
+    <link href='https://fonts.googleapis.com/css?family=Exo' rel='stylesheet' type='text/css'/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" data-th-href="@{css/main.css}" href="../static/css/main.css"/>
+
+</head>
+<body
+    onload="if( (document.getElementById('setMessageModal').innerText) == 'ON')
+      { document.getElementById('setMessageModal').click(); }"
+>
+
+<div class="container">
+    <header>
+        <p data-th-text="#{MainPageTitle}">headerText</p>
+    </header>
+    <nav class="navbar bg-light navbar-light" style="padding-left:1rem">
+        <a class="navbar-brand"><span data-th-text="${developer.name}+ ', ' + ' feladatai:'">Fejlesztő neve feladatai</span></a>
+        <a class="btn btn-outline-secondary" data-th-href="@{/developers}">
+            <img data-th-src="@{icons/back.svg}" src="../static/icons/back.svg" width="20" alt="" class="mb-1"/>
+            <span>Vissza a fejlesztőkhöz</span>
+        </a>
+    </nav>
+
+    <div class="container p-3">
+        <!-- Header -->
+        <div class="row mb-2">
+            <div class="col col-lg-2 text-center" style="text-decoration:underline">
+                <span>Projekt</span>
+            </div>
+            <div class="col col-lg-3 text-center" style="text-decoration:underline">
+                <span>Feladat</span>
+            </div>
+            <div class="col col-lg-5 text-center" style="text-decoration:underline">
+                <span>Feladat leírása</span>
+            </div>
+            <div class="col col-lg-1 text-center" style="text-decoration:underline">
+                <span>M. idő</span>
+            </div>
+            <div class="col col-lg-1 text-center" style="text-decoration:underline">
+                <span>Műveletek</span>
+            </div>
+        </div>
+        <!-- Data -->
+        <article data-th-each="task : ${allProjectTasksDeveloper}">
+            <div class="row">
+                <div class="col col-lg-2 border" style="text-align:left">
+                    <span class="form-control" style="border-style:none;"
+                          data-th-text="${task.projectTaskEntity.projectEntity.name}">Projekt&nbsp;neve</span>
+                </div>
+                <div class="col col-lg-3 border" style="text-align:left">
+                    <span class="form-control" style="border-style:none;"
+                          data-th-text="${task.projectTaskEntity.name}">Feladat&nbsp;neve</span>
+                </div>
+                <div class="col col-lg-5 border">
+                    <label hidden for="description"></label>
+                    <textarea disabled class="form-control" id="description"
+                              data-th-text="${task.projectTaskEntity.description}"
+                              style="background-color:white; height:40px; border-style:none;"
+                    >Feladat leírása</textarea>
+                </div>
+                <div class="col col-lg-1 border" style="text-align:right">
+                    <label hidden for="none"></label>
+                    <input type="number" class="form-control"
+                           data-th-value="${task.spendTime}"
+                           min="0" id='none'
+                           data-th-id="'spendTime' + ${task.id}"
+                           data-th-name="'spendTime' + ${task.id}"
+                           style="text-align:right; border:none" placeholder="0"
+                           data-th-onchange="'setTime(event,' + ${task.id} + ')'"
+                           data-th-onkeydown="'setTime(event,' + ${task.id} + ')'"
+                    />
+                </div>
+                <div class="col col-lg-1 border" style="text-align:center">
+                    <span class="btn btn-sm p-1 btn-outline-light"
+                          data-bs-toggle="tooltip" data-bs-placement="top" title="Az idő rögzítése">
+                        <img data-th-src="@{~/icons/accept.svg}" src="../static/icons/accept.svg" width="20" alt=""
+                             data-th-onclick="'setFields( ' + #{MODIFY} + ',' + ${task.id} + ' )'"
+                        >
+                    </span>
+                </div>
+                <!-- Function icons -->
+            </div>
+        </article>
+    </div>
+
+    <footer>
+        <p data-th-text="#{footerText}">footerText</p>
+    </footer>
+</div>
+
+
+<!-- Modal window -->
+<section data-th-replace="~{common/error_modal_window::error_modal_window}"></section>
+
+<!-- Data Form -->
+<form hidden name="taskSpendTime" data-th-action="@{/modifyDeveloperTask}"
+      data-th-object="${dataFromTemplate}" method="post" class="form">
+    <label for="operation"></label>
+    <input type="text" class="form-control" id="operation" name="operation" data-th-field="*{operation}"
+           placeholder="Operation"/>
+    <label for="id"></label>
+    <input type="text" class="form-control" id="id" name="id"
+           data-th-field="*{id}" placeholder="developerTask ID"/>
+    <label for="longData"></label>
+    <input type="number" class="form-control" id="longData" name="longData" data-th-field="*{longData}"
+           placeholder="0"/>
+    <button type="submit" id="submitButton" class="btn btn-outline-secondary">Idő rögzítése</button>
+</form>
+
+<script>
+    function setFields( operation, id ) {
+        var timeFieldName = "spendTime" + id;
+        var timeFieldValue = document.getElementById( timeFieldName ).getAttribute('value');
+
+        document.getElementById("operation").setAttribute('value', operation );
+        document.getElementById("id").setAttribute('value', id );
+        document.getElementById("longData").setAttribute('value', timeFieldValue );
+        document.getElementById("submitButton").click();
+    }
+
+    function setTime( event, id ){
+        var input = event.target;
+        var timeFieldName = "spendTime" + id;
+        document.getElementById(timeFieldName).setAttribute('value', input.value );
+    }
+</script>
+
+</body>
+</html>

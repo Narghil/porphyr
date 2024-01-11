@@ -103,11 +103,8 @@ class ProjectTests {
         projectWithTask = Objects.requireNonNull(spiedProjectService.getProjectByName("Projekt feladattal"));
         assertThrows( Exception.class, () -> spiedProjectService.deleteProject(projectWithTask));
         //------------------------------- Lekérdezések ---------------------------------------------
-        // - FindAll
         assertEquals(4, spyProjectRepository.findAll().size());
-        // - FindAllByName
         assertEquals(1, spyProjectRepository.findAllByName("1. projekt").size());
-        // - FindAllByNameIdNot
         assertEquals(0, spyProjectRepository.findAllByNameAndIdNot("1. projekt", 1L).size());
         assertEquals(1, spyProjectRepository.findAllByNameAndIdNot("1. projekt", 2L).size());
     }
