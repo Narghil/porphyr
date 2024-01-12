@@ -175,7 +175,7 @@ public class DeveloperService {
     }
 
     /**
-     * Egy felhasználó lekérdezése ID szerint.
+     * Egy fejlesztő lekérdezése ID szerint.
      */
     public synchronized @Nullable DeveloperEntity getDeveloperById(final @NonNull Long id)
         throws ExecutionException, InterruptedException {

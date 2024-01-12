@@ -1,6 +1,8 @@
 package combit.hu.porphyr;
 
 import combit.hu.porphyr.domain.DeveloperEntity;
+import combit.hu.porphyr.domain.ProjectDeveloperEntity;
+import combit.hu.porphyr.domain.ProjectEntity;
 import combit.hu.porphyr.repository.DeveloperRepository;
 import combit.hu.porphyr.service.DeveloperService;
 import combit.hu.porphyr.service.ServiceException;
@@ -56,6 +58,111 @@ class DeveloperTests {
         Mockito.clearInvocations(spyDeveloperRepository);
     }
 
+    //------------------------------- Lekérdezések ---------------------------------------------
+    @Test
+    @Transactional
+    @Rollback
+    void developerEntityQueriesTest() {
+        //getDeveloperProjects
+        assertArrayEquals(
+            new String[]{"1. projekt"},
+            spyDeveloperRepository.findAllByName("1. fejlesztő").get(0).
+                getDeveloperProjects().stream().map(ProjectDeveloperEntity::getProjectEntity).
+                map(ProjectEntity::getName).
+                toArray(String[]::new)
+        );
+        assertArrayEquals(
+            new String[]{"1. projekt", "2. projekt"},
+            spyDeveloperRepository.findAllByName("2. fejlesztő").get(0).
+                getDeveloperProjects().stream().map(ProjectDeveloperEntity::getProjectEntity).
+                map(ProjectEntity::getName).
+                toArray(String[]::new)
+        );
+        assertArrayEquals(
+            new String[]{"1. projekt", "2. projekt"},
+            spyDeveloperRepository.findAllByName("3. fejlesztő").get(0).
+                getDeveloperProjects().stream().map(ProjectDeveloperEntity::getProjectEntity).
+                map(ProjectEntity::getName).
+                toArray(String[]::new)
+        );
+        assertArrayEquals(
+            new String[]{"2. projekt","Projekt fejlesztővel"},
+            spyDeveloperRepository.findAllByName("4. fejlesztő").get(0).
+                getDeveloperProjects().stream().map(ProjectDeveloperEntity::getProjectEntity).
+                map(ProjectEntity::getName).
+                toArray(String[]::new)
+        );
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    void developerRepositoryQueriesTest() {
+        // - FindAll
+        assertArrayEquals(
+            new String[]{"1. fejlesztő", "2. fejlesztő", "3. fejlesztő", "4. fejlesztő"},
+            spyDeveloperRepository.findAll().stream().map(DeveloperEntity::getName).toArray(String[]::new)
+        );
+        //FindAllById
+        assertEquals(
+            1L,
+            Objects.requireNonNull(spyDeveloperRepository.findAllById(1L)).getId()
+        );
+        // - FindAllByName
+        assertArrayEquals(
+            new String[]{"1. fejlesztő"},
+            spyDeveloperRepository.findAllByName("1. fejlesztő")
+                .stream()
+                .map(DeveloperEntity::getName)
+                .toArray(String[]::new)
+        );
+        // - FindAllByNameIdNot
+        assertEquals(0, spyDeveloperRepository.findAllByNameAndIdNot("1. fejlesztő", 1L).size());
+        assertArrayEquals(
+            new String[]{"1. fejlesztő"},
+            spyDeveloperRepository.findAllByNameAndIdNot("1. fejlesztő", 2L)
+                .stream()
+                .map(DeveloperEntity::getName)
+                .toArray(String[]::new)
+        );
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    void developerServiceQueriesTest() throws ExecutionException, InterruptedException {
+        //getDevelopers() --------------------------
+        assertArrayEquals(
+            new String[]{"1. fejlesztő", "2. fejlesztő", "3. fejlesztő", "4. fejlesztő"},
+            spiedDeveloperService.getDevelopers().stream().map(DeveloperEntity::getName).toArray(String[]::new)
+        );
+        verify(spyDeveloperRepository, times(1)).findAll();
+        // getDeveloperBy* ---------------------------------------------------
+        //getDeveloperById
+        assertEquals(1, Objects.requireNonNull(spiedDeveloperService.getDeveloperById(1L)).getId());
+        assertEquals(2, Objects.requireNonNull(spiedDeveloperService.getDeveloperById(2L)).getId());
+        assertEquals(3, Objects.requireNonNull(spiedDeveloperService.getDeveloperById(3L)).getId());
+        assertEquals(4, Objects.requireNonNull(spiedDeveloperService.getDeveloperById(4L)).getId());
+        //getDeveloperByName
+        assertEquals(
+            "1. fejlesztő",
+            Objects.requireNonNull(spiedDeveloperService.getDeveloperByName("1. fejlesztő")).getName()
+        );
+        assertEquals(
+            "2. fejlesztő",
+            Objects.requireNonNull(spiedDeveloperService.getDeveloperByName("2. fejlesztő")).getName()
+        );
+        assertEquals(
+            "3. fejlesztő",
+            Objects.requireNonNull(spiedDeveloperService.getDeveloperByName("3. fejlesztő")).getName()
+        );
+        assertEquals(
+            "4. fejlesztő",
+            Objects.requireNonNull(spiedDeveloperService.getDeveloperByName("4. fejlesztő")).getName()
+        );
+    }
+
+    //--------------------------- Repository műveletek tesztje -----------------------------
     @Test
     @Transactional
     @Rollback
@@ -97,18 +204,11 @@ class DeveloperTests {
         assertNull(actualDeveloper);
         // - fejlesztő törlése, aki projekthez van rendelve (foreign key ellenőrzése)
         final DeveloperEntity deleteDeveloper = spyDeveloperRepository.findAllById(1L);
-        assertNotNull( deleteDeveloper );
+        assertNotNull(deleteDeveloper);
         assertThrows(Exception.class, () -> spiedDeveloperService.deleteDeveloper(deleteDeveloper));
-        //------------------------------- Lekérdezések ---------------------------------------------
-        // - FindAll
-        assertEquals(4, spyDeveloperRepository.findAll().size());
-        // - FindAllByName
-        assertEquals(1, spyDeveloperRepository.findAllByName("1. fejlesztő").size());
-        // - FindAllByNameIdNot
-        assertEquals(0, spyDeveloperRepository.findAllByNameAndIdNot("1. fejlesztő", 1L).size());
-        assertEquals(1, spyDeveloperRepository.findAllByNameAndIdNot("1. fejlesztő", 2L).size());
     }
 
+    //--------------------------- Service műveletek tesztje -----------------------------
     @Test
     @Transactional
     @Rollback
@@ -235,7 +335,7 @@ class DeveloperTests {
         actualDeveloper = spiedDeveloperService.getDeveloperByName("Ötödik fejlesztő");
         assertNotNull(actualDeveloper);
         developerId = actualDeveloper.getId();
-        assertNotNull( developerId );
+        assertNotNull(developerId);
         assertDoesNotThrow(() -> spiedDeveloperService.deleteDeveloper(actualDeveloper));
         verify(spyDeveloperRepository, times(1)).deleteById(developerId);
         // - Visszaolvasás
@@ -244,26 +344,5 @@ class DeveloperTests {
         assertNull(spiedDeveloperService.getDeveloperByName("Ötödik fejlesztő"));
         // - Minden hibalehetőség tesztelve volt:
         assertDoesNotThrow(() -> ServiceException.isAllExceptionsThrown(ServiceException.ExceptionGroups.DEVELOPER_DELETE));
-    }
-
-    @Test
-    @Transactional
-    @Rollback
-    void developerServiceQueriesTest() throws ExecutionException, InterruptedException {
-        DeveloperEntity actualDeveloper;
-        //----------------------- Minden developer lekérdezése: getDevelopers() --------------------------
-        assertEquals(4, spiedDeveloperService.getDevelopers().size());
-        verify(spyDeveloperRepository, times(1)).findAll();
-        // --------------------------------- Egyéb lekérdezések ------------------------------------------
-        // Egy developer projektjei: getDeveloperProjects()
-        entityManager.clear();
-        actualDeveloper = Objects.requireNonNull(spiedDeveloperService.getDeveloperByName("1. fejlesztő"));
-        assertEquals(1, actualDeveloper.getDeveloperProjects().size());
-        actualDeveloper = Objects.requireNonNull(spiedDeveloperService.getDeveloperByName("2. fejlesztő"));
-        assertEquals(2, actualDeveloper.getDeveloperProjects().size());
-        actualDeveloper = Objects.requireNonNull(spiedDeveloperService.getDeveloperByName("3. fejlesztő"));
-        assertEquals(2, actualDeveloper.getDeveloperProjects().size());
-        actualDeveloper = Objects.requireNonNull(spiedDeveloperService.getDeveloperByName("4. fejlesztő"));
-        assertEquals(2, actualDeveloper.getDeveloperProjects().size());
     }
 }
