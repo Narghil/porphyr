@@ -30,6 +30,8 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import static combit.hu.porphyr.TestConstants.*;
+
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("service_test")
@@ -63,13 +65,14 @@ class ProjectTests {
     @Test
     @Transactional
     @Rollback
+    // OneToMany kapcsolatok lekérdezésének ellenőrzése
     void projectEntityQueriesTest() {
         ProjectEntity actualProject;
         //getProjectDevelopers
         actualProject = spyProjectRepository.findAllById(1L);
         assert actualProject != null;
         assertArrayEquals(
-            new String[]{"1. fejlesztő", "2. fejlesztő", "3. fejlesztő"},
+            new String[]{developerNames[0], developerNames[1], developerNames[2]},
             actualProject.getProjectDevelopers()
                 .stream()
                 .map(ProjectDeveloperEntity::getDeveloperEntity)
@@ -78,91 +81,77 @@ class ProjectTests {
         );
         //getProjectTasks
         assertArrayEquals(
-            new String[]{"1. projekt 1. feladat", "1. projekt 2. feladat"},
+            taskNames[0],
             actualProject.getProjectTasks()
                 .stream()
                 .map(ProjectTaskEntity::getName)
                 .toArray(String[]::new)
         );
-        //getProjectDevelopers
-        actualProject = spyProjectRepository.findAllById(2L);
+        //getProjectTasks olyan projektre, aminek nincsenek feladatai
+        actualProject = spyProjectRepository.findAllById(3L);
         assert actualProject != null;
         assertArrayEquals(
-            new String[]{"2. fejlesztő", "3. fejlesztő", "4. fejlesztő"},
-            actualProject.getProjectDevelopers()
-                .stream()
-                .map(ProjectDeveloperEntity::getDeveloperEntity)
-                .map(DeveloperEntity::getName)
-                .toArray(String[]::new)
-        );
-        //getProjectTasks
-        assertArrayEquals(
-            new String[]{"2. projekt 1. feladat", "2. projekt 2. feladat"},
+            new String[]{},
             actualProject.getProjectTasks()
                 .stream()
                 .map(ProjectTaskEntity::getName)
                 .toArray(String[]::new)
         );
-    }
-
-    @Test
-    @Transactional
-    @Rollback
-    void projectRepositoryQueriesTest() {
-        //---- findAll() -----
-        final List<ProjectEntity> actualProjects = spyProjectRepository.findAll();
-        final String[][] actualProjectsData = new String[][]{
-            actualProjects.stream().map(ProjectEntity::getName).toArray(String[]::new),
-            actualProjects.stream().map(ProjectEntity::getDescription).toArray(String[]::new)
-        };
-        final String[][] expectedProjectsData = new String[][]{
-            new String[]{"1. projekt", "2. projekt", "Projekt fejlesztővel", "Projekt feladattal"},
-            new String[]{"Első projekt", "Második projekt", "Projekt fejlesztővel", "Projekt feladattal"}
-        };
-        assertArrayEquals(expectedProjectsData, actualProjectsData);
-        //----- findAllBy* -----------------
-        assertEquals(1, Objects.requireNonNull(spyProjectRepository.findAllById(1L)).getId());
-        assertEquals(1, spyProjectRepository.findAllByName("1. projekt").size());
-        assertEquals(0, spyProjectRepository.findAllByNameAndIdNot("1. projekt", 1L).size());
-        assertEquals(1, spyProjectRepository.findAllByNameAndIdNot("1. projekt", 2L).size());
     }
 
     @Test
     @Transactional
     @Rollback
     void projectServiceQueriesTest() throws ExecutionException, InterruptedException {
-        //----------------------- Minden project lekérdezése: getProjects() --------------------------
+        //getProjects()
         final List<ProjectEntity> actualProjects = spiedProjectService.getProjects();
-        final String[][] actualProjectsData = new String[][]{
-            actualProjects.stream().map(ProjectEntity::getName).toArray(String[]::new),
-            actualProjects.stream().map(ProjectEntity::getDescription).toArray(String[]::new)
-        };
-        final String[][] expectedProjectsData = new String[][]{
-            new String[]{"1. projekt", "2. projekt", "Projekt fejlesztővel", "Projekt feladattal"},
-            new String[]{"Első projekt", "Második projekt", "Projekt fejlesztővel", "Projekt feladattal"}
-        };
-        assertArrayEquals(expectedProjectsData, actualProjectsData);
-        //getProjectById
-        assertEquals(1, Objects.requireNonNull(spiedProjectService.getProjectById(1L)).getId());
-        assertEquals(2, Objects.requireNonNull(spiedProjectService.getProjectById(2L)).getId());
-        assertEquals(3, Objects.requireNonNull(spiedProjectService.getProjectById(3L)).getId());
-        assertEquals(4, Objects.requireNonNull(spiedProjectService.getProjectById(4L)).getId());
-        //getProjectByName
-        final ProjectEntity[] actualProjectsArray = new ProjectEntity[]{
-            Objects.requireNonNull(spiedProjectService.getProjectByName("1. projekt")),
-            Objects.requireNonNull(spiedProjectService.getProjectByName("2. projekt")),
-            Objects.requireNonNull(spiedProjectService.getProjectByName("Projekt fejlesztővel")),
-            Objects.requireNonNull(spiedProjectService.getProjectByName("Projekt feladattal"))
-        };
-        //
-        assertEquals("1. projekt", actualProjectsArray[0].getName());
-        assertEquals("2. projekt", actualProjectsArray[1].getName());
-        assertEquals("Projekt fejlesztővel", actualProjectsArray[2].getName());
-        assertEquals("Projekt feladattal", actualProjectsArray[3].getName());
-        //
+        assertArrayEquals(
+            projectNames,
+            actualProjects.stream().map(ProjectEntity::getName).toArray(String[]::new)
+        );
         verify(spyProjectRepository, times(1)).findAll();
+        //getProjectById
+        assertArrayEquals(
+            new Long[]{1L, 2L, 3L, 4L},
+            new Long[]{
+                Objects.requireNonNull(spiedProjectService.getProjectById(1L)).getId(),
+                Objects.requireNonNull(spiedProjectService.getProjectById(2L)).getId(),
+                Objects.requireNonNull(spiedProjectService.getProjectById(3L)).getId(),
+                Objects.requireNonNull(spiedProjectService.getProjectById(4L)).getId()
+            }
+        );
         verify(spyProjectRepository, times(4)).findAllById(anyLong());
+        //getProjectByName
+        assertArrayEquals(
+            projectNames,
+            new String[]{
+                Objects.requireNonNull(spiedProjectService.getProjectByName(projectNames[0])).getName(),
+                Objects.requireNonNull(spiedProjectService.getProjectByName(projectNames[1])).getName(),
+                Objects.requireNonNull(spiedProjectService.getProjectByName(projectNames[2])).getName(),
+                Objects.requireNonNull(spiedProjectService.getProjectByName(projectNames[3])).getName()
+            }
+        );
         verify(spyProjectRepository, times(4)).findAllByName(anyString());
+        //isProjectByNameAndIdNot
+        assertArrayEquals(
+            new Boolean[]{false, false, false, false},
+            new Boolean[]{
+                spiedProjectService.isProjectWithNameAndNotId(projectNames[0], 1L),
+                spiedProjectService.isProjectWithNameAndNotId(projectNames[1], 2L),
+                spiedProjectService.isProjectWithNameAndNotId(projectNames[2], 3L),
+                spiedProjectService.isProjectWithNameAndNotId(projectNames[3], 4L)
+            }
+        );
+        assertArrayEquals(
+            new Boolean[]{true,true,true,true},
+            new Boolean[]{
+                spiedProjectService.isProjectWithNameAndNotId(projectNames[0], 4L),
+                spiedProjectService.isProjectWithNameAndNotId(projectNames[1], 3L),
+                spiedProjectService.isProjectWithNameAndNotId(projectNames[2], 2L),
+                spiedProjectService.isProjectWithNameAndNotId(projectNames[3], 1L)
+            }
+        );
+        verify(spyProjectRepository, times(8)).findAllByNameAndIdNot(anyString(), anyLong());
     }
 
     @Test
@@ -177,8 +166,9 @@ class ProjectTests {
         ProjectEntity actualProject;
         //-------------------------------- Project felvétele --
         // - Már létező névvel (constraint ellenőrzése)
-        projectWithSameName = new ProjectEntity("1. projekt", "");
-        assertThrows(Exception.class, () -> spiedProjectService.insertNewProject(projectWithSameName));
+        projectWithSameName = new ProjectEntity(projectNames[0], "");
+        assertThrows(Exception.class, () -> spyProjectRepository.saveAndFlush(projectWithSameName));
+        entityManager.clear();
         // - Még nem létező névvel
         projectWithNewName = new ProjectEntity("New Project", "");
         assertDoesNotThrow(() -> spyProjectRepository.saveAndFlush(projectWithNewName));
@@ -206,10 +196,10 @@ class ProjectTests {
         actualProject = spyProjectRepository.findAllById(projectId);
         assertNull(actualProject);
         // - projekt törlése, amihez fejlesztő van rendelve, de feladat nincs (foreign key ellenőrzése)
-        projectWithDeveloper = Objects.requireNonNull(spiedProjectService.getProjectByName("Projekt fejlesztővel"));
+        projectWithDeveloper = Objects.requireNonNull(spiedProjectService.getProjectByName(projectNames[2]));
         assertThrows(Exception.class, () -> spiedProjectService.deleteProject(projectWithDeveloper));
         // - projekt törlése, amihez feladat van rendelve, de projekt nincs (foreign key ellenőrzése)
-        projectWithTask = Objects.requireNonNull(spiedProjectService.getProjectByName("Projekt feladattal"));
+        projectWithTask = Objects.requireNonNull(spiedProjectService.getProjectByName(projectNames[3]));
         assertThrows(Exception.class, () -> spiedProjectService.deleteProject(projectWithTask));
     }
 
@@ -229,7 +219,7 @@ class ProjectTests {
             ServiceException.Exceptions.PROJECT_INSERT_EMPTY_NAME.getDescription()
         );
         // - Már létező névvel
-        projectForInsert.setName("1. projekt");
+        projectForInsert.setName(projectNames[0]);
         assertThrows(
             ServiceException.class,
             () -> spiedProjectService.insertNewProject(projectForInsert),
@@ -273,14 +263,14 @@ class ProjectTests {
             ServiceException.Exceptions.PROJECT_MODIFY_EMPTY_NAME.getDescription()
         );
         // - Ki van töltve a név, de van már ilyen.
-        projectWithAnyNames.setName("1. projekt");
+        projectWithAnyNames.setName(projectNames[0]);
         assertThrows(
             ServiceException.class,
             () -> spiedProjectService.modifyProject(projectWithAnyNames),
             ServiceException.Exceptions.PROJECT_MODIFY_SAME_NAME.getDescription()
         );
         // - Ki van töltve a név, ugyanaz, ami volt: Nem hiba
-        projectWithAnyNames.setName("2. projekt");
+        projectWithAnyNames.setName(projectNames[1]);
         assertDoesNotThrow(
             () -> spiedProjectService.modifyProject(projectWithAnyNames)
         );
@@ -326,7 +316,7 @@ class ProjectTests {
         );
         // - Már létező project, de még be van osztva hozzá fejlesztő
         entityManager.clear();
-        projectWithDeveloper = spiedProjectService.getProjectByName("Projekt fejlesztővel");
+        projectWithDeveloper = spiedProjectService.getProjectByName(projectNames[2]);
         assertNotNull(projectWithDeveloper);
         assertThrows(
             ServiceException.class,
@@ -335,7 +325,7 @@ class ProjectTests {
         );
         // - Már létező project, de még van hozzá feladat
         entityManager.clear();
-        projectWithTask = spiedProjectService.getProjectByName("Projekt feladattal");
+        projectWithTask = spiedProjectService.getProjectByName(projectNames[3]);
         assertNotNull(projectWithTask);
         assertThrows(
             ServiceException.class,

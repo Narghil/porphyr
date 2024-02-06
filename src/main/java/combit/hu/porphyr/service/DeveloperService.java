@@ -4,6 +4,7 @@ import combit.hu.porphyr.domain.DeveloperEntity;
 import combit.hu.porphyr.repository.DeveloperRepository;
 import lombok.NonNull;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import lombok.Synchronized;
 import org.jetbrains.annotations.Nullable;
 // import org.springframework.beans.factory.annotation.Autowired
@@ -34,7 +35,10 @@ public class DeveloperService {
     private @NonNull DeveloperRepository developerRepository;
 
     @Autowired
-    public DeveloperService(final @NonNull EntityManager entityManager, final @NonNull DeveloperRepository developerRepository) {
+    public DeveloperService(
+        final @NonNull EntityManager entityManager,
+        final @NonNull DeveloperRepository developerRepository
+    ) {
         this.entityManager = entityManager;
         this.developerRepository = developerRepository;
     }
@@ -90,6 +94,7 @@ public class DeveloperService {
                 this.modifiedDeveloperEntity = modifiedDeveloperEntity;
             }
 
+            @SneakyThrows
             @Override
             public void run() {
                 entityManager.detach(modifiedDeveloperEntity);
@@ -97,11 +102,14 @@ public class DeveloperService {
                     throw (new ServiceException(ServiceException.Exceptions.DEVELOPER_MODIFY_NOT_SAVED));
                 } else if (modifiedDeveloperEntity.getName().isEmpty()) {
                     throw (new ServiceException(ServiceException.Exceptions.DEVELOPER_MODIFY_EMPTY_NAME));
-                } else if (!developerRepository.findAllByNameAndIdNot(
-                    modifiedDeveloperEntity.getName(), modifiedDeveloperEntity.getId()).isEmpty()) {
-                    throw (new ServiceException(ServiceException.Exceptions.DEVELOPER_MODIFY_SAME_NAME));
                 } else {
-                    developerRepository.saveAndFlush(modifiedDeveloperEntity);
+                    boolean isSameNamedDeveloper = isDeveloperWithNameAndNotId(
+                        modifiedDeveloperEntity.getName(), modifiedDeveloperEntity.getId());
+                    if (isSameNamedDeveloper) {
+                        throw (new ServiceException(ServiceException.Exceptions.DEVELOPER_MODIFY_SAME_NAME));
+                    } else {
+                        developerRepository.saveAndFlush(modifiedDeveloperEntity);
+                    }
                 }
             }
         }
@@ -225,6 +233,34 @@ public class DeveloperService {
         @Nullable DeveloperEntity result = null;
         try {
             result = forkJoinPool.submit(new CallableCore(name)).get();
+        } catch (ExecutionException executionException) {
+            ServiceException.handleExecutionException(executionException);
+        }
+        return result;
+    }
+
+    /**
+     * Egy felhasználó lekérdezése: Van-e már ilyen nevű felhasználó?
+     */
+    public synchronized @NonNull Boolean isDeveloperWithNameAndNotId(final @NonNull String name, final @NonNull Long id)
+        throws ExecutionException, InterruptedException {
+        final class CallableCore implements Callable<Boolean> {
+            private final @NonNull String name;
+            private final @NonNull Long id;
+
+            public CallableCore(final @NonNull String name, final @NonNull Long id) {
+                this.name = name;
+                this.id = id;
+            }
+
+            @Override
+            public Boolean call() {
+                return !developerRepository.findAllByNameAndIdNot(name, id).isEmpty();
+            }
+        }
+        @NonNull Boolean result = false;
+        try {
+            result = forkJoinPool.submit(new CallableCore(name, id)).get();
         } catch (ExecutionException executionException) {
             ServiceException.handleExecutionException(executionException);
         }

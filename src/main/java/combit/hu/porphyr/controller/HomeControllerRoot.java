@@ -43,6 +43,7 @@ public class HomeControllerRoot {
         return "porphyr";
     }
 
+    //@Secured("ROLE_USER")
     @RequestMapping("/projects")
     public @NonNull String projects(Model model) throws ExecutionException, InterruptedException {
         model.addAttribute("error", webErrorBean.getWebErrorData());
@@ -51,6 +52,7 @@ public class HomeControllerRoot {
         return "projects";
     }
 
+    //@Secured("ROLE_USER")
     @RequestMapping("/developers")
     public @NonNull String developers(Model model) throws ExecutionException, InterruptedException {
         List<DeveloperEntity> developerList;

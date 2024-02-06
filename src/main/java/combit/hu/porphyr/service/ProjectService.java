@@ -4,6 +4,7 @@ import combit.hu.porphyr.domain.ProjectEntity;
 import combit.hu.porphyr.repository.ProjectRepository;
 import lombok.NonNull;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import lombok.Synchronized;
 import org.jetbrains.annotations.Nullable;
 //-- import org.springframework.beans.factory.annotation.Autowired --
@@ -92,6 +93,7 @@ public class ProjectService {
                 this.modifiedProjectEntity = modifiedProjectEntity;
             }
 
+            @SneakyThrows
             @Override
             public void run() {
                 entityManager.detach(modifiedProjectEntity);
@@ -99,13 +101,15 @@ public class ProjectService {
                     throw new ServiceException(ServiceException.Exceptions.PROJECT_MODIFY_NOT_SAVED);
                 } else if (modifiedProjectEntity.getName().isEmpty()) {
                     throw new ServiceException(ServiceException.Exceptions.PROJECT_MODIFY_EMPTY_NAME);
-                } else if (!projectRepository.findAllByNameAndIdNot(
-                    modifiedProjectEntity.getName(),
-                    modifiedProjectEntity.getId()
-                ).isEmpty()) {
-                    throw new ServiceException(ServiceException.Exceptions.PROJECT_MODIFY_SAME_NAME);
                 } else {
-                    projectRepository.saveAndFlush(modifiedProjectEntity);
+                    boolean isSameNamedProject = isProjectWithNameAndNotId(
+                        modifiedProjectEntity.getName(), modifiedProjectEntity.getId()
+                    );
+                    if (isSameNamedProject) {
+                        throw new ServiceException(ServiceException.Exceptions.PROJECT_MODIFY_SAME_NAME);
+                    } else {
+                        projectRepository.saveAndFlush(modifiedProjectEntity);
+                    }
                 }
             }
         }
@@ -226,6 +230,34 @@ public class ProjectService {
         @Nullable ProjectEntity result = null;
         try {
             result = forkJoinPool.submit(new CallableCore(name)).get();
+        } catch (ExecutionException ee) {
+            ServiceException.handleExecutionException(ee);
+        }
+        return result;
+    }
+
+    /**
+     * Egy projekt lekérdezése: van-e már ilyen nevű projekt?
+     */
+    public synchronized @NonNull Boolean isProjectWithNameAndNotId(final @NonNull String name, final @NonNull Long id)
+        throws ExecutionException, InterruptedException {
+        final class CallableCore implements Callable<Boolean> {
+            private final @NonNull String name;
+            private final @NonNull Long id;
+
+            public CallableCore(final @NonNull String name, final @NonNull Long id) {
+                this.name = name;
+                this.id = id;
+            }
+
+            @Override
+            public Boolean call() {
+                return !projectRepository.findAllByNameAndIdNot(name, id).isEmpty();
+            }
+        }
+        @NonNull Boolean result = false;
+        try {
+            result = forkJoinPool.submit(new CallableCore(name, id)).get();
         } catch (ExecutionException ee) {
             ServiceException.handleExecutionException(ee);
         }

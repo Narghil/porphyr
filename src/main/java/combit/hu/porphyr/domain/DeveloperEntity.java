@@ -42,10 +42,10 @@ public class DeveloperEntity {
     @Column
     private @NonNull String name;
 
+    @JsonBackReference
+    @OneToMany(mappedBy = "developerEntity")
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @OneToMany(mappedBy = "developerEntity")
-    @JsonBackReference
     private @NonNull List<ProjectDeveloperEntity> developerProjects;
 
     public DeveloperEntity(final @NonNull String name) {

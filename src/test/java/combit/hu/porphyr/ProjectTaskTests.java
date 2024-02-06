@@ -1,6 +1,9 @@
 package combit.hu.porphyr;
 
+import combit.hu.porphyr.domain.DeveloperEntity;
+import combit.hu.porphyr.domain.ProjectDeveloperEntity;
 import combit.hu.porphyr.domain.ProjectEntity;
+import combit.hu.porphyr.domain.ProjectTaskDeveloperEntity;
 import combit.hu.porphyr.domain.ProjectTaskEntity;
 import combit.hu.porphyr.repository.ProjectRepository;
 import combit.hu.porphyr.repository.ProjectTaskRepository;
@@ -23,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 import static org.mockito.Mockito.times;
@@ -65,6 +69,223 @@ class ProjectTaskTests {
     void setupEach() {
         entityManager.clear();
         Mockito.clearInvocations(spyProjectTaskRepository);
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    void projectTaskEntityQueriesTest() {
+        //GetProjectEntity
+        assertEquals(
+            "1. projekt",
+            Objects.requireNonNull(projectTaskRepository.findAllById(1L)).getProjectEntity().getName()
+        );
+        assertEquals(
+            "1. projekt",
+            Objects.requireNonNull(projectTaskRepository.findAllById(2L)).getProjectEntity().getName()
+        );
+        assertEquals(
+            "2. projekt",
+            Objects.requireNonNull(projectTaskRepository.findAllById(3L)).getProjectEntity().getName()
+        );
+        assertEquals(
+            "2. projekt",
+            Objects.requireNonNull(projectTaskRepository.findAllById(4L)).getProjectEntity().getName()
+        );
+        assertEquals("Projekt feladattal", Objects.requireNonNull(projectTaskRepository.findAllById(5L))
+            .getProjectEntity().getName());
+        //GetProjectTaskDevelopers
+        assertArrayEquals(
+            new String[]{"1. fejlesztő", "2. fejlesztő"},
+            Objects.requireNonNull(projectTaskRepository.findAllById(1L)).getProjectTaskDevelopers().stream()
+                .map(ProjectTaskDeveloperEntity::getProjectDeveloperEntity)
+                .map(ProjectDeveloperEntity::getDeveloperEntity)
+                .map(DeveloperEntity::getName).toArray(String[]::new)
+        );
+        assertArrayEquals(
+            new String[]{"2. fejlesztő", "3. fejlesztő"},
+            Objects.requireNonNull(projectTaskRepository.findAllById(2L)).getProjectTaskDevelopers().stream()
+                .map(ProjectTaskDeveloperEntity::getProjectDeveloperEntity)
+                .map(ProjectDeveloperEntity::getDeveloperEntity)
+                .map(DeveloperEntity::getName).toArray(String[]::new)
+        );
+        assertArrayEquals(
+            new String[]{"2. fejlesztő", "3. fejlesztő"},
+            Objects.requireNonNull(projectTaskRepository.findAllById(3L)).getProjectTaskDevelopers().stream()
+                .map(ProjectTaskDeveloperEntity::getProjectDeveloperEntity)
+                .map(ProjectDeveloperEntity::getDeveloperEntity)
+                .map(DeveloperEntity::getName).toArray(String[]::new)
+        );
+        assertArrayEquals(
+            new String[]{"3. fejlesztő", "4. fejlesztő"},
+            Objects.requireNonNull(projectTaskRepository.findAllById(4L)).getProjectTaskDevelopers().stream()
+                .map(ProjectTaskDeveloperEntity::getProjectDeveloperEntity)
+                .map(ProjectDeveloperEntity::getDeveloperEntity)
+                .map(DeveloperEntity::getName).toArray(String[]::new)
+        );
+        assertArrayEquals(
+            new String[]{},
+            Objects.requireNonNull(projectTaskRepository.findAllById(5L)).getProjectTaskDevelopers().stream()
+                .map(ProjectTaskDeveloperEntity::getProjectDeveloperEntity)
+                .map(ProjectDeveloperEntity::getDeveloperEntity)
+                .map(DeveloperEntity::getName).toArray(String[]::new)
+        );
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    void projectTaskRepositoryQueriesTest() {
+        //findAll
+        assertArrayEquals(
+            new String[]{
+                "1. projekt 1. feladat", "1. projekt 2. feladat",
+                "2. projekt 1. feladat", "2. projekt 2. feladat",
+                "Projekt feladattal - feladat"
+            },
+            projectTaskRepository.findAll().stream().map(ProjectTaskEntity::getName).toArray(String[]::new)
+        );
+        //findAllByProjectEntity
+        @NonNull ProjectEntity projectEntity = Objects.requireNonNull(projectRepository.findAllById(1L));
+        assertArrayEquals(
+            new String[]{"1. projekt 1. feladat", "1. projekt 2. feladat"},
+            projectTaskRepository.findAllByProjectEntity(projectEntity)
+                .stream()
+                .map(ProjectTaskEntity::getName)
+                .toArray(String[]::new)
+        );
+        projectEntity = Objects.requireNonNull(projectRepository.findAllById(2L));
+        assertArrayEquals(
+            new String[]{"2. projekt 1. feladat", "2. projekt 2. feladat"},
+            projectTaskRepository.findAllByProjectEntity(projectEntity)
+                .stream()
+                .map(ProjectTaskEntity::getName)
+                .toArray(String[]::new)
+        );
+        projectEntity = Objects.requireNonNull(projectRepository.findAllById(3L));
+        assertArrayEquals(
+            new String[]{},
+            projectTaskRepository.findAllByProjectEntity(projectEntity)
+                .stream()
+                .map(ProjectTaskEntity::getName)
+                .toArray(String[]::new)
+        );
+        projectEntity = Objects.requireNonNull(projectRepository.findAllById(4L));
+        assertArrayEquals(
+            new String[]{"Projekt feladattal - feladat"},
+            projectTaskRepository.findAllByProjectEntity(projectEntity)
+                .stream()
+                .map(ProjectTaskEntity::getName)
+                .toArray(String[]::new)
+        );
+        //findAllById
+        // --assertEquals("1. projekt 1. feladat", Objects.requireNonNull(projectTaskRepository.findAllById(1L)).getName());
+        // --assertEquals("1. projekt 2. feladat", Objects.requireNonNull(projectTaskRepository.findAllById(2L)).getName());
+        assertEquals("2. projekt 1. feladat", Objects.requireNonNull(projectTaskRepository.findAllById(3L)).getName());
+        // --assertEquals("2. projekt 2. feladat", Objects.requireNonNull(projectTaskRepository.findAllById(4L)).getName());
+        assertEquals(
+            "Projekt feladattal - feladat",
+            Objects.requireNonNull(projectTaskRepository.findAllById(5L)).getName()
+        );
+        //findAllByProjectEntityAndName
+        projectEntity = Objects.requireNonNull(projectRepository.findAllByName("1. projekt")).get(0);
+        assertEquals(
+            "1. projekt 1. feladat",
+            Objects.requireNonNull(projectTaskRepository.findAllByProjectEntityAndName(projectEntity,
+                "1. projekt 1. feladat")).getName()
+        );
+        assertEquals(
+            "1. projekt 2. feladat",
+            Objects.requireNonNull(projectTaskRepository.findAllByProjectEntityAndName(projectEntity,
+                "1. projekt 2. feladat")).getName()
+        );
+        projectEntity = Objects.requireNonNull(projectRepository.findAllByName("2. projekt")).get(0);
+        assertEquals(
+            "2. projekt 1. feladat",
+            Objects.requireNonNull(projectTaskRepository.findAllByProjectEntityAndName(projectEntity,
+                "2. projekt 1. feladat")).getName()
+        );
+        assertEquals(
+            "2. projekt 2. feladat",
+            Objects.requireNonNull(projectTaskRepository.findAllByProjectEntityAndName(projectEntity,
+                "2. projekt 2. feladat")).getName()
+        );
+        projectEntity = Objects.requireNonNull(projectRepository.findAllByName("Projekt feladattal")).get(0);
+        assertEquals(
+            "Projekt feladattal - feladat",
+            Objects.requireNonNull(projectTaskRepository.findAllByProjectEntityAndName(projectEntity,
+                "Projekt feladattal - feladat")).getName()
+        );
+        assertNull(projectTaskRepository.findAllByProjectEntityAndName(projectEntity, "1. projekt 1. feladat"));
+        //findAllByProjectEntityAndNameAndIdNot
+        projectEntity = Objects.requireNonNull(projectRepository.findAllByName("1. projekt")).get(0);
+        assertNull( projectTaskRepository.findAllByProjectEntityAndNameAndIdNot(projectEntity,"1. projekt 1. feladat", 1L));
+        assertNull( projectTaskRepository.findAllByProjectEntityAndNameAndIdNot(projectEntity,"1. projekt 2. feladat", 2L));
+        assertEquals( 1L, Objects.requireNonNull(projectTaskRepository.findAllByProjectEntityAndNameAndIdNot(
+            projectEntity,
+            "1. projekt 1. feladat",
+            0L
+        )).getId());
+        assertEquals( 2L, Objects.requireNonNull(projectTaskRepository.findAllByProjectEntityAndNameAndIdNot(
+            projectEntity,
+            "1. projekt 2. feladat",
+            0L
+        )).getId());
+        projectEntity = Objects.requireNonNull(projectRepository.findAllByName("2. projekt")).get(0);
+        assertNull( projectTaskRepository.findAllByProjectEntityAndNameAndIdNot(projectEntity,"1. projekt 1. feladat", 3L));
+        assertNull( projectTaskRepository.findAllByProjectEntityAndNameAndIdNot(projectEntity,"2. projekt 2. feladat", 4L));
+        assertEquals( 3L, Objects.requireNonNull(projectTaskRepository.findAllByProjectEntityAndNameAndIdNot(
+            projectEntity,
+            "2. projekt 1. feladat",
+            0L
+        )).getId());
+        assertEquals( 4L, Objects.requireNonNull(projectTaskRepository.findAllByProjectEntityAndNameAndIdNot(
+            projectEntity,
+            "2. projekt 2. feladat",
+            0L
+        )).getId());
+        projectEntity = Objects.requireNonNull(projectRepository.findAllByName("Projekt feladattal")).get(0);
+        assertNull( projectTaskRepository.findAllByProjectEntityAndNameAndIdNot(projectEntity,"Projekt feladattal - feladat", 5L));
+        assertEquals( 5L, Objects.requireNonNull(projectTaskRepository.findAllByProjectEntityAndNameAndIdNot(
+            projectEntity,
+            "Projekt feladattal - feladat",
+            0L
+        )).getId());
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    void projectTaskServiceQueriesTest() throws ExecutionException, InterruptedException {
+        //getProjectTasks
+        assertArrayEquals(
+            new String[]{
+                "1. projekt 1. feladat", "1. projekt 2. feladat",
+                "2. projekt 1. feladat", "2. projekt 2. feladat",
+                "Projekt feladattal - feladat"
+            },
+            spiedProjectTaskService.getProjectTasks().stream().map( ProjectTaskEntity::getName).toArray(String[]::new)
+        );
+        //getProjectTaskById
+        assertNotNull(spiedProjectTaskService.getProjectTaskById(1L));
+        //getProjectTaskByProjectEntityAndName
+        ProjectEntity projectEntity = projectRepository.findAllById(1L);
+        assertNotNull(projectEntity);
+        assertNotNull(spiedProjectTaskService.getProjectTaskByProjectEntityAndName(
+            projectEntity,
+            "1. projekt 1. feladat"
+        ));
+        //getProjectTasksByProjectId
+        assertEquals(2, spiedProjectTaskService.getProjectTasksByProjectEntity(projectEntity).size());
+        projectEntity = projectRepository.findAllById(2L);
+        assertNotNull(projectEntity);
+        assertEquals(2, spiedProjectTaskService.getProjectTasksByProjectEntity(projectEntity).size());
+        projectEntity = projectRepository.findAllById(3L);
+        assertNotNull(projectEntity);
+        assertEquals(0, spiedProjectTaskService.getProjectTasksByProjectEntity(projectEntity).size());
+        projectEntity = projectRepository.findAllById(4L);
+        assertNotNull(projectEntity);
+        assertEquals(1, spiedProjectTaskService.getProjectTasksByProjectEntity(projectEntity).size());
     }
 
     @Test
@@ -303,33 +524,5 @@ class ProjectTaskTests {
         verify(spyProjectTaskRepository, times(1)).deleteById(projectTaskId);
         // - Minden hibalehetőség tesztelve volt:
         assertDoesNotThrow(() -> ServiceException.isAllExceptionsThrown(ServiceException.ExceptionGroups.PROJECTTASKS_DELETE));
-    }
-
-    @Test
-    @Transactional
-    @Rollback
-    void projectTaskServiceQueriesTest() throws ExecutionException, InterruptedException {
-        //getProjectTasks
-        assertEquals(5, spiedProjectTaskService.getProjectTasks().size());
-        //getProjectTaskById
-        assertNotNull(spiedProjectTaskService.getProjectTaskById(1L));
-        //getProjectTaskByProjectEntityAndName
-        ProjectEntity projectEntity = projectRepository.findAllById(1L);
-        assertNotNull(projectEntity);
-        assertNotNull(spiedProjectTaskService.getProjectTaskByProjectEntityAndName(
-            projectEntity,
-            "1. projekt 1. feladat"
-        ));
-        //getProjectTasksByProjectId
-        assertEquals(2, spiedProjectTaskService.getProjectTasksByProjectEntity(projectEntity).size());
-        projectEntity = projectRepository.findAllById(2L);
-        assertNotNull(projectEntity);
-        assertEquals(2, spiedProjectTaskService.getProjectTasksByProjectEntity(projectEntity).size());
-        projectEntity = projectRepository.findAllById(3L);
-        assertNotNull(projectEntity);
-        assertEquals(0, spiedProjectTaskService.getProjectTasksByProjectEntity(projectEntity).size());
-        projectEntity = projectRepository.findAllById(4L);
-        assertNotNull(projectEntity);
-        assertEquals(1, spiedProjectTaskService.getProjectTasksByProjectEntity(projectEntity).size());
     }
 }
