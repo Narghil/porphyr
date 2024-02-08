@@ -1,21 +1,7 @@
 <!DOCTYPE html>
-<html lang="hu" style="visibility:hidden">
-<head>
-    <title data-th-text="#{MainPageTitle}">MainPageTitle</title>
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
-    <script>
-        function loadHead(){$("head").load("_head.html");}
-        function doVisible(){ document.documentElement.style.visibility = "visible"; }
-		window.addEventListener('load', function(){ document.documentElement.style.visibility = "visible"; })
-        $(window).on('load', loadHead() );
-    </script>
-</head>
+<html lang="hu" data-layout-decorate="layouts/main_decorator">
 <body>
-
-<div class="container-sm">
-    <header>
-        <p data-th-text="#{MainPageTitle}">headerText</p>
-    </header>
+<div data-layout-fragment="mainContent">
 
     <nav class="navbar bg-light justify-content-center p-3">
         <a class="btn btn-outline-secondary" data-th-href="@{'/projects'}">Projektek</a>
@@ -23,11 +9,7 @@
         <a class="btn btn-outline-secondary" data-th-href="@{'/developers'}">Fejlesztők</a>
     </nav>
 
-    <br/>
-    <footer>
-        <p data-th-text="#{footerText}">footerText</p>
-    </footer>
 </div>
-
 </body>
 </html>
+

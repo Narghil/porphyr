@@ -1,37 +1,23 @@
 <!DOCTYPE html>
-<html lang="hu" style="visibility:hidden">
-<head>
-    <title data-th-text="#{MainPageTitle}">MainPageTitle</title>
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
-    <script>
-        function loadHead(){$("head").load("_head.html");}
-        function doVisible(){ document.documentElement.style.visibility = "visible"; }
-        window.addEventListener('load', function(){ document.documentElement.style.visibility = "visible"; })
-        $(window).on('load', loadHead() );
-    </script>
-</head>
+<html lang="hu" data-layout-decorate="layouts/main_decorator">
 <body>
-
-<div class="container">
-
+<div data-layout-fragment="mainContent">
     <nav class="navbar navbar-default">
         <div class="container-fluid">
             <div class="navbar-header">
                 <div class="navbar-brand">Részletes hibaleírás</div>
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-5">
-                <p class="navbar-text navbar-right" data-th-text="#{your_ip}">IP címed: <a href="#" class="navbar-link">127.0.0.1</a>
+                <p class="navbar-text navbar-right" data-th-text="#{your_ip}">IP címed: <a href="#"
+                                                                                           class="navbar-link">127.0.0.1</a>
                 </p>
             </div>
         </div>
     </nav>
-
-
     <article>
         <header>
             <h1 data-th-text="${error}">Error</h1>
         </header>
-
         <section>
             <p data-th-text="${message}">Message</p>
             <p data-th-text="${path}">Path</p>
@@ -42,13 +28,6 @@
             <br/>
         </section>
     </article>
-    <footer>
-        <p data-th-text="#{footerText}">Készült a Combit Zrt. megbízásából</p>
-    </footer>
-
 </div>
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 </body>
 </html>

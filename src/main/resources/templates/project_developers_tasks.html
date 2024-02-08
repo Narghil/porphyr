@@ -1,23 +1,7 @@
 <!DOCTYPE html>
-<html lang="hu" style="visibility:hidden">
-<head>
-    <title data-th-text="#{MainPageTitle}">MainPageTitle</title>
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
-    <script>
-        function loadHead(){$("head").load("_head.html");}
-        window.addEventListener('load', function(){ document.documentElement.style.visibility = "visible"; })
-        $(window).on('load', loadHead() );
-    </script>
-</head>
-<body
-    onload="if( (document.getElementById('setMessageModal').innerText) == 'ON')
-      { document.getElementById('setMessageModal').click(); }"
->
-
-<div class="container">
-    <header>
-        <p data-th-text="#{MainPageTitle}">headerText</p>
-    </header>
+<html lang="hu" data-layout-decorate="layouts/main_decorator">
+<body>
+<div data-layout-fragment="mainContent">
     <nav class="navbar bg-light navbar-light" style="padding-left:1rem">
         <a class="navbar-brand"><span data-th-text="${project.name}+ ', ' + ${developer.name} + ' feladatai:'">Project fejlesztői</span></a>
         <a class="btn btn-outline-secondary" data-th-href="@{/project_developers}">
@@ -87,7 +71,7 @@
         </article>
     </div>
 
-    <footer>
+    <div class="footer">
         <div data-th-switch="${assignAbleProjectTasks}">
             <div data-th-case="'0'">
                 <p>A fejlesztőhöz a projektből minden lehetséges feladat hozzá van rendelve.</p>
@@ -99,46 +83,41 @@
                 </a></p>
             </div>
         </div>
-        <p data-th-text="#{footerText}">footerText</p>
-    </footer>
+    </div>
+
+    <!-- Data Form -->
+    <form hidden name="taskSpendTime" data-th-action="@{/selectProjectDeveloperTaskOperation}"
+          data-th-object="${dataFromTemplate}" method="post" class="form">
+        <label for="operation"></label>
+        <input type="text" class="form-control" id="operation" name="operation" data-th-field="*{operation}"
+               placeholder="Operation"/>
+        <label for="id"></label>
+        <input type="text" class="form-control" id="id" name="id"
+               data-th-field="*{id}" placeholder="projectTaskDeveloper ID"/>
+        <label for="longData"></label>
+        <input type="number" class="form-control" id="longData" name="longData" data-th-field="*{longData}"
+               placeholder="0"/>
+        <button type="submit" id="submitButton" class="btn btn-outline-secondary">Idő rögzítése</button>
+    </form>
+
+    <script>
+        function setFields( operation, id ) {
+            var timeFieldName = "spendTime" + id;
+            var timeFieldValue = document.getElementById( timeFieldName ).getAttribute('value');
+
+            document.getElementById("operation").setAttribute('value', operation );
+            document.getElementById("id").setAttribute('value', id );
+            document.getElementById("longData").setAttribute('value', timeFieldValue );
+            document.getElementById("submitButton").click();
+        }
+
+        function setTime( event, id ){
+            var input = event.target;
+            var timeFieldName = "spendTime" + id;
+            document.getElementById(timeFieldName).setAttribute('value', input.value );
+        }
+    </script>
+
 </div>
-
-
-<!-- Modal window -->
-<section data-th-replace="~{common/error_modal_window::error_modal_window}"></section>
-
-<!-- Data Form -->
-<form hidden name="taskSpendTime" data-th-action="@{/selectProjectDeveloperTaskOperation}"
-      data-th-object="${dataFromTemplate}" method="post" class="form">
-    <label for="operation"></label>
-    <input type="text" class="form-control" id="operation" name="operation" data-th-field="*{operation}"
-           placeholder="Operation"/>
-    <label for="id"></label>
-    <input type="text" class="form-control" id="id" name="id"
-           data-th-field="*{id}" placeholder="projectTaskDeveloper ID"/>
-    <label for="longData"></label>
-    <input type="number" class="form-control" id="longData" name="longData" data-th-field="*{longData}"
-           placeholder="0"/>
-    <button type="submit" id="submitButton" class="btn btn-outline-secondary">Idő rögzítése</button>
-</form>
-
-<script>
-    function setFields( operation, id ) {
-        var timeFieldName = "spendTime" + id;
-        var timeFieldValue = document.getElementById( timeFieldName ).getAttribute('value');
-
-        document.getElementById("operation").setAttribute('value', operation );
-        document.getElementById("id").setAttribute('value', id );
-        document.getElementById("longData").setAttribute('value', timeFieldValue );
-        document.getElementById("submitButton").click();
-    }
-
-    function setTime( event, id ){
-        var input = event.target;
-        var timeFieldName = "spendTime" + id;
-        document.getElementById(timeFieldName).setAttribute('value', input.value );
-    }
-</script>
-
 </body>
 </html>

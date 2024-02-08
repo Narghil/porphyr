@@ -27,9 +27,11 @@ public class SecurityConfigurator {
             {
                 auth.antMatchers("/").authenticated();
                 auth.antMatchers("/devs").hasRole("ADMIN");
-                auth.anyRequest().authenticated();
+                auth.anyRequest().permitAll();
             })
         ;
+        httpSecurity.logout().permitAll();
+        httpSecurity.formLogin().permitAll();
         return httpSecurity.build();
     }
 

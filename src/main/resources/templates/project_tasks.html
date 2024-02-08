@@ -1,23 +1,7 @@
 <!DOCTYPE html>
-<html lang="hu" style="visibility:hidden">
-<head>
-    <title data-th-text="#{MainPageTitle}">MainPageTitle</title>
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
-    <script>
-        function loadHead(){$("head").load("_head.html");}
-        window.addEventListener('load', function(){ document.documentElement.style.visibility = "visible"; })
-        $(window).on('load', loadHead() );
-    </script>
-</head>
-
-<body
-    onload="if( (document.getElementById('setMessageModal').innerText) == 'ON')
-      { document.getElementById('setMessageModal').click(); }"
->
-<div class="container">
-    <header>
-        <p data-th-text="#{MainPageTitle}">headerText</p>
-    </header>
+<html lang="hu" data-layout-decorate="layouts/main_decorator">
+<body>
+<div data-layout-fragment="mainContent">
     <nav class="navbar bg-light navbar-light" style="padding-left:1rem">
         <a class="navbar-brand"><span data-th-text="${project.name}+ ' feladatai:'">Project feladatai:</span></a>
         <a class="btn btn-outline-secondary" data-th-href="@{/projects}">
@@ -89,14 +73,6 @@
         <img data-th-src="@{icons/new.svg}" src="../static/icons/new.svg" width="20" alt="" class="mb-1"/>
         <span>Új feladat</span>
     </a>
-
-    <footer class="mt-3">
-        <p data-th-text="#{footerText}">footerText</p>
-    </footer>
-
-    <!-- Modal window -->
-    <section data-th-replace="~{common/error_modal_window::error_modal_window}"></section>
-
     <!-- jS: setFields() -->
     <script>
         function setFields( operation, projectTaskId ) {
@@ -113,7 +89,6 @@
         <input type="number" class="form-control" id="id" name="id">
         <button id="submit_button"></button>
     </form>
-
 </div>
 </body>
 </html>

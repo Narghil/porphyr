@@ -1,19 +1,7 @@
 <!DOCTYPE html>
-<html lang="hu" style="visibility:hidden">
-<head>
-    <title data-th-text="#{MainPageTitle}">MainPageTitle</title>
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
-    <script>
-        function loadHead(){$("head").load("_head.html");}
-        function doVisible(){ document.documentElement.style.visibility = "visible"; }
-        window.addEventListener('load', function(){ document.documentElement.style.visibility = "visible"; })
-        $(window).on('load', loadHead() );
-    </script>
-</head>
+<html lang="hu" data-layout-decorate="layouts/main_decorator">
 <body>
-
-<div class="container">
-    <br/>
+<div data-layout-fragment="mainContent">
     <article>
         <h4 data-th-text="${errMessage}">Ez itt a gond</h4>
         <br/>
@@ -22,10 +10,6 @@
         </a></h6>
         <br/>
     </article>
-    <footer>
-        <p data-th-text="#{footerText}">Készült a Combit Zrt megbízásából</p>
-    </footer>
 </div>
-
 </body>
 </html>

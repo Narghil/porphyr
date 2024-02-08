@@ -43,7 +43,6 @@ public class HomeControllerRoot {
         return "porphyr";
     }
 
-    //@Secured("ROLE_USER")
     @RequestMapping("/projects")
     public @NonNull String projects(Model model) throws ExecutionException, InterruptedException {
         model.addAttribute("error", webErrorBean.getWebErrorData());
