@@ -33,7 +33,7 @@ import static org.mockito.Mockito.verify;
 
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@ActiveProfiles("service_test")
+@ActiveProfiles("test")
 class ProjectDeveloperTest {
     @Autowired
     private @NonNull EntityManager entityManager;

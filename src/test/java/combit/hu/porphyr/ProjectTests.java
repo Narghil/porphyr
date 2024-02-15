@@ -34,7 +34,7 @@ import static combit.hu.porphyr.TestConstants.*;
 
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@ActiveProfiles("service_test")
+@ActiveProfiles("test")
 class ProjectTests {
     @Autowired
     private @NonNull EntityManager entityManager;

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="hu" data-layout-decorate="layouts/login_decorator">
+
+<body>
+<div data-layout-fragment="loginContent">
+    <div class="container">
+        <div id="loginModal" class="modal" tabindex="1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form name="login" data-th-action="@{/logout}" method="post" class="form col-md-12 center-block">
+                        <div class="modal-header">
+                            <h4 class="text-center">Kijelentkezés</h4>
+                        </div>
+                        <div class="modal-body alert-sm alert-danger text-center">
+                            Valóban kijelentkezik?
+                        </div>
+                        <div class="modal-body"></div>
+                        <div class="modal-footer">
+                            <button class="btn" data-dismiss="modal" type="reset" onclick="history.go(-1)">Mégsem</button>
+                            <button id="username" class="btn btn-primary btn-md btn-block" type="submit">Kijelentkezés</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

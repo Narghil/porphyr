@@ -5,9 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class PorphyrApplication {
-
-	public static void main(String[] args) {
-		SpringApplication.run(PorphyrApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(PorphyrApplication.class, args);
+    }
 }

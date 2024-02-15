@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@ActiveProfiles("service_test")
+@ActiveProfiles("test")
 class ProjectTaskTests {
     @Autowired
     private @NonNull EntityManager entityManager;
