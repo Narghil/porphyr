@@ -1,6 +1,6 @@
 databaseChangeLog:
 - changeSet:
-    id: 11
+    id: 14
     author: Pernyei Gabor
     changes:
     # ---------------------
@@ -297,3 +297,85 @@ databaseChangeLog:
             name: SPEND_TIME
             valueNumeric: 1
         tableName: PROJECTTASKDEVELOPERS
+    # ------------------
+    # Inserts into USERS
+    # ------------------
+    - insert:
+        columns:
+        - column:
+            name: ID
+            valueNumeric: 1
+        - column:
+            name: LOGIN_NAME
+            value: user
+        - column:
+            name: FULL_NAME
+            value: Felhasználó
+        - column:
+            name: PASSWORD
+            value: "{bcrypt}$2a$10$F9t0jXQI4o95P0mhzFkTzuuXUpm8aCadvTpyk4B3jaPU6uKb00APa"
+        tableName: USERS
+    - insert:
+        columns:
+        - column:
+            name: ID
+            valueNumeric: 2
+        - column:
+            name: LOGIN_NAME
+            value: admin
+        - column:
+            name: FULL_NAME
+            value: Rendszergazda
+        - column:
+            name: PASSWORD
+            value: "{bcrypt}$2a$10$xU/NYqThNXLNFhBMyORlfupt5NTIE93fiwabOmTB1/fRs03YoqodC"
+        tableName: USERS
+    # ------------------
+    # Inserts into ROLES
+    # ------------------
+    - insert:
+        columns:
+        - column:
+            name: ID
+            valueNumeric: 1
+        - column:
+            name: ROLE
+            value: USER
+        tableName: ROLES
+    - insert:
+        columns:
+        - column:
+            name: ID
+            valueNumeric: 2
+        - column:
+            name: ROLE
+            value: ADMIN
+        tableName: ROLES
+    # ------------------------
+    # Inserts into USERS_ROLES
+    # ------------------------
+    - insert:
+        columns:
+        - column:
+            name: ID
+            valueNumeric: 1
+        - column:
+            name: USER_ID
+            valueNumeric: 1
+        - column:
+            name: ROLE_ID
+            valueNumeric: 1
+        tableName: USERS_ROLES
+    - insert:
+        columns:
+        - column:
+            name: ID
+            valueNumeric: 2
+        - column:
+            name: USER_ID
+            valueNumeric: 2
+        - column:
+            name: ROLE_ID
+            valueNumeric: 2
+        tableName: USERS_ROLES
+        

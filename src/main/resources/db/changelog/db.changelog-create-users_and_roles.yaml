@@ -1,0 +1,134 @@
+databaseChangeLog:
+- changeSet:
+    id: 11
+    author: Pernyei Gabor
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: PK_USERS_ID
+            name: ID
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+              unique: false
+            name: FULL_NAME
+            type: VARCHAR(100)
+        - column:
+            constraints:
+              nullable: false
+              unique: true
+            name: LOGIN_NAME
+            type: VARCHAR(20)
+        - column:
+            constraints:
+              nullable: true
+              unique: true
+            name: EMAIL
+            type: VARCHAR(100)
+        - column:
+            constraints:
+              nullable: false
+              unique: false
+            name: PASSWORD
+            type: VARCHAR(100)
+        tableName: USERS
+    - createIndex:
+        columns:
+        - column:
+            name: LOGIN_NAME
+        indexName: IDX_USERS_LOGIN_NAME
+        tableName: USERS
+    - createIndex:
+        columns:
+        - column:
+            name: EMAIL
+        indexName: IDX_USERS_EMAIL
+        tableName: USERS
+- changeSet:
+    id: 12
+    author: Pernyei Gabor
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: PK_ROLES_ID
+            name: ID
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+              unique: true
+            name: ROLE
+            type: VARCHAR(20)
+        tableName: ROLES
+- changeSet:
+    id: 13
+    author: Pernyei Gabor
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: PK_USERS_ROLES_ID
+            name: ID
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+              unique: false
+            name: USER_ID
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+              unique: false
+            name: ROLE_ID
+            type: BIGINT
+        tableName: USERS_ROLES
+    - createIndex:
+        columns:
+        - column:
+            name: USER_ID
+        indexName: IDX_USERS_ROLES_USER_ID
+        tableName: USERS_ROLES
+    - createIndex:
+        columns:
+        - column:
+            name: ROLE_ID
+        indexName: IDX_USERS_ROLES_ROLE_ID
+        tableName: USERS_ROLES
+    - addForeignKeyConstraint:
+        baseColumnNames: USER_ID
+        baseTableName: USERS_ROLES
+        constraintName: FK_USERS_ROLES_USER_ID
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: USERS
+        validate: true
+    - addForeignKeyConstraint:
+        baseColumnNames: ROLE_ID
+        baseTableName: USERS_ROLES
+        constraintName: FK_USERS_ROLES_ROLE_ID
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: ROLES
+        validate: true

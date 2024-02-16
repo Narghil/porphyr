@@ -1,6 +1,6 @@
 databaseChangeLog:
 - changeSet:
-    id: 11
+    id: 14
     author: Pernyei Gabor
     changes:
     # ---------------------
@@ -8,9 +8,6 @@ databaseChangeLog:
     # ---------------------
     - insert:
         columns:
-        - column:
-            name: ID
-            valueNumeric: 1
         - column:
             name: NAME
             value: 1. projekt
@@ -21,23 +18,35 @@ databaseChangeLog:
     - insert:
         columns:
         - column:
-            name: ID
-            valueNumeric: 2
-        - column:
             name: NAME
             value: 2. projekt
         - column:
             name: DESCRIPTION
             value: Második projekt
         tableName: PROJECTS
+    - insert:
+        columns:
+        - column:
+            name: NAME
+            value: Projekt fejlesztővel
+        - column:
+            name: DESCRIPTION
+            value: Projekt fejlesztővel
+        tableName: PROJECTS
+    - insert:
+        columns:
+        - column:
+            name: NAME
+            value: Projekt feladattal
+        - column:
+            name: DESCRIPTION
+            value: Projekt feladattal
+        tableName: PROJECTS
     # -------------------------
     # Inserts into PROJECTTASKS
     # -------------------------
     - insert:
         columns:
-        - column:
-            name: ID
-            valueNumeric: 1
         - column:
             name: PROJECT_ID
             valueNumeric: 1
@@ -51,9 +60,6 @@ databaseChangeLog:
     - insert:
         columns:
         - column:
-            name: ID
-            valueNumeric: 2
-        - column:
             name: PROJECT_ID
             valueNumeric: 1
         - column:
@@ -65,9 +71,6 @@ databaseChangeLog:
         tableName: PROJECTTASKS
     - insert:
         columns:
-        - column:
-            name: ID
-            valueNumeric: 3
         - column:
             name: PROJECT_ID
             valueNumeric: 2
@@ -81,9 +84,6 @@ databaseChangeLog:
     - insert:
         columns:
         - column:
-            name: ID
-            valueNumeric: 4
-        - column:
             name: PROJECT_ID
             valueNumeric: 2
         - column:
@@ -93,14 +93,23 @@ databaseChangeLog:
             name: DESCRIPTION
             value: Második projekt második feladat
         tableName: PROJECTTASKS
+    - insert:
+        columns:
+        - column:
+            name: PROJECT_ID
+            valueNumeric: 4
+        - column:
+            name: NAME
+            value: Projekt feladattal - feladat
+        - column:
+            name: DESCRIPTION
+            value: Projekt feladattal - feladat
+        tableName: PROJECTTASKS
     # -----------------------
     # Inserts into DEVELOPERS
     # -----------------------
     - insert:
         columns:
-        - column:
-            name: ID
-            valueNumeric: 1
         - column:
             name: NAME
             value: 1. fejlesztő
@@ -108,26 +117,17 @@ databaseChangeLog:
     - insert:
         columns:
         - column:
-            name: ID
-            valueNumeric: 2
-        - column:
             name: NAME
             value: 2. fejlesztő
         tableName: DEVELOPERS
     - insert:
         columns:
         - column:
-            name: ID
-            valueNumeric: 3
-        - column:
             name: NAME
             value: 3. fejlesztő
         tableName: DEVELOPERS
     - insert:
         columns:
-        - column:
-            name: ID
-            valueNumeric: 4
         - column:
             name: NAME
             value: 4. fejlesztő
@@ -138,9 +138,6 @@ databaseChangeLog:
     - insert:
         columns:
         - column:
-            name: ID
-            valueNumeric: 1
-        - column:
             name: PROJECT_ID
             valueNumeric: 1
         - column:
@@ -149,9 +146,6 @@ databaseChangeLog:
         tableName: PROJECTDEVELOPERS
     - insert:
         columns:
-        - column:
-            name: ID
-            valueNumeric: 2
         - column:
             name: PROJECT_ID
             valueNumeric: 1
@@ -162,9 +156,6 @@ databaseChangeLog:
     - insert:
         columns:
         - column:
-            name: ID
-            valueNumeric: 3
-        - column:
             name: PROJECT_ID
             valueNumeric: 1
         - column:
@@ -174,35 +165,35 @@ databaseChangeLog:
     - insert:
         columns:
         - column:
-            name: ID
+            name: PROJECT_ID
+            valueNumeric: 2
+        - column:
+            name: DEVELOPER_ID
+            valueNumeric: 2
+        tableName: PROJECTDEVELOPERS
+    - insert:
+        columns:
+        - column:
+            name: PROJECT_ID
+            valueNumeric: 2
+        - column:
+            name: DEVELOPER_ID
+            valueNumeric: 3
+        tableName: PROJECTDEVELOPERS
+    - insert:
+        columns:
+        - column:
+            name: PROJECT_ID
+            valueNumeric: 2
+        - column:
+            name: DEVELOPER_ID
             valueNumeric: 4
-        - column:
-            name: PROJECT_ID
-            valueNumeric: 2
-        - column:
-            name: DEVELOPER_ID
-            valueNumeric: 2
         tableName: PROJECTDEVELOPERS
     - insert:
         columns:
         - column:
-            name: ID
-            valueNumeric: 5
-        - column:
             name: PROJECT_ID
-            valueNumeric: 2
-        - column:
-            name: DEVELOPER_ID
             valueNumeric: 3
-        tableName: PROJECTDEVELOPERS
-    - insert:
-        columns:
-        - column:
-            name: ID
-            valueNumeric: 6
-        - column:
-            name: PROJECT_ID
-            valueNumeric: 2
         - column:
             name: DEVELOPER_ID
             valueNumeric: 4
@@ -213,9 +204,6 @@ databaseChangeLog:
     - insert:
         columns:
         - column:
-            name: ID
-            valueNumeric: 2
-        - column:
             name: PROJECTTASK_ID
             valueNumeric: 1
         - column:
@@ -227,9 +215,6 @@ databaseChangeLog:
         tableName: PROJECTTASKDEVELOPERS
     - insert:
         columns:
-        - column:
-            name: ID
-            valueNumeric: 3
         - column:
             name: PROJECTTASK_ID
             valueNumeric: 1
@@ -243,9 +228,6 @@ databaseChangeLog:
     - insert:
         columns:
         - column:
-            name: ID
-            valueNumeric: 4
-        - column:
             name: PROJECTTASK_ID
             valueNumeric: 2
         - column:
@@ -257,9 +239,6 @@ databaseChangeLog:
         tableName: PROJECTTASKDEVELOPERS
     - insert:
         columns:
-        - column:
-            name: ID
-            valueNumeric: 5
         - column:
             name: PROJECTTASK_ID
             valueNumeric: 2
@@ -273,9 +252,6 @@ databaseChangeLog:
     - insert:
         columns:
         - column:
-            name: ID
-            valueNumeric: 6
-        - column:
             name: PROJECTTASK_ID
             valueNumeric: 3
         - column:
@@ -287,9 +263,6 @@ databaseChangeLog:
         tableName: PROJECTTASKDEVELOPERS
     - insert:
         columns:
-        - column:
-            name: ID
-            valueNumeric: 7
         - column:
             name: PROJECTTASK_ID
             valueNumeric: 3
@@ -303,9 +276,6 @@ databaseChangeLog:
     - insert:
         columns:
         - column:
-            name: ID
-            valueNumeric: 8
-        - column:
             name: PROJECTTASK_ID
             valueNumeric: 4
         - column:
@@ -317,9 +287,6 @@ databaseChangeLog:
         tableName: PROJECTTASKDEVELOPERS
     - insert:
         columns:
-        - column:
-            name: ID
-            valueNumeric: 9
         - column:
             name: PROJECTTASK_ID
             valueNumeric: 4
@@ -328,5 +295,5 @@ databaseChangeLog:
             valueNumeric: 6
         - column:
             name: SPEND_TIME
-            valueNumeric: 0
+            valueNumeric: 1
         tableName: PROJECTTASKDEVELOPERS
