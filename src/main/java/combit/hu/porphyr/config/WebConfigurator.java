@@ -3,11 +3,11 @@ package combit.hu.porphyr.config;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+// import org.springframework.web.servlet.config.annotation.EnableWebMvc
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-@EnableWebMvc
+//@EnableWebMvc
 @Configuration
 public class WebConfigurator implements WebMvcConfigurer{
 

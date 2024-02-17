@@ -37,15 +37,18 @@ public class HomeControllerRoot {
     @Resource(name = "getSessionData")
     SessionData sessionData;
 
+    private static final String ERROR = "error";
+
     @RequestMapping("/")
     public String root(Model model) {
         sessionData.setSelectedProjectId( 0L );
+        model.addAttribute(ERROR, webErrorBean.getWebErrorData());
         return "porphyr";
     }
 
     @RequestMapping("/projects")
     public @NonNull String projects(Model model) throws ExecutionException, InterruptedException {
-        model.addAttribute("error", webErrorBean.getWebErrorData());
+        model.addAttribute(ERROR, webErrorBean.getWebErrorData());
         model.addAttribute("projectsList", projectService.getProjects());
         model.addAttribute( "dataFromTemplate", sessionData.getDataFromTemplate());
         return "projects";
@@ -56,7 +59,7 @@ public class HomeControllerRoot {
     public @NonNull String developers(Model model) throws ExecutionException, InterruptedException {
         List<DeveloperEntity> developerList;
         developerList = developerService.getDevelopers();
-        model.addAttribute("error", webErrorBean.getWebErrorData());
+        model.addAttribute(ERROR, webErrorBean.getWebErrorData());
         model.addAttribute("developers", developerList);
         model.addAttribute( "dataFromTemplate", sessionData.getDataFromTemplate());
         return "developers";

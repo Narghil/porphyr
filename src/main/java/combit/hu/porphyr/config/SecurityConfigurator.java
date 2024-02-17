@@ -21,8 +21,9 @@ public class SecurityConfigurator {
         httpSecurity.authorizeHttpRequests(auth ->
         {
             auth.antMatchers("/").authenticated();
-            auth.antMatchers("/css").permitAll();
-            auth.antMatchers("/icons").permitAll();
+            //A login_decorator használ CSS-t, de ha nincs megadva rá az engedély, csak a belépés után éri el
+            //Eredmény: A belépés UTÁN tölti be a css-t, és text-ként megjeleníti, a fő oldal HELYETT.
+            auth.antMatchers("/css/**").permitAll();
             auth.requestMatchers(toH2Console()).hasAuthority("ADMIN");
             auth.antMatchers("/confirm_logout").permitAll();
             auth.antMatchers("/logged_out").permitAll();
