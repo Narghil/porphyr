@@ -163,7 +163,7 @@ public class DeveloperService {
     //------------- Lekérdezések -----------------
 
     /**
-     * Felhasználók listájának lekérdezése
+     * Fejlesztők listájának lekérdezése
      */
     public synchronized @NonNull List<DeveloperEntity> getDevelopers()
         throws ExecutionException, InterruptedException {
@@ -209,7 +209,7 @@ public class DeveloperService {
     }
 
     /**
-     * Egy felhasználó lekérdezése név szerint
+     * Egy fejlesztő lekérdezése név szerint
      */
     public synchronized @Nullable DeveloperEntity getDeveloperByName(final @NonNull String name)
         throws ExecutionException, InterruptedException {
@@ -240,7 +240,7 @@ public class DeveloperService {
     }
 
     /**
-     * Egy felhasználó lekérdezése: Van-e már ilyen nevű felhasználó?
+     * Egy fejlesztő lekérdezése: Van-e már ilyen nevű fejlesztő?
      */
     public synchronized @NonNull Boolean isDeveloperWithNameAndNotId(final @NonNull String name, final @NonNull Long id)
         throws ExecutionException, InterruptedException {

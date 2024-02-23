@@ -1,6 +1,6 @@
 databaseChangeLog:
 - changeSet:
-    id: 14
+    id: 18
     author: Pernyei Gabor
     changes:
     # ---------------------
@@ -303,8 +303,8 @@ databaseChangeLog:
     - insert:
         columns:
         - column:
-            name: ID
-            valueNumeric: 1
+            name: email
+            value: none@email.org
         - column:
             name: LOGIN_NAME
             value: user
@@ -318,8 +318,8 @@ databaseChangeLog:
     - insert:
         columns:
         - column:
-            name: ID
-            valueNumeric: 2
+            name: email
+            value: none@email.org
         - column:
             name: LOGIN_NAME
             value: admin
@@ -336,17 +336,11 @@ databaseChangeLog:
     - insert:
         columns:
         - column:
-            name: ID
-            valueNumeric: 1
-        - column:
             name: ROLE
             value: USER
         tableName: ROLES
     - insert:
         columns:
-        - column:
-            name: ID
-            valueNumeric: 2
         - column:
             name: ROLE
             value: ADMIN
@@ -357,9 +351,6 @@ databaseChangeLog:
     - insert:
         columns:
         - column:
-            name: ID
-            valueNumeric: 1
-        - column:
             name: USER_ID
             valueNumeric: 1
         - column:
@@ -369,13 +360,39 @@ databaseChangeLog:
     - insert:
         columns:
         - column:
-            name: ID
-            valueNumeric: 2
-        - column:
             name: USER_ID
             valueNumeric: 2
         - column:
             name: ROLE_ID
             valueNumeric: 2
         tableName: USERS_ROLES
-        
+    # -----------------------------
+    # Inserts into USERS_DEVELOPERS
+    # -----------------------------
+    - insert:
+        columns:
+        - column:
+            name: USER_ID
+            valueNumeric: 1
+        - column:
+            name: DEVELOPER_ID
+            valueNumeric: 1
+        tableName: USERS_DEVELOPERS
+    - insert:
+        columns:
+        - column:
+            name: USER_ID
+            valueNumeric: 2
+        - column:
+            name: DEVELOPER_ID
+            valueNumeric: 2
+        tableName: USERS_DEVELOPERS
+    - insert:
+        columns:
+        - column:
+            name: USER_ID
+            valueNumeric: 2
+        - column:
+            name: DEVELOPER_ID
+            valueNumeric: 3
+        tableName: USERS_DEVELOPERS

@@ -18,7 +18,8 @@ public class ServiceException extends IllegalArgumentException {
                                     PROJECTTASKS_INSERT, PROJECTTASKS_MODIFY, PROJECTTASKS_DELETE,
                                     PROJECTDEVELOPERS_INSERT, PROJECTDEVELOPERS_DELETE,
                                     PROJECTTASKDEVELOPERS_INSERT, PROJECTTASKDEVELOPERS_MODIFY, PROJECTTASKDEVELOPERS_DELETE,
-                                    CONTROLLERS
+                                    CONTROLLERS,
+                                    USERS_INSERT, USERS_MODIFY, USERS_DELETE
     }
     public enum Exceptions{
         PROJECT_INSERT_EMPTY_NAME( ExceptionGroups.PROJECT_INSERT, "A projekt neve nincs kitöltve, nem vihető fel!", 0),
@@ -82,6 +83,11 @@ public class ServiceException extends IllegalArgumentException {
         CONTROLLER_SELECTED_PROJECTTASK_NOT_EXISTS( ExceptionGroups.CONTROLLERS, "A kiválasztott feladat nem érhető el vagy törölték.", 0),
         CONTROLLER_SELECTED_PROJECTDEVELOPER_NOT_EXISTS( ExceptionGroups.CONTROLLERS, "A kiválasztott projekt-fejlesztő összerendelés nem érhető el vagy törölték.", 0),
         CONTROLLER_SELECTED_PROJECTTASKDEVELOPER_NOT_EXISTS( ExceptionGroups.CONTROLLERS, "A kiválasztott feladat-fejlesztő összerendelés nem érhető el vagy törölték.", 0),
+
+        USER_INSERT_SAME_LOGIN_NAME( ExceptionGroups.USERS_INSERT, "Már van felhasználó ezzel a belépési névvel!", 0),
+        USER_MODIFY_NOT_SAVED( ExceptionGroups.USERS_MODIFY, "A felhasználó még nincs elmentve, nem módosítható!", 0),
+        USER_MODIFY_SAME_LOGIN_NAME( ExceptionGroups.USERS_MODIFY, "Már van felhasználó ezzel a belépési névvel!", 0),
+        USER_DELETE_NOT_SAVED( ExceptionGroups.USERS_DELETE, "A felhasználó még nincs elmentve, nem törölhető!", 0),
         ;
 
         @Getter

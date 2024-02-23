@@ -9,15 +9,11 @@ import lombok.Setter;
 import lombok.ToString;
 import org.jetbrains.annotations.Nullable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A fejlesztők adatainak nyilvántartása. <br/>
@@ -52,6 +48,17 @@ public class DeveloperEntity {
         this.name = name;
         this.developerProjects = new ArrayList<>();
     }
+
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @ManyToMany( cascade = CascadeType.ALL, fetch = FetchType.EAGER )
+    @JoinTable(
+        name = "users_developers",
+        joinColumns = {@JoinColumn(name="developer_id")},
+        inverseJoinColumns = {@JoinColumn(name="user_id")}
+    )
+    private Set<UserEntity> users = new HashSet<>();
+
 
     public DeveloperEntity() {
         name = "";

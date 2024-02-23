@@ -15,6 +15,21 @@ public class TestConstants {
     };
 
     static @NonNull
+    final String[] loginNames = new String[]{
+        "user", "admin"
+    };
+
+    static @NonNull
+    final String[] userFullNames = new String[]{
+        "Felhasználó", "Rendszergazda"
+    };
+
+    static @NonNull
+    final String[] roleNames = new String[]{
+        "USER", "ADMIN"
+    };
+
+    static @NonNull
     final String[][] taskNames = new String[][]{
         {"1. projekt 1. feladat", "1. projekt 2. feladat"},
         {"2. projekt 1. feladat", "2. projekt 2. feladat"},
