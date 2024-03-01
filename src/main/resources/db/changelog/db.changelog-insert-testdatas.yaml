@@ -337,13 +337,19 @@ databaseChangeLog:
         columns:
         - column:
             name: ROLE
-            value: USER
+            value: 1-USER
         tableName: ROLES
     - insert:
         columns:
         - column:
             name: ROLE
-            value: ADMIN
+            value: 2-ADMIN
+        tableName: ROLES
+    - insert:
+        columns:
+        - column:
+            name: ROLE
+            value: 3-GUEST
         tableName: ROLES
     # ------------------------
     # Inserts into USERS_ROLES

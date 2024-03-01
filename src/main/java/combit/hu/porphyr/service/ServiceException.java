@@ -19,7 +19,8 @@ public class ServiceException extends IllegalArgumentException {
                                     PROJECTDEVELOPERS_INSERT, PROJECTDEVELOPERS_DELETE,
                                     PROJECTTASKDEVELOPERS_INSERT, PROJECTTASKDEVELOPERS_MODIFY, PROJECTTASKDEVELOPERS_DELETE,
                                     CONTROLLERS,
-                                    USERS_INSERT, USERS_MODIFY, USERS_DELETE
+                                    USERS_INSERT, USERS_MODIFY, USERS_DELETE,
+                                    ROLES_INSERT, ROLES_MODIFY, ROLES_DELETE
     }
     public enum Exceptions{
         PROJECT_INSERT_EMPTY_NAME( ExceptionGroups.PROJECT_INSERT, "A projekt neve nincs kitöltve, nem vihető fel!", 0),
@@ -88,6 +89,12 @@ public class ServiceException extends IllegalArgumentException {
         USER_MODIFY_NOT_SAVED( ExceptionGroups.USERS_MODIFY, "A felhasználó még nincs elmentve, nem módosítható!", 0),
         USER_MODIFY_SAME_LOGIN_NAME( ExceptionGroups.USERS_MODIFY, "Már van felhasználó ezzel a belépési névvel!", 0),
         USER_DELETE_NOT_SAVED( ExceptionGroups.USERS_DELETE, "A felhasználó még nincs elmentve, nem törölhető!", 0),
+
+        ROLES_INSERT_SAME_NAME( ExceptionGroups.ROLES_INSERT, "Már van ilyen nevű jogkör!", 0),
+        ROLES_MODIFY_NOT_SAVED( ExceptionGroups.ROLES_MODIFY, "A jogkör még nincs elmentve, nem módosítható!", 0),
+        ROLES_MODIFY_SAME_NAME( ExceptionGroups.ROLES_MODIFY, "Már van jogkör ezzel a belépési névvel!", 0),
+        ROLES_DELETE_NOT_SAVED( ExceptionGroups.ROLES_DELETE, "A jogkör még nincs elmentve, nem törölhető!", 0),
+        ROLES_DELETE_ATTACHED_USERS( ExceptionGroups.ROLES_DELETE, "A jogkör egy vagy több felhasználónak ki van adva, nem törölhető!", 0),
         ;
 
         @Getter

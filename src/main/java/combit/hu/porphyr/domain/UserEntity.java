@@ -13,6 +13,18 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * <b>Felhasználók: USERS tábla</b> <br/>
+ * Egy USER-hez több ROLE és több DEVELOPER is rendelhető. <br/>
+ * Nem kötelező, hogy egy USER egyben DEVELOPER is legyen. Ilyen pl. az ADMIN user. <br/> <br/>
+ * - id         : Egyedi azonosító <br/>
+ * - email      : E-mail cím <br/>
+ * - loginName  : bejelentkezési név <br/>
+ * - password   : Bejelentkezési jelszó, bcrypt kódolással <br/>
+ * - fullName   : Teljes név <br/>
+ * - roles      : A user-hez rendelt jogkörök <br/>
+ * - developers : A user-hez rendelt fejlesztők <br/>
+ */
 @Entity
 @Table(name="users")
 @Data

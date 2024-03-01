@@ -109,8 +109,6 @@ class UserTests {
     void userRepositoryTest() {
         final @NonNull String JOHN_SMITH = "john_smith";
         final @NonNull String MODDED_USER = "modded_user";
-        final @NonNull String NEW_USER = "new_user";
-        final @NonNull String NEW_LOGIN_NAME = "new_login_name";
         final UserEntity expectedUser = new UserEntity();
         expectedUser.setFullName("John Smith");
         expectedUser.setPassword("{noop}password");
@@ -121,34 +119,33 @@ class UserTests {
         expectedUser.setLoginName("user");
         assertThrows(Exception.class, () -> spiedUserService.insertNewUser(expectedUser));
         // - Még nem létező névvel
-        expectedUser.setLoginName("JOHN_SMITH");
+        expectedUser.setLoginName(JOHN_SMITH);
         assertDoesNotThrow(() -> spyUserRepository.saveAndFlush(expectedUser));
         assertNotNull( expectedUser.getId() );
         // - Visszaolvasás
         entityManager.clear();
-        actualUser = spyUserRepository.findByLoginName("JOHN_SMITH");
+        actualUser = spyUserRepository.findByLoginName(JOHN_SMITH);
         assertEquals(expectedUser, actualUser);
         //--------------------------------- User módosítása ---------------------------------
         entityManager.clear();
-        final UserEntity userWithExistingLoginName = spyUserRepository.findByLoginName("JOHN_SMITH");
+        final UserEntity userWithExistingLoginName = spyUserRepository.findByLoginName(JOHN_SMITH);
         assertNotNull(userWithExistingLoginName);
         userWithExistingLoginName.setLoginName("user");
         assertThrows(Exception.class, () -> spiedUserService.modifyUser(userWithExistingLoginName));
         //
         entityManager.clear();
-        final UserEntity userWithNewLoginName =  spyUserRepository.findByLoginName("JOHN_SMITH");
+        final UserEntity userWithNewLoginName =  spyUserRepository.findByLoginName(JOHN_SMITH);
         assertNotNull(userWithNewLoginName);
-        userWithNewLoginName.setLoginName("MODDED_USER");
+        userWithNewLoginName.setLoginName(MODDED_USER);
         assertDoesNotThrow(() -> spyUserRepository.saveAndFlush(userWithNewLoginName));
         // - Visszaolvasás
         entityManager.clear();
-        actualUser = spyUserRepository.findByLoginName("MODDED_USER");
+        actualUser = spyUserRepository.findByLoginName(MODDED_USER);
         assertNotNull(actualUser);
         assertEquals(userWithNewLoginName, actualUser);
         // ----------------------------------- User törlése --------------------------------
         entityManager.clear();
         actualUser = spyUserRepository.findByLoginName("admin");
-        System.out.println("DELETE:" + actualUser);
         assertNotNull(actualUser);
         Long userId = Objects.requireNonNull(actualUser.getId());
         assertDoesNotThrow(() -> spyUserRepository.deleteById(userId));
@@ -167,6 +164,7 @@ class UserTests {
         Long userId;
         UserEntity userForInsert;
         UserEntity actualUser;
+        final @NonNull String NEW_USER = "new_user";
         //----------------------- Felvétel: insertNewUser(); -----------------------------------------
         userForInsert = new UserEntity();
         // - Már létező login névvel
@@ -177,14 +175,14 @@ class UserTests {
             ).getMessage()
         );
         // - Még nem létező névvel
-        userForInsert.setLoginName("NEW_USER");
+        userForInsert.setLoginName(NEW_USER);
         assertDoesNotThrow(() -> spiedUserService.insertNewUser(userForInsert));
         verify(spyUserRepository, times(1)).saveAndFlush(userForInsert);
         // - Visszaolvasás
         userId = userForInsert.getId();
         entityManager.clear();
         assertNotNull(userId);
-        actualUser = Objects.requireNonNull(spiedUserService.getUserByLoginName("NEW_USER"));
+        actualUser = Objects.requireNonNull(spiedUserService.getUserByLoginName(NEW_USER));
         assertNotNull(actualUser);
         // - Minden hibalehetőség tesztelve volt:
         assertDoesNotThrow(() -> ServiceException.isAllExceptionsThrown(ServiceException.ExceptionGroups.USERS_INSERT));
@@ -194,6 +192,7 @@ class UserTests {
     @Transactional
     @Rollback
     void userServiceModifyTest() throws ExecutionException, InterruptedException {
+        final @NonNull String NEW_LOGIN_NAME = "new_login_name";
         Long userId;
         final UserEntity userWithEmptyId = new UserEntity();
         final UserEntity userWithAnyNames;
@@ -220,13 +219,13 @@ class UserTests {
         );
         entityManager.clear();
         // - Ki van töltve a név, másra
-        userWithAnyNames.setLoginName("NEW_LOGIN_NAME");
+        userWithAnyNames.setLoginName(NEW_LOGIN_NAME);
         assertDoesNotThrow(
             () -> spiedUserService.modifyUser(userWithAnyNames)
         );
         userId = userWithAnyNames.getId();
         assertNotNull(userId);
-        actualUser = spiedUserService.getUserByLoginName("NEW_LOGIN_NAME");
+        actualUser = spiedUserService.getUserByLoginName(NEW_LOGIN_NAME);
         assertNotNull(actualUser);
         verify(spyUserRepository, times(2)).saveAndFlush(any(UserEntity.class));
         // - Minden hibalehetőség tesztelve volt:

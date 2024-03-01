@@ -26,7 +26,7 @@ public class TestConstants {
 
     static @NonNull
     final String[] roleNames = new String[]{
-        "USER", "ADMIN"
+        "1-USER", "2-ADMIN", "3-GUEST"
     };
 
     static @NonNull

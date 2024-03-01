@@ -3,6 +3,8 @@ package combit.hu.porphyr.domain;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -13,6 +15,7 @@ import java.util.Set;
 @Entity
 @Table( name="roles" )
 @Data
+@NoArgsConstructor
 public class RoleEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,9 +25,10 @@ public class RoleEntity {
     @Column
     private String role;
 
+    // @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @ManyToMany( cascade = CascadeType.ALL, fetch = FetchType.EAGER )
+    @ManyToMany()
     @JoinTable(
         name = "users_roles",
         joinColumns = {@JoinColumn(name="role_id")},
@@ -37,4 +41,7 @@ public class RoleEntity {
         return "Role [id=" + id + ", role=" + role + "]";
     }
 
+    public RoleEntity( final @NonNull String roleName ){
+        this.role = roleName;
+    }
 }
