@@ -63,9 +63,9 @@ public class DeveloperService {
             @Override
             public void run() {
                 if (newDeveloperEntity.getName().isEmpty()) {
-                    throw (new ServiceException(ServiceException.Exceptions.DEVELOPER_INSERT_EMPTY_NAME));
+                    throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.DEVELOPER_INSERT_EMPTY_NAME));
                 } else if (!developerRepository.findAllByName(newDeveloperEntity.getName()).isEmpty()) {
-                    throw (new ServiceException(ServiceException.Exceptions.DEVELOPER_INSERT_SAME_NAME));
+                    throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.DEVELOPER_INSERT_SAME_NAME));
                 } else {
                     developerRepository.saveAndFlush(newDeveloperEntity);
                 }
@@ -74,7 +74,7 @@ public class DeveloperService {
         try {
             forkJoinPool.submit(new RunnableCore(newDeveloperEntity)).get();
         } catch (ExecutionException exception) {
-            ServiceException.handleExecutionException(exception);
+            PorphyrServiceException.handleExecutionException(exception);
         }
     }
 
@@ -99,14 +99,14 @@ public class DeveloperService {
             public void run() {
                 entityManager.detach(modifiedDeveloperEntity);
                 if (modifiedDeveloperEntity.getId() == null) {
-                    throw (new ServiceException(ServiceException.Exceptions.DEVELOPER_MODIFY_NOT_SAVED));
+                    throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.DEVELOPER_MODIFY_NOT_SAVED));
                 } else if (modifiedDeveloperEntity.getName().isEmpty()) {
-                    throw (new ServiceException(ServiceException.Exceptions.DEVELOPER_MODIFY_EMPTY_NAME));
+                    throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.DEVELOPER_MODIFY_EMPTY_NAME));
                 } else {
                     boolean isSameNamedDeveloper = isDeveloperWithNameAndNotId(
                         modifiedDeveloperEntity.getName(), modifiedDeveloperEntity.getId());
                     if (isSameNamedDeveloper) {
-                        throw (new ServiceException(ServiceException.Exceptions.DEVELOPER_MODIFY_SAME_NAME));
+                        throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.DEVELOPER_MODIFY_SAME_NAME));
                     } else {
                         developerRepository.saveAndFlush(modifiedDeveloperEntity);
                     }
@@ -116,7 +116,7 @@ public class DeveloperService {
         try {
             forkJoinPool.submit(new RunnableCore(modifiedDeveloperEntity)).get();
         } catch (ExecutionException executionException) {
-            ServiceException.handleExecutionException(executionException);
+            PorphyrServiceException.handleExecutionException(executionException);
         }
     }
 
@@ -139,13 +139,13 @@ public class DeveloperService {
             public void run() {
                 Long developerID = developerEntity.getId();
                 if (developerID == null) {
-                    throw (new ServiceException(ServiceException.Exceptions.DEVELOPER_DELETE_NOT_SAVED));
+                    throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.DEVELOPER_DELETE_NOT_SAVED));
                 } else {
                     DeveloperEntity actualDeveloperData = developerRepository.findAllById(developerID);
                     if (actualDeveloperData == null) {
-                        throw (new ServiceException(ServiceException.Exceptions.UNDEFINED));
+                        throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.UNDEFINED));
                     } else if (!actualDeveloperData.getDeveloperProjects().isEmpty()) {
-                        throw (new ServiceException(ServiceException.Exceptions.DEVELOPER_DELETE_ASSIGNED_TO_PROJECTS));
+                        throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.DEVELOPER_DELETE_ASSIGNED_TO_PROJECTS));
                     } else {
                         developerRepository.deleteById(developerID);
                         entityManager.flush();
@@ -156,7 +156,7 @@ public class DeveloperService {
         try {
             forkJoinPool.submit(new RunnableCore(developerEntity)).get();
         } catch (ExecutionException executionException) {
-            ServiceException.handleExecutionException(executionException);
+            PorphyrServiceException.handleExecutionException(executionException);
         }
     }
 
@@ -177,7 +177,7 @@ public class DeveloperService {
         try {
             result = forkJoinPool.submit(new CallableCore()).get();
         } catch (ExecutionException executionException) {
-            ServiceException.handleExecutionException(executionException);
+            PorphyrServiceException.handleExecutionException(executionException);
         }
         return result;
     }
@@ -203,7 +203,7 @@ public class DeveloperService {
         try {
             result = forkJoinPool.submit(new CallableCore(id)).get();
         } catch (ExecutionException executionException) {
-            ServiceException.handleExecutionException(executionException);
+            PorphyrServiceException.handleExecutionException(executionException);
         }
         return result;
     }
@@ -234,7 +234,7 @@ public class DeveloperService {
         try {
             result = forkJoinPool.submit(new CallableCore(name)).get();
         } catch (ExecutionException executionException) {
-            ServiceException.handleExecutionException(executionException);
+            PorphyrServiceException.handleExecutionException(executionException);
         }
         return result;
     }
@@ -262,7 +262,7 @@ public class DeveloperService {
         try {
             result = forkJoinPool.submit(new CallableCore(name, id)).get();
         } catch (ExecutionException executionException) {
-            ServiceException.handleExecutionException(executionException);
+            PorphyrServiceException.handleExecutionException(executionException);
         }
         return result;
     }

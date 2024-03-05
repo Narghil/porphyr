@@ -12,8 +12,19 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Jogosultságok nyilvántartása <br/>
+ * <br />
+ * Mezők: <br />
+ * {@code - id:} &#9; Egyedi azonosító <br />
+ * {@code - role:} &#9; A jogosultság neve (egyedi) <br />
+ * <br />
+ *
+ * @see UserEntity
+ */
+
 @Entity
-@Table( name="roles" )
+@Table(name = "roles")
 @Data
 @NoArgsConstructor
 public class RoleEntity {
@@ -25,14 +36,13 @@ public class RoleEntity {
     @Column
     private String role;
 
-    // @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @ManyToMany()
     @JoinTable(
         name = "users_roles",
-        joinColumns = {@JoinColumn(name="role_id")},
-        inverseJoinColumns = {@JoinColumn(name="user_id")}
+        joinColumns = {@JoinColumn(name = "role_id")},
+        inverseJoinColumns = {@JoinColumn(name = "user_id")}
     )
     private Set<UserEntity> users = new HashSet<>();
 
@@ -41,7 +51,7 @@ public class RoleEntity {
         return "Role [id=" + id + ", role=" + role + "]";
     }
 
-    public RoleEntity( final @NonNull String roleName ){
+    public RoleEntity(final @NonNull String roleName) {
         this.role = roleName;
     }
 }

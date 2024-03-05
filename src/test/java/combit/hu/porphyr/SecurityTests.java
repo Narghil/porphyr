@@ -1,5 +1,6 @@
 package combit.hu.porphyr;
 
+import lombok.NonNull;
 import org.junit.jupiter.api.Test;
 
 import org.junit.jupiter.api.TestInstance;
@@ -13,11 +14,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import javax.transaction.Transactional;
 import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.logout;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
@@ -30,9 +31,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
+@Transactional
 class SecurityTests {
+
+    private final @NonNull MockMvc mockMvc;
+
     @Autowired
-    private MockMvc mockMvc;
+    public SecurityTests( final @NonNull MockMvc mockMvc){
+        this.mockMvc = mockMvc;
+    }
 
     @Test
     void loginWithValidUserThenAuthenticated() throws Exception {
@@ -56,7 +63,7 @@ class SecurityTests {
     @Test
     void accessUnsecuredResourceThenOk() throws Exception {
         mockMvc.perform(get("/logout"))
-            .andExpect( status().isOk() )
+            .andExpect( status().is3xxRedirection())
         ;
     }
 

@@ -7,9 +7,8 @@ import combit.hu.porphyr.repository.ProjectDeveloperRepository;
 import combit.hu.porphyr.repository.ProjectTaskDeveloperRepository;
 import combit.hu.porphyr.repository.ProjectTaskRepository;
 import combit.hu.porphyr.service.ProjectTaskDeveloperService;
-import combit.hu.porphyr.service.ServiceException;
+import combit.hu.porphyr.service.PorphyrServiceException;
 import lombok.NonNull;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -34,36 +33,40 @@ import static org.mockito.Mockito.verify;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")
 class ProjectTaskDeveloperTest {
-    @Autowired
-    private @NonNull EntityManager entityManager;
+    private final @NonNull EntityManager entityManager;
+    private final @NonNull ProjectTaskDeveloperRepository projectTaskDeveloperRepository;
+    private final @NonNull ProjectTaskRepository projectTaskRepository;
+    private final @NonNull ProjectDeveloperRepository projectDeveloperRepository;
+    private final ProjectTaskDeveloperRepository spyProjectTaskDeveloperRepository;
+    private final ProjectTaskDeveloperService spiedProjectTaskDeveloperService;
 
     @Autowired
-    private @NonNull ProjectTaskDeveloperRepository projectTaskDeveloperRepository;
-
-    @Autowired
-    private @NonNull ProjectTaskRepository projectTaskRepository;
-
-    @Autowired
-    private @NonNull ProjectDeveloperRepository projectDeveloperRepository;
-
-    private ProjectTaskDeveloperRepository spyProjectTaskDeveloperRepository;
-    private ProjectTaskDeveloperService spiedProjectTaskDeveloperService;
-
-    @BeforeAll
-    void setupAll() {
-        spiedProjectTaskDeveloperService = new ProjectTaskDeveloperService(
-            entityManager, projectTaskDeveloperRepository, projectTaskRepository, projectDeveloperRepository
+    public ProjectTaskDeveloperTest(
+        final @NonNull EntityManager entityManager,
+        final @NonNull ProjectTaskDeveloperRepository projectTaskDeveloperRepository,
+        final @NonNull ProjectTaskRepository projectTaskRepository,
+        final @NonNull ProjectDeveloperRepository projectDeveloperRepository
+    ) {
+        this.entityManager = entityManager;
+        this.projectTaskDeveloperRepository = projectTaskDeveloperRepository;
+        this.projectTaskRepository = projectTaskRepository;
+        this.projectDeveloperRepository = projectDeveloperRepository;
+        this.spiedProjectTaskDeveloperService = new ProjectTaskDeveloperService(
+            this.entityManager,
+            this.projectTaskDeveloperRepository,
+            this.projectTaskRepository,
+            this.projectDeveloperRepository
         );
-        spyProjectTaskDeveloperRepository = Mockito.mock(
-            ProjectTaskDeveloperRepository.class, AdditionalAnswers.delegatesTo(projectTaskDeveloperRepository)
+        this.spyProjectTaskDeveloperRepository = Mockito.mock(
+            ProjectTaskDeveloperRepository.class, AdditionalAnswers.delegatesTo(this.projectTaskDeveloperRepository)
         );
-        spiedProjectTaskDeveloperService.setProjectTaskDeveloperRepository(spyProjectTaskDeveloperRepository);
+        this.spiedProjectTaskDeveloperService.setProjectTaskDeveloperRepository(this.spyProjectTaskDeveloperRepository);
 
-        spiedProjectTaskDeveloperService.setEntityManager(entityManager);
-        spiedProjectTaskDeveloperService.setProjectTaskRepository(projectTaskRepository);
-        spiedProjectTaskDeveloperService.setProjectDeveloperRepository(projectDeveloperRepository);
+        this.spiedProjectTaskDeveloperService.setEntityManager(this.entityManager);
+        this.spiedProjectTaskDeveloperService.setProjectTaskRepository(this.projectTaskRepository);
+        this.spiedProjectTaskDeveloperService.setProjectDeveloperRepository(this.projectDeveloperRepository);
 
-        ServiceException.initExceptionsCounter();
+        PorphyrServiceException.initExceptionsCounter();
     }
 
     @BeforeEach
@@ -123,7 +126,7 @@ class ProjectTaskDeveloperTest {
         assertDoesNotThrow(() -> spyProjectTaskDeveloperRepository.saveAndFlush(projectTaskDeveloperEntity));
         // - Tétel törlése
         spyProjectTaskDeveloperRepository.deleteById(projectTaskDeveloperId);
-        assertDoesNotThrow(() -> entityManager.flush());
+        assertDoesNotThrow(entityManager::flush);
         entityManager.clear();
     }
 
@@ -139,9 +142,9 @@ class ProjectTaskDeveloperTest {
         projectDeveloperEntity = projectDeveloperRepository.findAllById(1L);
         newProjectTaskDeveloper.setProjectTaskAndProjectDeveloper(projectTaskEntity, projectDeveloperEntity);
         assertEquals(
-            ServiceException.Exceptions.PROJECTTASKDEVELOPER_INSERT_PROJECTTASK_NOT_SAVED.getDescription(),
+            PorphyrServiceException.Exceptions.PROJECTTASKDEVELOPER_INSERT_PROJECTTASK_NOT_SAVED.getDescription(),
             assertThrows(
-                ServiceException.class,
+                PorphyrServiceException.class,
                 () -> spiedProjectTaskDeveloperService.insertNewProjectTaskDeveloper(newProjectTaskDeveloper)
             ).getMessage()
         );
@@ -153,9 +156,9 @@ class ProjectTaskDeveloperTest {
         projectTaskRepository.delete(projectTaskEntity);
         entityManager.flush();
         assertEquals(
-            ServiceException.Exceptions.PROJECTTASKDEVELOPER_INSERT_PROJECTTASK_NOT_EXISTS.getDescription(),
+            PorphyrServiceException.Exceptions.PROJECTTASKDEVELOPER_INSERT_PROJECTTASK_NOT_EXISTS.getDescription(),
             assertThrows(
-                ServiceException.class,
+                PorphyrServiceException.class,
                 () -> spiedProjectTaskDeveloperService.insertNewProjectTaskDeveloper(newProjectTaskDeveloper)
             ).getMessage()
         );
@@ -165,9 +168,9 @@ class ProjectTaskDeveloperTest {
         projectDeveloperEntity = new ProjectDeveloperEntity();
         newProjectTaskDeveloper.setProjectTaskAndProjectDeveloper(projectTaskEntity, projectDeveloperEntity);
         assertEquals(
-            ServiceException.Exceptions.PROJECTTASKDEVELOPER_INSERT_PROJECTDEVELOPER_NOT_SAVED.getDescription(),
+            PorphyrServiceException.Exceptions.PROJECTTASKDEVELOPER_INSERT_PROJECTDEVELOPER_NOT_SAVED.getDescription(),
             assertThrows(
-                ServiceException.class,
+                PorphyrServiceException.class,
                 () -> spiedProjectTaskDeveloperService.insertNewProjectTaskDeveloper(newProjectTaskDeveloper)
             ).getMessage()
         );
@@ -180,9 +183,9 @@ class ProjectTaskDeveloperTest {
         projectDeveloperRepository.delete(projectDeveloperEntity);
         entityManager.flush();
         assertEquals(
-            ServiceException.Exceptions.PROJECTTASKDEVELOPER_INSERT_PROJECTDEVELOPER_NOT_EXISTS.getDescription(),
+            PorphyrServiceException.Exceptions.PROJECTTASKDEVELOPER_INSERT_PROJECTDEVELOPER_NOT_EXISTS.getDescription(),
             assertThrows(
-                ServiceException.class,
+                PorphyrServiceException.class,
                 () -> spiedProjectTaskDeveloperService.insertNewProjectTaskDeveloper(newProjectTaskDeveloper)
             ).getMessage()
         );
@@ -192,9 +195,9 @@ class ProjectTaskDeveloperTest {
         projectDeveloperEntity = projectDeveloperRepository.findAllById(1L);
         newProjectTaskDeveloper.setProjectTaskAndProjectDeveloper(projectTaskEntity, projectDeveloperEntity);
         assertEquals(
-            ServiceException.Exceptions.PROJECTTASKDEVELOPER_INSERT_TASK_OR_DEVELOPER_NOT_IN_PROJECT.getDescription(),
+            PorphyrServiceException.Exceptions.PROJECTTASKDEVELOPER_INSERT_TASK_OR_DEVELOPER_NOT_IN_PROJECT.getDescription(),
             assertThrows(
-                ServiceException.class,
+                PorphyrServiceException.class,
                 () -> spiedProjectTaskDeveloperService.insertNewProjectTaskDeveloper(newProjectTaskDeveloper)
             ).getMessage()
         );
@@ -204,9 +207,9 @@ class ProjectTaskDeveloperTest {
         projectDeveloperEntity = projectDeveloperRepository.findAllById(1L);
         newProjectTaskDeveloper.setProjectTaskAndProjectDeveloper(projectTaskEntity, projectDeveloperEntity);
         assertEquals(
-            ServiceException.Exceptions.PROJECTTASKDEVELOPER_INSERT_EXISTING_DATA.getDescription(),
+            PorphyrServiceException.Exceptions.PROJECTTASKDEVELOPER_INSERT_EXISTING_DATA.getDescription(),
             assertThrows(
-                ServiceException.class,
+                PorphyrServiceException.class,
                 () -> spiedProjectTaskDeveloperService.insertNewProjectTaskDeveloper(newProjectTaskDeveloper)
             ).getMessage()
         );
@@ -222,7 +225,7 @@ class ProjectTaskDeveloperTest {
         );
         entityManager.clear();
         // - Minden hibalehetőség tesztelve volt:
-        assertDoesNotThrow(() -> ServiceException.isAllExceptionsThrown(ServiceException.ExceptionGroups.PROJECTTASKDEVELOPERS_INSERT));
+        assertDoesNotThrow(() -> PorphyrServiceException.isAllExceptionsThrown(PorphyrServiceException.ExceptionGroups.PROJECTTASKDEVELOPERS_INSERT));
     }
 
     @Test
@@ -232,9 +235,9 @@ class ProjectTaskDeveloperTest {
         // -  projectTaskDeveloperEntity nincs elmentve
         ProjectTaskDeveloperEntity newProjectTaskDeveloper = new ProjectTaskDeveloperEntity();
         assertEquals(
-            ServiceException.Exceptions.PROJECTTASKDEVELOPER_MODIFY_NOT_SAVED.getDescription(),
+            PorphyrServiceException.Exceptions.PROJECTTASKDEVELOPER_MODIFY_NOT_SAVED.getDescription(),
             assertThrows(
-                ServiceException.class,
+                PorphyrServiceException.class,
                 () -> spiedProjectTaskDeveloperService.modifyProjectTaskDeveloper(newProjectTaskDeveloper)
             ).getMessage()
         );
@@ -244,9 +247,9 @@ class ProjectTaskDeveloperTest {
         assertNotNull(modifyProjectTaskDeveloper);
         modifyProjectTaskDeveloper.setSpendTime(-1L);
         assertEquals(
-            ServiceException.Exceptions.PROJECTTASKDEVELOPER_MODIFY_TIME_IS_NEGATIVE.getDescription(),
+            PorphyrServiceException.Exceptions.PROJECTTASKDEVELOPER_MODIFY_TIME_IS_NEGATIVE.getDescription(),
             assertThrows(
-                ServiceException.class,
+                PorphyrServiceException.class,
                 () -> spiedProjectTaskDeveloperService.modifyProjectTaskDeveloper(modifyProjectTaskDeveloper)
             ).getMessage()
         );
@@ -254,12 +257,12 @@ class ProjectTaskDeveloperTest {
         // - jó adatokkal
         modifyProjectTaskDeveloper.setSpendTime(1L);
         spiedProjectTaskDeveloperService.modifyProjectTaskDeveloper(modifyProjectTaskDeveloper);
-        assertDoesNotThrow(() -> entityManager.flush());
+        assertDoesNotThrow(entityManager::flush);
         verify(spyProjectTaskDeveloperRepository, times(1)).saveAndFlush(modifyProjectTaskDeveloper);
         entityManager.clear();
         assertEquals(modifyProjectTaskDeveloper, spiedProjectTaskDeveloperService.getProjectTaskDeveloperById(1L));
         // - Minden hibalehetőség tesztelve volt:
-        assertDoesNotThrow(() -> ServiceException.isAllExceptionsThrown(ServiceException.ExceptionGroups.PROJECTTASKDEVELOPERS_MODIFY));
+        assertDoesNotThrow(() -> PorphyrServiceException.isAllExceptionsThrown(PorphyrServiceException.ExceptionGroups.PROJECTTASKDEVELOPERS_MODIFY));
     }
 
     @Test
@@ -269,9 +272,9 @@ class ProjectTaskDeveloperTest {
         // -  projectTaskDeveloperEntity nincs elmentve
         ProjectTaskDeveloperEntity newProjectTaskDeveloper = new ProjectTaskDeveloperEntity();
         assertEquals(
-            ServiceException.Exceptions.PROJECTTASKDEVELOPER_DELETE_NOT_SAVED.getDescription(),
+            PorphyrServiceException.Exceptions.PROJECTTASKDEVELOPER_DELETE_NOT_SAVED.getDescription(),
             assertThrows(
-                ServiceException.class,
+                PorphyrServiceException.class,
                 () -> spiedProjectTaskDeveloperService.deleteProjectTaskDeveloper(newProjectTaskDeveloper)
             ).getMessage()
         );
@@ -281,9 +284,9 @@ class ProjectTaskDeveloperTest {
         assertNotNull(timeNotZeroPTDEntity);
         assert (timeNotZeroPTDEntity.getSpendTime() > 0);
         assertEquals(
-            ServiceException.Exceptions.PROJECTTASKDEVELOPER_DELETE_TIME_NOT_ZERO.getDescription(),
+            PorphyrServiceException.Exceptions.PROJECTTASKDEVELOPER_DELETE_TIME_NOT_ZERO.getDescription(),
             assertThrows(
-                ServiceException.class,
+                PorphyrServiceException.class,
                 () -> spiedProjectTaskDeveloperService.deleteProjectTaskDeveloper(timeNotZeroPTDEntity)
             ).getMessage()
         );
@@ -299,7 +302,7 @@ class ProjectTaskDeveloperTest {
         verify(spyProjectTaskDeveloperRepository, times(1)).deleteById(deletedEntityId);
         assertNull(spyProjectTaskDeveloperRepository.findAllById(7L));
         // - Minden hibalehetőség tesztelve volt:
-        assertDoesNotThrow(() -> ServiceException.isAllExceptionsThrown(ServiceException.ExceptionGroups.PROJECTTASKDEVELOPERS_DELETE));
+        assertDoesNotThrow(() -> PorphyrServiceException.isAllExceptionsThrown(PorphyrServiceException.ExceptionGroups.PROJECTTASKDEVELOPERS_DELETE));
     }
 
     @Test

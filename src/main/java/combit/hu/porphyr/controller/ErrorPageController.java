@@ -20,27 +20,26 @@ import org.springframework.web.context.request.WebRequest;
 @Controller
 public class ErrorPageController implements ErrorController {
 
-	private ErrorAttributes errorAttributes;
+    private final @NonNull ErrorAttributes errorAttributes;
 
-	@Autowired
-	public void setErrorAttributes(ErrorAttributes errorAttributes) {
-		this.errorAttributes = errorAttributes;
-	}
+    @Autowired
+    public ErrorPageController(final @NonNull ErrorAttributes errorAttributes) {
+        this.errorAttributes = errorAttributes;
+    }
 
-	@RequestMapping("/error")
-	public @NonNull String error(Model model, HttpServletRequest request) {
-		WebRequest webRequest = new ServletWebRequest(request);
-		ErrorAttributeOptions errorAttributeOptions = ErrorAttributeOptions.defaults()
-			.including(ErrorAttributeOptions.Include.MESSAGE);
-		Map<String, Object> error = errorAttributes.getErrorAttributes(webRequest, errorAttributeOptions);
+    @RequestMapping("/error")
+    public @NonNull String error(Model model, HttpServletRequest request) {
+        WebRequest webRequest = new ServletWebRequest(request);
+        ErrorAttributeOptions errorAttributeOptions = ErrorAttributeOptions.defaults()
+            .including(ErrorAttributeOptions.Include.MESSAGE);
+        Map<String, Object> error = errorAttributes.getErrorAttributes(webRequest, errorAttributeOptions);
 
-		model.addAttribute("timestamp", error.get("timestamp"));
-		model.addAttribute("error", "PAGE:"+ error.get("error"));
-		model.addAttribute("message", error.get("message"));
-		model.addAttribute("path", error.get("path"));
-		model.addAttribute("status", error.get("status"));
+        model.addAttribute("timestamp", error.get("timestamp"));
+        model.addAttribute("error", "PAGE:" + error.get("error"));
+        model.addAttribute("message", error.get("message"));
+        model.addAttribute("path", error.get("path"));
+        model.addAttribute("status", error.get("status"));
 
-		return "detailedError";
-	}
-
+        return "detailedError";
+    }
 }

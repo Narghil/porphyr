@@ -5,7 +5,7 @@ import combit.hu.porphyr.controller.helpers.TemplateData;
 import combit.hu.porphyr.controller.helpers.WebErrorBean;
 import combit.hu.porphyr.domain.DeveloperEntity;
 import combit.hu.porphyr.service.DeveloperService;
-import combit.hu.porphyr.service.ServiceException;
+import combit.hu.porphyr.service.PorphyrServiceException;
 import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,10 +26,10 @@ import static combit.hu.porphyr.controller.helpers.HomeControllerConstants.*;
 @Controller
 public class HomeControllerDevelopers {
 
-    private DeveloperService developerService;
+    private final @NonNull DeveloperService developerService;
 
     @Autowired
-    public void setDeveloperService(DeveloperService developerService) {
+    public HomeControllerDevelopers(final @NonNull DeveloperService developerService) {
         this.developerService = developerService;
     }
 
@@ -50,48 +50,49 @@ public class HomeControllerDevelopers {
     public @NonNull String selectOperation(
         @ModelAttribute
         @NonNull
-        TemplateData dataFromTemplate
+        final TemplateData dataFromTemplate
     ) throws ExecutionException, InterruptedException {
         @NonNull String result;
-        @Nullable Long developerId = dataFromTemplate.getId();
+        @Nullable
+        final Long developerId = dataFromTemplate.getId();
         if (developerId == null) {
-            throw new ServiceException(ServiceException.Exceptions.NULL_VALUE);
+            throw new PorphyrServiceException(PorphyrServiceException.Exceptions.NULL_VALUE);
         }
         @Nullable DeveloperEntity developer = developerService.getDeveloperById(dataFromTemplate.getId());
         if (developer == null) {
-            throw new ServiceException(ServiceException.Exceptions.NULL_VALUE);
+            throw new PorphyrServiceException(PorphyrServiceException.Exceptions.NULL_VALUE);
         }
         sessionData.setSelectedDeveloperId(developerId);
         switch (dataFromTemplate.getOperation()) {
-            case TASKS: {
+            case MENU_ITEM_TASKS: {
                 result = REDIRECT_TO_DEVELOPER_TASKS;
                 break;
             }
-            case MODIFY: {
+            case MENU_ITEM_MODIFY: {
                 result = startModifyDeveloper();
                 break;
             }
-            case DELETE: {
+            case MENU_ITEM_DELETE: {
                 deleteDeveloper();
                 result = REDIRECT_TO_DEVELOPERS;
                 break;
             }
             default:
-                throw new ServiceException(ServiceException.Exceptions.NULL_VALUE);
+                throw new PorphyrServiceException(PorphyrServiceException.Exceptions.NULL_VALUE);
         }
         return result;
     }
 
     //------------------ Új fejlesztő felvétele ---------------------------------
     @RequestMapping("/developers_new_start")
-    public @NonNull String startNewDeveloper(Model model) {
+    public @NonNull String startNewDeveloper(final @NonNull Model model) {
         sessionData.getDataToTemplate().setName(null);
         return newDeveloper(model);
     }
 
     @RequestMapping("/developer_new")
     public @NonNull String newDeveloper(
-        Model model
+        final @NonNull Model model
     ) {
         model.addAttribute(ERROR, webErrorBean.getWebErrorData());
         model.addAttribute(DATA_FROM_TEMPLATE, sessionData.getDataToTemplate());
@@ -102,7 +103,7 @@ public class HomeControllerDevelopers {
     public @NonNull String insertNewDeveloper(
         @ModelAttribute
         @NonNull
-        TemplateData dataFromTemplate
+        final TemplateData dataFromTemplate
     ) throws InterruptedException, ExecutionException {
         @NonNull String result = REDIRECT_TO_DEVELOPERS;
         @Nullable String developerName = dataFromTemplate.getName();
@@ -111,15 +112,15 @@ public class HomeControllerDevelopers {
             webErrorBean.setError(
                 ON,
                 ERROR_TITLE,
-                ServiceException.Exceptions.DEVELOPER_INSERT_EMPTY_NAME.getDescription()
+                PorphyrServiceException.Exceptions.DEVELOPER_INSERT_EMPTY_NAME.getDescription()
             );
         } else {
             try {
                 developerService.insertNewDeveloper(
                     new DeveloperEntity(developerName)
                 );
-            } catch (ServiceException serviceException) {
-                webErrorBean.setError(ON, ERROR_TITLE, serviceException.getMessage());
+            } catch (PorphyrServiceException porphyrServiceException) {
+                webErrorBean.setError(ON, ERROR_TITLE, porphyrServiceException.getMessage());
                 result = REDIRECT_TO_DEVELOPER_NEW;
             }
         }
@@ -128,7 +129,8 @@ public class HomeControllerDevelopers {
 
     //------------------------ Fejlesztő módosítása
     public @NonNull String startModifyDeveloper()
-        throws InterruptedException, ExecutionException {
+        throws InterruptedException, ExecutionException
+    {
         final @NonNull DeveloperEntity developer = sessionData.getSelectedDeveloper();
         sessionData.getDataFromTemplate().setId(developer.getId());
         sessionData.getDataFromTemplate().setName(developer.getName());
@@ -137,7 +139,7 @@ public class HomeControllerDevelopers {
 
     @RequestMapping("/developer_modify")
     public @NotNull String loadDataBeforeModifyDeveloper(
-        Model model
+        final @NonNull Model model
     ) {
         sessionData.moveDataFromToTemplate();
         final @NotNull TemplateData dataToTemplate = sessionData.getDataToTemplate();
@@ -150,8 +152,7 @@ public class HomeControllerDevelopers {
     @PostMapping("/modifyDeveloper")
     public @NonNull String modifyDeveloper(
         @ModelAttribute
-        @NonNull
-        TemplateData dataFromTemplate
+        @NonNull TemplateData dataFromTemplate
     ) throws InterruptedException, ExecutionException {
         @NonNull String result = REDIRECT_TO_DEVELOPERS;
         sessionData.setDataFromTemplate(dataFromTemplate);
@@ -161,8 +162,8 @@ public class HomeControllerDevelopers {
 
         try {
             developerService.modifyDeveloper(modifiedDeveloper);
-        } catch (ServiceException serviceException) {
-            webErrorBean.setError(ON, ERROR_TITLE, serviceException.getMessage());
+        } catch (PorphyrServiceException porphyrServiceException) {
+            webErrorBean.setError(ON, ERROR_TITLE, porphyrServiceException.getMessage());
             result = REDIRECT_TO_DEVELOPER_MODIFY;
         }
 
@@ -175,8 +176,8 @@ public class HomeControllerDevelopers {
         final @Nullable DeveloperEntity developer = sessionData.getSelectedDeveloper();
         try {
             developerService.deleteDeveloper(developer);
-        } catch (ServiceException serviceException) {
-            webErrorBean.setError(ON, ERROR_TITLE, serviceException.getMessage());
+        } catch (PorphyrServiceException porphyrServiceException) {
+            webErrorBean.setError(ON, ERROR_TITLE, porphyrServiceException.getMessage());
         }
     }
 }

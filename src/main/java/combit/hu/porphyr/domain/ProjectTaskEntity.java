@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
@@ -33,6 +32,7 @@ import java.util.List;
  * {@code - description:} &#9;&#9; A projekt leírása <br />
  * {@code - projectTaskDevelopers:} &#9; Az aktuális feladathoz tartozó ProjectDeveloperEntity összerendelések.
  * <br />
+ *
  * @see ProjectEntity
  * @see ProjectDeveloperEntity
  * @see ProjectTaskDeveloperEntity
@@ -67,10 +67,6 @@ public class ProjectTaskEntity {
     @OneToMany(mappedBy = "projectTaskEntity")
     @JsonBackReference
     private @NonNull List<ProjectTaskDeveloperEntity> projectTaskDevelopers;
-
-    @Setter
-    @Getter
-    private @NonNull Long developerSpendTime;
 
     public ProjectTaskEntity(
         final @NonNull ProjectEntity projectEntity,

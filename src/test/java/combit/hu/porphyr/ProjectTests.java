@@ -6,9 +6,8 @@ import combit.hu.porphyr.domain.ProjectEntity;
 import combit.hu.porphyr.domain.ProjectTaskEntity;
 import combit.hu.porphyr.repository.ProjectRepository;
 import combit.hu.porphyr.service.ProjectService;
-import combit.hu.porphyr.service.ServiceException;
+import combit.hu.porphyr.service.PorphyrServiceException;
 import lombok.NonNull;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -36,24 +35,23 @@ import static combit.hu.porphyr.TestConstants.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")
 class ProjectTests {
-    @Autowired
-    private @NonNull EntityManager entityManager;
+    private final @NonNull EntityManager entityManager;
+    private final @NonNull ProjectRepository spyProjectRepository;
+    private final @NonNull ProjectService spiedProjectService;
 
     @Autowired
-    private @NonNull ProjectRepository projectRepository;
-
-    private ProjectRepository spyProjectRepository;
-    private ProjectService spiedProjectService;
-
-    @BeforeAll
-    void setupAll() {
-        spiedProjectService = new ProjectService(entityManager, projectRepository);
-        spyProjectRepository = Mockito.mock(
+    public ProjectTests(
+        final @NonNull EntityManager entityManager,
+        final @NonNull ProjectRepository projectRepository
+    ) {
+        this.entityManager = entityManager;
+        this.spiedProjectService = new ProjectService(this.entityManager, projectRepository);
+        this.spyProjectRepository = Mockito.mock(
             ProjectRepository.class, AdditionalAnswers.delegatesTo(projectRepository)
         );
-        spiedProjectService.setProjectRepository(spyProjectRepository);
-        spiedProjectService.setEntityManager(entityManager);
-        ServiceException.initExceptionsCounter();
+        this.spiedProjectService.setProjectRepository(this.spyProjectRepository);
+        this.spiedProjectService.setEntityManager(this.entityManager);
+        PorphyrServiceException.initExceptionsCounter();
     }
 
     @BeforeEach
@@ -65,7 +63,7 @@ class ProjectTests {
     @Test
     @Transactional
     @Rollback
-    // OneToMany kapcsolatok lekérdezésének ellenőrzése
+        // OneToMany kapcsolatok lekérdezésének ellenőrzése
     void projectEntityQueriesTest() {
         ProjectEntity actualProject;
         //getProjectDevelopers
@@ -143,7 +141,7 @@ class ProjectTests {
             }
         );
         assertArrayEquals(
-            new Boolean[]{true,true,true,true},
+            new Boolean[]{true, true, true, true},
             new Boolean[]{
                 spiedProjectService.isProjectWithNameAndNotId(projectNames[0], 4L),
                 spiedProjectService.isProjectWithNameAndNotId(projectNames[1], 3L),
@@ -214,16 +212,16 @@ class ProjectTests {
         // - Kitöltetlen névvel
         projectForInsert = new ProjectEntity("", "");
         assertThrows(
-            ServiceException.class,
+            PorphyrServiceException.class,
             () -> spiedProjectService.insertNewProject(projectForInsert),
-            ServiceException.Exceptions.PROJECT_INSERT_EMPTY_NAME.getDescription()
+            PorphyrServiceException.Exceptions.PROJECT_INSERT_EMPTY_NAME.getDescription()
         );
         // - Már létező névvel
         projectForInsert.setName(projectNames[0]);
         assertThrows(
-            ServiceException.class,
+            PorphyrServiceException.class,
             () -> spiedProjectService.insertNewProject(projectForInsert),
-            ServiceException.Exceptions.PROJECT_INSERT_SAME_NAME.getDescription()
+            PorphyrServiceException.Exceptions.PROJECT_INSERT_SAME_NAME.getDescription()
         );
         // - Még nem létező névvel
         projectForInsert.setName("5. projekt");
@@ -235,7 +233,7 @@ class ProjectTests {
         assertNotNull(projectId);
         actualProject = Objects.requireNonNull(spiedProjectService.getProjectById(projectId));
         assertEquals(projectForInsert, actualProject);
-        assertDoesNotThrow(() -> ServiceException.isAllExceptionsThrown(ServiceException.ExceptionGroups.PROJECT_INSERT));
+        assertDoesNotThrow(() -> PorphyrServiceException.isAllExceptionsThrown(PorphyrServiceException.ExceptionGroups.PROJECT_INSERT));
     }
 
     @Test
@@ -250,24 +248,24 @@ class ProjectTests {
         // - Nincs kitöltve az ID
         projectWithNoId = new ProjectEntity();
         assertThrows(
-            ServiceException.class,
+            PorphyrServiceException.class,
             () -> spiedProjectService.modifyProject(projectWithNoId),
-            ServiceException.Exceptions.PROJECT_MODIFY_NOT_SAVED.getDescription()
+            PorphyrServiceException.Exceptions.PROJECT_MODIFY_NOT_SAVED.getDescription()
         );
         // - Nincs kitöltve a név
         projectWithAnyNames = Objects.requireNonNull(spiedProjectService.getProjectById(2L));
         projectWithAnyNames.setName("");
         assertThrows(
-            ServiceException.class,
+            PorphyrServiceException.class,
             () -> spiedProjectService.modifyProject(projectWithAnyNames),
-            ServiceException.Exceptions.PROJECT_MODIFY_EMPTY_NAME.getDescription()
+            PorphyrServiceException.Exceptions.PROJECT_MODIFY_EMPTY_NAME.getDescription()
         );
         // - Ki van töltve a név, de van már ilyen.
         projectWithAnyNames.setName(projectNames[0]);
         assertThrows(
-            ServiceException.class,
+            PorphyrServiceException.class,
             () -> spiedProjectService.modifyProject(projectWithAnyNames),
-            ServiceException.Exceptions.PROJECT_MODIFY_SAME_NAME.getDescription()
+            PorphyrServiceException.Exceptions.PROJECT_MODIFY_SAME_NAME.getDescription()
         );
         // - Ki van töltve a név, ugyanaz, ami volt: Nem hiba
         projectWithAnyNames.setName(projectNames[1]);
@@ -293,7 +291,7 @@ class ProjectTests {
         assertNotNull(actualProject);
         assertEquals(projectWithAnyNames, actualProject);
         // - Minden hibalehetőség tesztelve volt:
-        assertDoesNotThrow(() -> ServiceException.isAllExceptionsThrown(ServiceException.ExceptionGroups.PROJECT_MODIFY));
+        assertDoesNotThrow(() -> PorphyrServiceException.isAllExceptionsThrown(PorphyrServiceException.ExceptionGroups.PROJECT_MODIFY));
     }
 
     @Test
@@ -310,27 +308,27 @@ class ProjectTests {
         // - Nincs kitöltve az ID
         projectWithNoId = new ProjectEntity();
         assertThrows(
-            ServiceException.class,
+            PorphyrServiceException.class,
             () -> spiedProjectService.deleteProject(projectWithNoId),
-            ServiceException.Exceptions.PROJECT_DELETE_NOT_SAVED.getDescription()
+            PorphyrServiceException.Exceptions.PROJECT_DELETE_NOT_SAVED.getDescription()
         );
         // - Már létező project, de még be van osztva hozzá fejlesztő
         entityManager.clear();
         projectWithDeveloper = spiedProjectService.getProjectByName(projectNames[2]);
         assertNotNull(projectWithDeveloper);
         assertThrows(
-            ServiceException.class,
+            PorphyrServiceException.class,
             () -> spiedProjectService.deleteProject(projectWithDeveloper),
-            ServiceException.Exceptions.PROJECT_DELETE_DEVELOPERS_ASSIGNED.getDescription()
+            PorphyrServiceException.Exceptions.PROJECT_DELETE_DEVELOPERS_ASSIGNED.getDescription()
         );
         // - Már létező project, de még van hozzá feladat
         entityManager.clear();
         projectWithTask = spiedProjectService.getProjectByName(projectNames[3]);
         assertNotNull(projectWithTask);
         assertThrows(
-            ServiceException.class,
+            PorphyrServiceException.class,
             () -> spiedProjectService.deleteProject(projectWithTask),
-            ServiceException.Exceptions.PROJECT_DELETE_TASKS_ASSIGNED.getDescription()
+            PorphyrServiceException.Exceptions.PROJECT_DELETE_TASKS_ASSIGNED.getDescription()
         );
         // - Létező project, nincs semmihez rendelve
         entityManager.clear();
@@ -348,6 +346,6 @@ class ProjectTests {
         assertNull(spiedProjectService.getProjectById(projectId));
         assertNull(spiedProjectService.getProjectByName("Harmadik projekt"));
         // - Minden hibalehetőség tesztelve volt:
-        assertDoesNotThrow(() -> ServiceException.isAllExceptionsThrown(ServiceException.ExceptionGroups.PROJECT_DELETE));
+        assertDoesNotThrow(() -> PorphyrServiceException.isAllExceptionsThrown(PorphyrServiceException.ExceptionGroups.PROJECT_DELETE));
     }
 }

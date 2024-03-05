@@ -5,7 +5,7 @@ import combit.hu.porphyr.controller.helpers.SessionData;
 import combit.hu.porphyr.controller.helpers.WebErrorBean;
 import combit.hu.porphyr.domain.ProjectEntity;
 import combit.hu.porphyr.service.ProjectService;
-import combit.hu.porphyr.service.ServiceException;
+import combit.hu.porphyr.service.PorphyrServiceException;
 import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,10 +26,10 @@ import static combit.hu.porphyr.controller.helpers.HomeControllerConstants.*;
 @Controller
 public class HomeControllerProjects {
 
-    private ProjectService projectService;
+    private final @NonNull ProjectService projectService;
 
     @Autowired
-    public void setProjectService(ProjectService projectService) {
+    public HomeControllerProjects(final @NonNull ProjectService projectService) {
         this.projectService = projectService;
     }
 
@@ -47,41 +47,43 @@ public class HomeControllerProjects {
     public @NonNull String selectOperation(
         @ModelAttribute
         @NonNull
-        TemplateData dataFromTemplate
+        final TemplateData dataFromTemplate
     ) throws InterruptedException, ExecutionException {
-        @NonNull String result;
-        @Nullable Long id = dataFromTemplate.getId();
+        @NonNull
+        final String result;
+        @Nullable
+        final Long id = dataFromTemplate.getId();
         if (id == null) {
-            throw new ServiceException(ServiceException.Exceptions.NULL_VALUE);
+            throw new PorphyrServiceException(PorphyrServiceException.Exceptions.NULL_VALUE);
         }
         @Nullable ProjectEntity project = projectService.getProjectById(id);
         if (project == null) {
-            throw new ServiceException(ServiceException.Exceptions.NULL_VALUE);
+            throw new PorphyrServiceException(PorphyrServiceException.Exceptions.NULL_VALUE);
         }
         sessionData.setDataFromTemplate(dataFromTemplate);
         sessionData.setSelectedProjectId(id);
         switch (dataFromTemplate.getOperation()) {
-            case DEVELOPERS: {
+            case MENU_ITEM_DEVELOPERS: {
                 result = "redirect:/project_developers";
                 break;
             }
-            case TASKS: {
+            case MENU_ITEM_TASKS: {
                 result = "redirect:/project_tasks";
                 break;
             }
-            case MODIFY: {
+            case MENU_ITEM_MODIFY: {
                 result = startModifyProject();
                 break;
             }
             default:
-                throw new ServiceException(ServiceException.Exceptions.NULL_VALUE);
+                throw new PorphyrServiceException(PorphyrServiceException.Exceptions.NULL_VALUE);
         }
         return result;
     }
 
     //------------------ Új projekt felvitele ---------------------------------
     @RequestMapping("/project_new_start")
-    public @NonNull String startNewProject(Model model) {
+    public @NonNull String startNewProject(final @NonNull Model model) {
         final @NonNull TemplateData dataFromTemplate = sessionData.getDataFromTemplate();
         dataFromTemplate.setId(null);
         dataFromTemplate.setName(null);
@@ -90,7 +92,7 @@ public class HomeControllerProjects {
     }
 
     @RequestMapping("/project_new")
-    public @NonNull String newProject(Model model) {
+    public @NonNull String newProject(final @NonNull Model model) {
         sessionData.moveDataFromToTemplate();
         final @NonNull TemplateData dataToTemplate = sessionData.getDataToTemplate();
         dataToTemplate.setId(null);
@@ -103,7 +105,7 @@ public class HomeControllerProjects {
     public @NonNull String insertNewProject(
         @ModelAttribute
         @NonNull
-        TemplateData dataFromTemplate
+        final TemplateData dataFromTemplate
     ) throws InterruptedException, ExecutionException {
         @NonNull String result = REDIRECT_TO_PROJECTS;
         final @NonNull ProjectEntity newProject = new ProjectEntity();
@@ -112,8 +114,8 @@ public class HomeControllerProjects {
         sessionData.setDataFromTemplate(dataFromTemplate);
         try {
             projectService.insertNewProject(newProject);
-        } catch (ServiceException serviceException) {
-            webErrorBean.setError(ON, ERROR_TITLE, serviceException.getMessage());
+        } catch (PorphyrServiceException porphyrServiceException) {
+            webErrorBean.setError(ON, ERROR_TITLE, porphyrServiceException.getMessage());
             result = REDIRECT_TO_PROJECT_NEW;
         }
         return result;
@@ -128,26 +130,25 @@ public class HomeControllerProjects {
         final @Nullable ProjectEntity selectedProject = sessionData.getSelectedProject();
         try {
             projectService.deleteProject(selectedProject);
-        } catch (ServiceException serviceException) {
+        } catch (PorphyrServiceException porphyrServiceException) {
             result = REDIRECT_TO_PROJECT_MODIFY;
-            webErrorBean.setError(ON, ERROR_TITLE, serviceException.getMessage());
+            webErrorBean.setError(ON, ERROR_TITLE, porphyrServiceException.getMessage());
         }
         return result;
     }
 
     //------------------ Projekt módosítása ---------------------------------
     public @NonNull String startModifyProject()
-    throws InterruptedException, ExecutionException
-    {
+        throws InterruptedException, ExecutionException {
         final @NonNull ProjectEntity project = sessionData.getSelectedProject();
-        sessionData.getDataFromTemplate().setName( project.getName());
-        sessionData.getDataFromTemplate().setDescription( project.getDescription());
+        sessionData.getDataFromTemplate().setName(project.getName());
+        sessionData.getDataFromTemplate().setDescription(project.getDescription());
         return REDIRECT_TO_PROJECT_MODIFY;
     }
 
     @RequestMapping("/project_modify")
     public @NotNull String loadDataBeforeModifyProject(
-        Model model
+        final @NonNull Model model
     ) {
         String result = "project_modify";
         sessionData.moveDataFromToTemplate();
@@ -162,7 +163,7 @@ public class HomeControllerProjects {
     public @NonNull String modifyProject(
         @ModelAttribute
         @NonNull
-        TemplateData dataFromTemplate
+        final TemplateData dataFromTemplate
     ) throws InterruptedException, ExecutionException {
         @NonNull String result = REDIRECT_TO_PROJECTS;
         sessionData.setDataFromTemplate(dataFromTemplate);
@@ -173,8 +174,8 @@ public class HomeControllerProjects {
 
         try {
             projectService.modifyProject(modifiedProject);
-        } catch (ServiceException serviceException) {
-            webErrorBean.setError(ON, ERROR_TITLE, serviceException.getMessage());
+        } catch (PorphyrServiceException porphyrServiceException) {
+            webErrorBean.setError(ON, ERROR_TITLE, porphyrServiceException.getMessage());
             result = REDIRECT_TO_PROJECT_MODIFY;
         }
 

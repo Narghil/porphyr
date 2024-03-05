@@ -10,13 +10,16 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * Példa osztály RestController-re.
+ */
 @RestController
 public class ApiController {
 
-    private DeveloperService developerService;
+    private final @NonNull DeveloperService developerService;
 
     @Autowired
-    public void setDeveloperService(DeveloperService developerService) {
+    public ApiController(final @NonNull DeveloperService developerService) {
         this.developerService = developerService;
     }
 
@@ -26,5 +29,4 @@ public class ApiController {
         developerList = developerService.getDevelopers();
         return developerList.toString();
     }
-
 }

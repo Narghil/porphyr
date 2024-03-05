@@ -11,6 +11,10 @@ import org.springframework.web.context.annotation.SessionScope;
 
 import static combit.hu.porphyr.Constants.OFF;
 
+/**
+ * A template-nek átadható hibaobjektum.
+ * Lehetővé teszi, hogy a hiba azon az oldalon jelenjen meg, amelyiken létrejött, ne külön oldalon.
+ */
 @Component
 @Setter
 @Getter
@@ -34,15 +38,13 @@ public class WebErrorBean {
         this.message = "";
     }
 
-    public WebErrorBean(WebErrorBean oldWebError) {
-        this.onOff = oldWebError.onOff;
-        this.title = oldWebError.title;
-        this.message = oldWebError.message;
-    }
-
+    /**
+     * Visszaadja a jelenlegi hibát - amit a template kijelez - és törli az adatait, így a kijelzés csak egyszer
+     * történik meg.
+     */
     public @NonNull WebErrorBean getWebErrorData() {
-        WebErrorBean result = new WebErrorBean( this );
-        this.setError(OFF,"","");
+        WebErrorBean result = new WebErrorBean(this);
+        this.setError(OFF, "", "");
         return result;
     }
 
@@ -50,6 +52,13 @@ public class WebErrorBean {
     @SessionScope
     public WebErrorBean getWebErrorBean() {
         return new WebErrorBean();
+    }
+
+    //-- Helper
+    private WebErrorBean(WebErrorBean oldWebError) {
+        this.onOff = oldWebError.onOff;
+        this.title = oldWebError.title;
+        this.message = oldWebError.message;
     }
 }
 

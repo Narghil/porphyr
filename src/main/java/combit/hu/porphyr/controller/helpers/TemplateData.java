@@ -7,6 +7,11 @@ import lombok.Setter;
 import lombok.ToString;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * A template-től kapott vagy a template-nek átadott adatok osztálya.
+ *
+ * @see SessionData
+ */
 @Getter
 @Setter
 @ToString
@@ -18,7 +23,7 @@ public class TemplateData {
     private @Nullable String description;
     private @Nullable Long longData;
 
-    public void setTemplateData( final @NonNull TemplateData fromTemplate ){
+    public void setTemplateData(final @NonNull TemplateData fromTemplate) {
         this.operation = fromTemplate.operation;
         this.id = fromTemplate.id;
         this.name = fromTemplate.name;

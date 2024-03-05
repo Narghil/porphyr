@@ -6,7 +6,7 @@ import combit.hu.porphyr.controller.helpers.WebErrorBean;
 import combit.hu.porphyr.domain.DeveloperEntity;
 import combit.hu.porphyr.domain.ProjectTaskDeveloperEntity;
 import combit.hu.porphyr.service.ProjectTaskDeveloperService;
-import combit.hu.porphyr.service.ServiceException;
+import combit.hu.porphyr.service.PorphyrServiceException;
 import lombok.NonNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +27,10 @@ import static combit.hu.porphyr.controller.helpers.HomeControllerConstants.*;
 @Controller
 public class HomeControllerDevelopersTasks {
 
-    private ProjectTaskDeveloperService projectTaskDeveloperService;
+    private final @NonNull ProjectTaskDeveloperService projectTaskDeveloperService;
 
     @Autowired
-    public void setProjectTaskDeveloperService(ProjectTaskDeveloperService projectTaskDeveloperService) {
+    public HomeControllerDevelopersTasks(final @NonNull ProjectTaskDeveloperService projectTaskDeveloperService) {
         this.projectTaskDeveloperService = projectTaskDeveloperService;
     }
 
@@ -44,13 +44,13 @@ public class HomeControllerDevelopersTasks {
     //------------------ Fejlesztő feladatai ------------------------------------
     @RequestMapping("/developer_tasks")
     public @NonNull String tasksOfDeveloper(
-        Model model
+        final @NonNull Model model
     ) throws InterruptedException, ExecutionException {
         final @NonNull DeveloperEntity developer = sessionData.getSelectedDeveloper();
         final @Nullable Long developerId = developer.getId();
 
         if (developerId == null) {
-            throw new ServiceException(ServiceException.Exceptions.NULL_VALUE);
+            throw new PorphyrServiceException(PorphyrServiceException.Exceptions.NULL_VALUE);
         }
         List<ProjectTaskDeveloperEntity> allProjectTasksDeveloper = projectTaskDeveloperService.getProjectTasksDeveloperByDeveloperId(
             Objects.requireNonNull(developerId)
@@ -67,23 +67,24 @@ public class HomeControllerDevelopersTasks {
     public @NonNull String modifyDeveloperTask(
         @ModelAttribute
         @NonNull
-        TemplateData dataFromTemplate
+        final TemplateData dataFromTemplate
     ) throws InterruptedException, ExecutionException {
         @Nullable Long id = dataFromTemplate.getId();
         @Nullable Long time = dataFromTemplate.getLongData();
         @NonNull String result = REDIRECT_TO_DEVELOPER_TASKS;
         if (id == null || time == null) {
-            throw new ServiceException(ServiceException.Exceptions.NULL_VALUE);
+            throw new PorphyrServiceException(PorphyrServiceException.Exceptions.NULL_VALUE);
         }
-        ProjectTaskDeveloperEntity projectTaskDeveloper = projectTaskDeveloperService.getProjectTaskDeveloperById(id);
+        final @Nullable ProjectTaskDeveloperEntity projectTaskDeveloper = projectTaskDeveloperService.getProjectTaskDeveloperById(
+            id);
         if (projectTaskDeveloper == null) {
-            throw new ServiceException(ServiceException.Exceptions.NULL_VALUE);
+            throw new PorphyrServiceException(PorphyrServiceException.Exceptions.NULL_VALUE);
         }
         projectTaskDeveloper.setSpendTime(time);
         try {
             projectTaskDeveloperService.modifyProjectTaskDeveloper(projectTaskDeveloper);
-        } catch (ServiceException serviceException) {
-            webErrorBean.setError(ON, ERROR_TITLE, serviceException.getMessage());
+        } catch (PorphyrServiceException porphyrServiceException) {
+            webErrorBean.setError(ON, ERROR_TITLE, porphyrServiceException.getMessage());
         }
         return result;
     }

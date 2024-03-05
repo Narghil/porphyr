@@ -1,4 +1,5 @@
 package combit.hu.porphyr;
+
 import lombok.NonNull;
 import org.jetbrains.annotations.TestOnly;
 

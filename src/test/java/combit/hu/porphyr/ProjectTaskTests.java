@@ -8,9 +8,8 @@ import combit.hu.porphyr.domain.ProjectTaskEntity;
 import combit.hu.porphyr.repository.ProjectRepository;
 import combit.hu.porphyr.repository.ProjectTaskRepository;
 import combit.hu.porphyr.service.ProjectTaskService;
-import combit.hu.porphyr.service.ServiceException;
+import combit.hu.porphyr.service.PorphyrServiceException;
 import lombok.NonNull;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -37,32 +36,33 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")
 class ProjectTaskTests {
-    @Autowired
-    private @NonNull EntityManager entityManager;
+    private final @NonNull EntityManager entityManager;
+    private final @NonNull ProjectTaskRepository projectTaskRepository;
+    private final @NonNull ProjectRepository projectRepository;
+    private final @NonNull ProjectTaskRepository spyProjectTaskRepository;
+    private final @NonNull ProjectTaskService spiedProjectTaskService;
 
     @Autowired
-    private @NonNull ProjectTaskRepository projectTaskRepository;
-
-    @Autowired
-    private @NonNull ProjectRepository projectRepository;
-
-    private ProjectTaskRepository spyProjectTaskRepository;
-    private ProjectTaskService spiedProjectTaskService;
-
-    @BeforeAll
-    void setupAll() {
-        spiedProjectTaskService = new ProjectTaskService(
-            entityManager, projectTaskRepository, projectRepository
+    public ProjectTaskTests(
+        final @NonNull EntityManager entityManager,
+        final @NonNull ProjectTaskRepository projectTaskRepository,
+        final @NonNull ProjectRepository projectRepository
+    ) {
+        this.entityManager = entityManager;
+        this.projectTaskRepository = projectTaskRepository;
+        this.projectRepository = projectRepository;
+        this.spiedProjectTaskService = new ProjectTaskService(
+            this.entityManager, this.projectTaskRepository, this.projectRepository
         );
-        spyProjectTaskRepository = Mockito.mock(
-            ProjectTaskRepository.class, AdditionalAnswers.delegatesTo(projectTaskRepository)
+        this.spyProjectTaskRepository = Mockito.mock(
+            ProjectTaskRepository.class, AdditionalAnswers.delegatesTo(this.projectTaskRepository)
         );
 
-        spiedProjectTaskService.setProjectTaskRepository(spyProjectTaskRepository);
-        spiedProjectTaskService.setProjectRepository(projectRepository);
-        spiedProjectTaskService.setEntityManager(entityManager);
+        this.spiedProjectTaskService.setProjectTaskRepository(this.spyProjectTaskRepository);
+        this.spiedProjectTaskService.setProjectRepository(this.projectRepository);
+        this.spiedProjectTaskService.setEntityManager(this.entityManager);
 
-        ServiceException.initExceptionsCounter();
+        PorphyrServiceException.initExceptionsCounter();
     }
 
     @BeforeEach
@@ -179,10 +179,7 @@ class ProjectTaskTests {
                 .toArray(String[]::new)
         );
         //findAllById
-        // --assertEquals("1. projekt 1. feladat", Objects.requireNonNull(projectTaskRepository.findAllById(1L)).getName());
-        // --assertEquals("1. projekt 2. feladat", Objects.requireNonNull(projectTaskRepository.findAllById(2L)).getName());
         assertEquals("2. projekt 1. feladat", Objects.requireNonNull(projectTaskRepository.findAllById(3L)).getName());
-        // --assertEquals("2. projekt 2. feladat", Objects.requireNonNull(projectTaskRepository.findAllById(4L)).getName());
         assertEquals(
             "Projekt feladattal - feladat",
             Objects.requireNonNull(projectTaskRepository.findAllById(5L)).getName()
@@ -191,62 +188,92 @@ class ProjectTaskTests {
         projectEntity = Objects.requireNonNull(projectRepository.findAllByName("1. projekt")).get(0);
         assertEquals(
             "1. projekt 1. feladat",
-            Objects.requireNonNull(projectTaskRepository.findAllByProjectEntityAndName(projectEntity,
-                "1. projekt 1. feladat")).getName()
+            Objects.requireNonNull(projectTaskRepository.findAllByProjectEntityAndName(
+                projectEntity,
+                "1. projekt 1. feladat"
+            )).getName()
         );
         assertEquals(
             "1. projekt 2. feladat",
-            Objects.requireNonNull(projectTaskRepository.findAllByProjectEntityAndName(projectEntity,
-                "1. projekt 2. feladat")).getName()
+            Objects.requireNonNull(projectTaskRepository.findAllByProjectEntityAndName(
+                projectEntity,
+                "1. projekt 2. feladat"
+            )).getName()
         );
         projectEntity = Objects.requireNonNull(projectRepository.findAllByName("2. projekt")).get(0);
         assertEquals(
             "2. projekt 1. feladat",
-            Objects.requireNonNull(projectTaskRepository.findAllByProjectEntityAndName(projectEntity,
-                "2. projekt 1. feladat")).getName()
+            Objects.requireNonNull(projectTaskRepository.findAllByProjectEntityAndName(
+                projectEntity,
+                "2. projekt 1. feladat"
+            )).getName()
         );
         assertEquals(
             "2. projekt 2. feladat",
-            Objects.requireNonNull(projectTaskRepository.findAllByProjectEntityAndName(projectEntity,
-                "2. projekt 2. feladat")).getName()
+            Objects.requireNonNull(projectTaskRepository.findAllByProjectEntityAndName(
+                projectEntity,
+                "2. projekt 2. feladat"
+            )).getName()
         );
         projectEntity = Objects.requireNonNull(projectRepository.findAllByName("Projekt feladattal")).get(0);
         assertEquals(
             "Projekt feladattal - feladat",
-            Objects.requireNonNull(projectTaskRepository.findAllByProjectEntityAndName(projectEntity,
-                "Projekt feladattal - feladat")).getName()
+            Objects.requireNonNull(projectTaskRepository.findAllByProjectEntityAndName(
+                projectEntity,
+                "Projekt feladattal - feladat"
+            )).getName()
         );
         assertNull(projectTaskRepository.findAllByProjectEntityAndName(projectEntity, "1. projekt 1. feladat"));
         //findAllByProjectEntityAndNameAndIdNot
         projectEntity = Objects.requireNonNull(projectRepository.findAllByName("1. projekt")).get(0);
-        assertNull( projectTaskRepository.findAllByProjectEntityAndNameAndIdNot(projectEntity,"1. projekt 1. feladat", 1L));
-        assertNull( projectTaskRepository.findAllByProjectEntityAndNameAndIdNot(projectEntity,"1. projekt 2. feladat", 2L));
-        assertEquals( 1L, Objects.requireNonNull(projectTaskRepository.findAllByProjectEntityAndNameAndIdNot(
+        assertNull(projectTaskRepository.findAllByProjectEntityAndNameAndIdNot(
+            projectEntity,
+            "1. projekt 1. feladat",
+            1L
+        ));
+        assertNull(projectTaskRepository.findAllByProjectEntityAndNameAndIdNot(
+            projectEntity,
+            "1. projekt 2. feladat",
+            2L
+        ));
+        assertEquals(1L, Objects.requireNonNull(projectTaskRepository.findAllByProjectEntityAndNameAndIdNot(
             projectEntity,
             "1. projekt 1. feladat",
             0L
         )).getId());
-        assertEquals( 2L, Objects.requireNonNull(projectTaskRepository.findAllByProjectEntityAndNameAndIdNot(
+        assertEquals(2L, Objects.requireNonNull(projectTaskRepository.findAllByProjectEntityAndNameAndIdNot(
             projectEntity,
             "1. projekt 2. feladat",
             0L
         )).getId());
         projectEntity = Objects.requireNonNull(projectRepository.findAllByName("2. projekt")).get(0);
-        assertNull( projectTaskRepository.findAllByProjectEntityAndNameAndIdNot(projectEntity,"1. projekt 1. feladat", 3L));
-        assertNull( projectTaskRepository.findAllByProjectEntityAndNameAndIdNot(projectEntity,"2. projekt 2. feladat", 4L));
-        assertEquals( 3L, Objects.requireNonNull(projectTaskRepository.findAllByProjectEntityAndNameAndIdNot(
+        assertNull(projectTaskRepository.findAllByProjectEntityAndNameAndIdNot(
+            projectEntity,
+            "1. projekt 1. feladat",
+            3L
+        ));
+        assertNull(projectTaskRepository.findAllByProjectEntityAndNameAndIdNot(
+            projectEntity,
+            "2. projekt 2. feladat",
+            4L
+        ));
+        assertEquals(3L, Objects.requireNonNull(projectTaskRepository.findAllByProjectEntityAndNameAndIdNot(
             projectEntity,
             "2. projekt 1. feladat",
             0L
         )).getId());
-        assertEquals( 4L, Objects.requireNonNull(projectTaskRepository.findAllByProjectEntityAndNameAndIdNot(
+        assertEquals(4L, Objects.requireNonNull(projectTaskRepository.findAllByProjectEntityAndNameAndIdNot(
             projectEntity,
             "2. projekt 2. feladat",
             0L
         )).getId());
         projectEntity = Objects.requireNonNull(projectRepository.findAllByName("Projekt feladattal")).get(0);
-        assertNull( projectTaskRepository.findAllByProjectEntityAndNameAndIdNot(projectEntity,"Projekt feladattal - feladat", 5L));
-        assertEquals( 5L, Objects.requireNonNull(projectTaskRepository.findAllByProjectEntityAndNameAndIdNot(
+        assertNull(projectTaskRepository.findAllByProjectEntityAndNameAndIdNot(
+            projectEntity,
+            "Projekt feladattal - feladat",
+            5L
+        ));
+        assertEquals(5L, Objects.requireNonNull(projectTaskRepository.findAllByProjectEntityAndNameAndIdNot(
             projectEntity,
             "Projekt feladattal - feladat",
             0L
@@ -264,7 +291,7 @@ class ProjectTaskTests {
                 "2. projekt 1. feladat", "2. projekt 2. feladat",
                 "Projekt feladattal - feladat"
             },
-            spiedProjectTaskService.getProjectTasks().stream().map( ProjectTaskEntity::getName).toArray(String[]::new)
+            spiedProjectTaskService.getProjectTasks().stream().map(ProjectTaskEntity::getName).toArray(String[]::new)
         );
         //getProjectTaskById
         assertNotNull(spiedProjectTaskService.getProjectTaskById(1L));
@@ -341,7 +368,7 @@ class ProjectTaskTests {
         );
         assertNotNull(actualProjectTask);
         spyProjectTaskRepository.delete(actualProjectTask);
-        assertThrows(PersistenceException.class, () -> entityManager.flush());
+        assertThrows(PersistenceException.class, entityManager::flush);
         entityManager.clear();
     }
 
@@ -357,8 +384,10 @@ class ProjectTaskTests {
         // - A project entity nincs elmentve.
         newProjectTask.setProjectEntity(projectEntity);
         assertEquals(
-            ServiceException.Exceptions.PROJECTTASK_INSERT_PROJECT_NOT_SAVED.getDescription(),
-            assertThrows(ServiceException.class, () -> spiedProjectTaskService.insertNewProjectTask(newProjectTask)
+            PorphyrServiceException.Exceptions.PROJECTTASK_INSERT_PROJECT_NOT_SAVED.getDescription(),
+            assertThrows(
+                PorphyrServiceException.class,
+                () -> spiedProjectTaskService.insertNewProjectTask(newProjectTask)
             ).getMessage()
         );
         // - A project entity  nincs az adatbázisban
@@ -368,8 +397,10 @@ class ProjectTaskTests {
         entityManager.flush();
         newProjectTask.setProjectEntity(deletedProjectEntity);
         assertEquals(
-            ServiceException.Exceptions.PROJECTTASK_INSERT_PROJECT_NOT_EXISTS.getDescription(),
-            assertThrows(ServiceException.class, () -> spiedProjectTaskService.insertNewProjectTask(newProjectTask)
+            PorphyrServiceException.Exceptions.PROJECTTASK_INSERT_PROJECT_NOT_EXISTS.getDescription(),
+            assertThrows(
+                PorphyrServiceException.class,
+                () -> spiedProjectTaskService.insertNewProjectTask(newProjectTask)
             ).getMessage()
         );
         // - A task neve üres
@@ -379,15 +410,19 @@ class ProjectTaskTests {
         newProjectTask.setProjectEntity(projectEntity);
         newProjectTask.setName("");
         assertEquals(
-            ServiceException.Exceptions.PROJECTTASK_INSERT_EMPTY_NAME.getDescription(),
-            assertThrows(ServiceException.class, () -> spiedProjectTaskService.insertNewProjectTask(newProjectTask)
+            PorphyrServiceException.Exceptions.PROJECTTASK_INSERT_EMPTY_NAME.getDescription(),
+            assertThrows(
+                PorphyrServiceException.class,
+                () -> spiedProjectTaskService.insertNewProjectTask(newProjectTask)
             ).getMessage()
         );
         // - Ilyen nevű task már van a projekten belül!
         newProjectTask.setName("1. projekt 1. feladat");
         assertEquals(
-            ServiceException.Exceptions.PROJECTTASK_INSERT_SAME_PROJECT_AND_NAME.getDescription(),
-            assertThrows(ServiceException.class, () -> spiedProjectTaskService.insertNewProjectTask(newProjectTask)
+            PorphyrServiceException.Exceptions.PROJECTTASK_INSERT_SAME_PROJECT_AND_NAME.getDescription(),
+            assertThrows(
+                PorphyrServiceException.class,
+                () -> spiedProjectTaskService.insertNewProjectTask(newProjectTask)
             ).getMessage()
         );
         // - Minden ok.
@@ -402,7 +437,7 @@ class ProjectTaskTests {
         actualProjectTask = spiedProjectTaskService.getProjectTaskById(newProjectTask.getId());
         assertEquals(newProjectTask, actualProjectTask);
         //Mindent ellenőriztünk
-        assertDoesNotThrow(() -> ServiceException.isAllExceptionsThrown(ServiceException.ExceptionGroups.PROJECTTASKS_INSERT));
+        assertDoesNotThrow(() -> PorphyrServiceException.isAllExceptionsThrown(PorphyrServiceException.ExceptionGroups.PROJECTTASKS_INSERT));
     }
 
     @Test
@@ -419,8 +454,10 @@ class ProjectTaskTests {
         assertNotNull(projectEntity);
         projectTaskWithNoId = new ProjectTaskEntity(projectEntity, "Modified ProjectTask", "");
         assertEquals(
-            ServiceException.Exceptions.PROJECTTASK_MODIFY_NOT_SAVED.getDescription(),
-            assertThrows(ServiceException.class, () -> spiedProjectTaskService.modifyProjectTask(projectTaskWithNoId)
+            PorphyrServiceException.Exceptions.PROJECTTASK_MODIFY_NOT_SAVED.getDescription(),
+            assertThrows(
+                PorphyrServiceException.class,
+                () -> spiedProjectTaskService.modifyProjectTask(projectTaskWithNoId)
             ).getMessage()
         );
         // - A project nincs elmentve
@@ -428,9 +465,9 @@ class ProjectTaskTests {
         assertNotNull(projectTaskWithAnyCases);
         projectTaskWithAnyCases.setProjectEntity(new ProjectEntity("Not Saved project", ""));
         assertEquals(
-            ServiceException.Exceptions.PROJECTTASK_MODIFY_PROJECT_NOT_SAVED.getDescription(),
+            PorphyrServiceException.Exceptions.PROJECTTASK_MODIFY_PROJECT_NOT_SAVED.getDescription(),
             assertThrows(
-                ServiceException.class,
+                PorphyrServiceException.class,
                 () -> spiedProjectTaskService.modifyProjectTask(projectTaskWithAnyCases)
             ).getMessage()
         );
@@ -441,9 +478,9 @@ class ProjectTaskTests {
         entityManager.flush();
         projectTaskWithAnyCases.setProjectEntity(deletedProjectEntity);
         assertEquals(
-            ServiceException.Exceptions.PROJECTTASK_MODIFY_PROJECT_NOT_EXISTS.getDescription(),
+            PorphyrServiceException.Exceptions.PROJECTTASK_MODIFY_PROJECT_NOT_EXISTS.getDescription(),
             assertThrows(
-                ServiceException.class,
+                PorphyrServiceException.class,
                 () -> spiedProjectTaskService.modifyProjectTask(projectTaskWithAnyCases)
             ).getMessage()
         );
@@ -452,18 +489,18 @@ class ProjectTaskTests {
         assertNotNull(projectTaskWithAnyNames);
         projectTaskWithAnyNames.setName("");
         assertEquals(
-            ServiceException.Exceptions.PROJECTTASK_MODIFY_EMPTY_NAME.getDescription(),
+            PorphyrServiceException.Exceptions.PROJECTTASK_MODIFY_EMPTY_NAME.getDescription(),
             assertThrows(
-                ServiceException.class,
+                PorphyrServiceException.class,
                 () -> spiedProjectTaskService.modifyProjectTask(projectTaskWithAnyNames)
             ).getMessage()
         );
         // - Ilyen nevű task már van a projektben
         projectTaskWithAnyNames.setName("1. projekt 1. feladat");
         assertEquals(
-            ServiceException.Exceptions.PROJECTTASK_MODIFY_SAME_PROJECT_AND_NAME.getDescription(),
+            PorphyrServiceException.Exceptions.PROJECTTASK_MODIFY_SAME_PROJECT_AND_NAME.getDescription(),
             assertThrows(
-                ServiceException.class,
+                PorphyrServiceException.class,
                 () -> spiedProjectTaskService.modifyProjectTask(projectTaskWithAnyNames)
             ).getMessage()
         );
@@ -477,7 +514,7 @@ class ProjectTaskTests {
         actualProjectTask = spiedProjectTaskService.getProjectTaskById(projectTaskId);
         assertEquals(projectTaskWithAnyNames, actualProjectTask);
         //
-        assertDoesNotThrow(() -> ServiceException.isAllExceptionsThrown(ServiceException.ExceptionGroups.PROJECTTASKS_MODIFY));
+        assertDoesNotThrow(() -> PorphyrServiceException.isAllExceptionsThrown(PorphyrServiceException.ExceptionGroups.PROJECTTASKS_MODIFY));
     }
 
     @Test
@@ -494,17 +531,19 @@ class ProjectTaskTests {
         assertNotNull(projectEntity);
         projectTaskWithNoId = new ProjectTaskEntity(projectEntity, "Törlendő feladat", "");
         assertEquals(
-            ServiceException.Exceptions.PROJECTTASK_DELETE_NOT_SAVED.getDescription(),
-            assertThrows(ServiceException.class, () -> spiedProjectTaskService.deleteProjectTask(projectTaskWithNoId)
+            PorphyrServiceException.Exceptions.PROJECTTASK_DELETE_NOT_SAVED.getDescription(),
+            assertThrows(
+                PorphyrServiceException.class,
+                () -> spiedProjectTaskService.deleteProjectTask(projectTaskWithNoId)
             ).getMessage()
         );
         // - A task-hoz még van hozzárendelve fejlesztő
         projectTaskWithDeveloper = projectTaskRepository.findAllById(1L);
         assertNotNull(projectTaskWithDeveloper);
         assertEquals(
-            ServiceException.Exceptions.PROJECTTASK_DELETE_DEVELOPERS_ASSIGNED.getDescription(),
+            PorphyrServiceException.Exceptions.PROJECTTASK_DELETE_DEVELOPERS_ASSIGNED.getDescription(),
             assertThrows(
-                ServiceException.class,
+                PorphyrServiceException.class,
                 () -> spiedProjectTaskService.deleteProjectTask(projectTaskWithDeveloper)
             ).getMessage()
 
@@ -523,6 +562,6 @@ class ProjectTaskTests {
         assertNull(actualProjectTask);
         verify(spyProjectTaskRepository, times(1)).deleteById(projectTaskId);
         // - Minden hibalehetőség tesztelve volt:
-        assertDoesNotThrow(() -> ServiceException.isAllExceptionsThrown(ServiceException.ExceptionGroups.PROJECTTASKS_DELETE));
+        assertDoesNotThrow(() -> PorphyrServiceException.isAllExceptionsThrown(PorphyrServiceException.ExceptionGroups.PROJECTTASKS_DELETE));
     }
 }

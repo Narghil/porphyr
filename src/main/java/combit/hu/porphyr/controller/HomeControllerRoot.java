@@ -18,20 +18,19 @@ import java.util.concurrent.ExecutionException;
 @Controller
 public class HomeControllerRoot {
 
-    private ProjectService projectService;
-    private DeveloperService developerService;
+    private final @NonNull ProjectService projectService;
+    private final @NonNull DeveloperService developerService;
 
     @Autowired
-    public void setProjectService(ProjectService projectService) {
+    public HomeControllerRoot(
+        final @NonNull ProjectService projectService,
+        final @NonNull DeveloperService developerService
+    ) {
         this.projectService = projectService;
-    }
-
-    @Autowired
-    public void setDeveloperService(DeveloperService developerService) {
         this.developerService = developerService;
     }
 
-    @Resource(name="getWebErrorBean")
+    @Resource(name = "getWebErrorBean")
     WebErrorBean webErrorBean;
 
     @Resource(name = "getSessionData")
@@ -40,27 +39,26 @@ public class HomeControllerRoot {
     private static final String ERROR = "error";
 
     @RequestMapping("/")
-    public String root(Model model) {
-        sessionData.setSelectedProjectId( 0L );
+    public String root(final @NonNull Model model) {
+        sessionData.setSelectedProjectId(0L);
         model.addAttribute(ERROR, webErrorBean.getWebErrorData());
         return "porphyr";
     }
 
     @RequestMapping("/projects")
-    public @NonNull String projects(Model model) throws ExecutionException, InterruptedException {
+    public @NonNull String projects(final @NonNull Model model) throws ExecutionException, InterruptedException {
         model.addAttribute(ERROR, webErrorBean.getWebErrorData());
         model.addAttribute("projectsList", projectService.getProjects());
-        model.addAttribute( "dataFromTemplate", sessionData.getDataFromTemplate());
+        model.addAttribute("dataFromTemplate", sessionData.getDataFromTemplate());
         return "projects";
     }
 
     @RequestMapping("/developers")
-    public @NonNull String developers(Model model) throws ExecutionException, InterruptedException {
-        List<DeveloperEntity> developerList;
-        developerList = developerService.getDevelopers();
+    public @NonNull String developers(final @NonNull Model model) throws ExecutionException, InterruptedException {
+        final @NonNull List<DeveloperEntity> developerList = developerService.getDevelopers();
         model.addAttribute(ERROR, webErrorBean.getWebErrorData());
         model.addAttribute("developers", developerList);
-        model.addAttribute( "dataFromTemplate", sessionData.getDataFromTemplate());
+        model.addAttribute("dataFromTemplate", sessionData.getDataFromTemplate());
         return "developers";
     }
 }

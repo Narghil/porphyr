@@ -84,7 +84,7 @@ public class UserService implements UserDetailsService {
         try {
             result = forkJoinPool.submit(new CallableCore(loginName)).get();
         } catch (ExecutionException executionException) {
-            ServiceException.handleExecutionException(executionException);
+            PorphyrServiceException.handleExecutionException(executionException);
         }
         return result;
     }
@@ -104,7 +104,7 @@ public class UserService implements UserDetailsService {
         try {
             result = forkJoinPool.submit(new CallableCore()).get();
         } catch (ExecutionException executionException) {
-            ServiceException.handleExecutionException(executionException);
+            PorphyrServiceException.handleExecutionException(executionException);
         }
         return result;
     }
@@ -135,7 +135,7 @@ public class UserService implements UserDetailsService {
         try {
             result = forkJoinPool.submit(new CallableCore(loginName, id)).get();
         } catch (ExecutionException executionException) {
-            ServiceException.handleExecutionException(executionException);
+            PorphyrServiceException.handleExecutionException(executionException);
         }
         return result;
     }
@@ -157,7 +157,7 @@ public class UserService implements UserDetailsService {
             @Override
             public void run() {
                 if (userRepository.findByLoginName(newUserEntity.getLoginName()) != null) {
-                    throw (new ServiceException(ServiceException.Exceptions.USER_INSERT_SAME_LOGIN_NAME));
+                    throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.USER_INSERT_SAME_LOGIN_NAME));
                 } else {
                     userRepository.saveAndFlush(newUserEntity);
                 }
@@ -166,7 +166,7 @@ public class UserService implements UserDetailsService {
         try {
             forkJoinPool.submit(new RunnableCore(newUserEntity)).get();
         } catch (ExecutionException exception) {
-            ServiceException.handleExecutionException(exception);
+            PorphyrServiceException.handleExecutionException(exception);
         }
     }
 
@@ -189,13 +189,13 @@ public class UserService implements UserDetailsService {
             @Override
             public void run() {
                 if (modifiedUserEntity.getId() == null) {
-                    throw (new ServiceException(ServiceException.Exceptions.USER_MODIFY_NOT_SAVED));
+                    throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.USER_MODIFY_NOT_SAVED));
                 } else {
                     entityManager.clear();
                     if (isUserWithLoginNameAndNotId(
                         modifiedUserEntity.getLoginName(), modifiedUserEntity.getId())
                     ) {
-                        throw (new ServiceException(ServiceException.Exceptions.USER_MODIFY_SAME_LOGIN_NAME));
+                        throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.USER_MODIFY_SAME_LOGIN_NAME));
                     } else {
                         userRepository.saveAndFlush(modifiedUserEntity);
                     }
@@ -205,7 +205,7 @@ public class UserService implements UserDetailsService {
         try {
             forkJoinPool.submit(new RunnableCore(modifiedUserEntity)).get();
         } catch (ExecutionException executionException) {
-            ServiceException.handleExecutionException(executionException);
+            PorphyrServiceException.handleExecutionException(executionException);
         }
     }
 
@@ -227,11 +227,11 @@ public class UserService implements UserDetailsService {
             public void run() {
                 Long userID = userEntity.getId();
                 if (userID == null) {
-                    throw (new ServiceException(ServiceException.Exceptions.USER_DELETE_NOT_SAVED));
+                    throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.USER_DELETE_NOT_SAVED));
                 } else {
                     UserEntity actualUserData = userRepository.findAllById(userID);
                     if (actualUserData == null) {
-                        throw (new ServiceException(ServiceException.Exceptions.UNDEFINED));
+                        throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.UNDEFINED));
                     } else {
                         userRepository.deleteById(userID);
                         entityManager.flush();
@@ -242,7 +242,7 @@ public class UserService implements UserDetailsService {
         try {
             forkJoinPool.submit(new RunnableCore(userEntity)).get();
         } catch (ExecutionException executionException) {
-            ServiceException.handleExecutionException(executionException);
+            PorphyrServiceException.handleExecutionException(executionException);
         }
     }
 }

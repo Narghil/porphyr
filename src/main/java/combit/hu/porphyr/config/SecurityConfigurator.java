@@ -6,6 +6,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
+import static combit.hu.porphyr.Constants.ROLE_ADMIN;
 import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.toH2Console;
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -24,7 +25,7 @@ public class SecurityConfigurator {
             //A login_decorator használ CSS-t, de ha nincs megadva rá az engedély, csak a belépés után éri el
             //Eredmény: A belépés UTÁN tölti be a css-t, és text-ként megjeleníti, a fő oldal HELYETT.
             auth.antMatchers("/css/**").permitAll();
-            auth.requestMatchers(toH2Console()).hasAuthority("ADMIN");
+            auth.requestMatchers(toH2Console()).hasAuthority(ROLE_ADMIN);
             auth.antMatchers("/confirm_logout").permitAll();
             auth.antMatchers("/logged_out").permitAll();
             auth.anyRequest().authenticated();

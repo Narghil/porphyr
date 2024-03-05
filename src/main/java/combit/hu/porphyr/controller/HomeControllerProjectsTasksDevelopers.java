@@ -8,7 +8,7 @@ import combit.hu.porphyr.domain.ProjectEntity;
 import combit.hu.porphyr.domain.ProjectTaskDeveloperEntity;
 import combit.hu.porphyr.domain.ProjectTaskEntity;
 import combit.hu.porphyr.service.ProjectTaskDeveloperService;
-import combit.hu.porphyr.service.ServiceException;
+import combit.hu.porphyr.service.PorphyrServiceException;
 import lombok.NonNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +27,12 @@ import static combit.hu.porphyr.controller.helpers.HomeControllerConstants.*;
 @Controller
 public class HomeControllerProjectsTasksDevelopers {
 
-    private ProjectTaskDeveloperService projectTaskDeveloperService;
+    private final @NonNull ProjectTaskDeveloperService projectTaskDeveloperService;
 
     @Autowired
-    public void setProjectTaskDeveloperService(ProjectTaskDeveloperService projectTaskDeveloperService) {
+    public HomeControllerProjectsTasksDevelopers(
+        final @NonNull ProjectTaskDeveloperService projectTaskDeveloperService
+    ) {
         this.projectTaskDeveloperService = projectTaskDeveloperService;
     }
 
@@ -46,34 +48,34 @@ public class HomeControllerProjectsTasksDevelopers {
     public @NonNull String selectOperation(
         @ModelAttribute
         @NonNull
-        TemplateData dataFromTemplate
+        final TemplateData dataFromTemplate
     ) throws ExecutionException, InterruptedException {
-        @NonNull String result;
+        @NonNull final String result;
         sessionData.setDataFromTemplate(dataFromTemplate);
         final @Nullable Long projectTaskDeveloperId = dataFromTemplate.getId();
         if (projectTaskDeveloperId == null) {
-            throw new ServiceException(ServiceException.Exceptions.NULL_VALUE);
+            throw new PorphyrServiceException(PorphyrServiceException.Exceptions.NULL_VALUE);
         }
         final @Nullable ProjectTaskDeveloperEntity projectTaskDeveloper =
             projectTaskDeveloperService.getProjectTaskDeveloperById(projectTaskDeveloperId);
         if (projectTaskDeveloper == null) {
-            throw new ServiceException(ServiceException.Exceptions.NULL_VALUE);
+            throw new PorphyrServiceException(PorphyrServiceException.Exceptions.NULL_VALUE);
         }
         sessionData.setSelectedProjectTaskDeveloperId(projectTaskDeveloperId);
         sessionData.moveDataFromToTemplate();
         switch (dataFromTemplate.getOperation()) {
-            case MODIFY: {
+            case MENU_ITEM_MODIFY: {
                 modifyProjectTaskDeveloper();
                 result = REDIRECT_TO_PROJECTTASKS_DEVELOPERS;
                 break;
             }
-            case DELETE: {
+            case MENU_ITEM_DELETE: {
                 deleteProjectTaskDeveloper();
                 result = REDIRECT_TO_PROJECTTASKS_DEVELOPERS;
                 break;
             }
             default:
-                throw new ServiceException(ServiceException.Exceptions.NULL_VALUE);
+                throw new PorphyrServiceException(PorphyrServiceException.Exceptions.NULL_VALUE);
         }
         return result;
     }
@@ -84,8 +86,8 @@ public class HomeControllerProjectsTasksDevelopers {
         try {
             projectTaskDeveloperService.deleteProjectTaskDeveloper(
                 sessionData.getSelectedProjectTaskDeveloper());
-        } catch (ServiceException serviceException) {
-            webErrorBean.setError(ON, ERROR_TITLE, serviceException.getMessage());
+        } catch (PorphyrServiceException porphyrServiceException) {
+            webErrorBean.setError(ON, ERROR_TITLE, porphyrServiceException.getMessage());
         }
     }
 
@@ -95,19 +97,19 @@ public class HomeControllerProjectsTasksDevelopers {
         final @NonNull ProjectTaskDeveloperEntity projectTaskDeveloper = sessionData.getSelectedProjectTaskDeveloper();
         final @Nullable Long time = sessionData.getDataFromTemplate().getLongData();
         if (time == null) {
-            throw new ServiceException(ServiceException.Exceptions.NULL_VALUE);
+            throw new PorphyrServiceException(PorphyrServiceException.Exceptions.NULL_VALUE);
         }
         try {
             projectTaskDeveloper.setSpendTime(time);
             projectTaskDeveloperService.modifyProjectTaskDeveloper(projectTaskDeveloper);
-        } catch (ServiceException serviceException) {
-            webErrorBean.setError(ON, ERROR_TITLE, serviceException.getMessage());
+        } catch (PorphyrServiceException porphyrServiceException) {
+            webErrorBean.setError(ON, ERROR_TITLE, porphyrServiceException.getMessage());
         }
     }
 
     //---------------------- Új fejlesztő hozzárendelése a feladathoz
     @RequestMapping("/project_tasks_developers_new")
-    public String newProjectTaskDeveloper(Model model)
+    public @NonNull String newProjectTaskDeveloper(Model model)
     throws InterruptedException, ExecutionException {
         final @NonNull ProjectEntity project = sessionData.getSelectedProject();
         final @NonNull ProjectTaskEntity projectTask = sessionData.getSelectedProjectTask();
@@ -135,11 +137,11 @@ public class HomeControllerProjectsTasksDevelopers {
     public @NonNull String newProjectTaskDeveloper(
         @ModelAttribute
         @NonNull
-        TemplateData dataFromTemplate
+        final TemplateData dataFromTemplate
     ) throws InterruptedException, ExecutionException {
         final @Nullable Long projectDeveloperId = dataFromTemplate.getId();
         if( projectDeveloperId == null){
-            throw new ServiceException(ServiceException.Exceptions.NULL_VALUE);
+            throw new PorphyrServiceException(PorphyrServiceException.Exceptions.NULL_VALUE);
         }
         sessionData.setSelectedProjectDeveloperId( projectDeveloperId );
         final @NonNull ProjectDeveloperEntity projectDeveloper = sessionData.getSelectedProjectDeveloper();
@@ -148,8 +150,8 @@ public class HomeControllerProjectsTasksDevelopers {
         newProjectTaskDeveloper.setProjectTaskAndProjectDeveloper(projectTask, projectDeveloper);
         try {
             projectTaskDeveloperService.insertNewProjectTaskDeveloper(newProjectTaskDeveloper);
-        } catch (ServiceException serviceException) {
-            webErrorBean.setError(ON, ERROR_TITLE, serviceException.getMessage());
+        } catch (PorphyrServiceException porphyrServiceException) {
+            webErrorBean.setError(ON, ERROR_TITLE, porphyrServiceException.getMessage());
         }
 
         return REDIRECT_TO_PROJECTTASKS_DEVELOPERS;

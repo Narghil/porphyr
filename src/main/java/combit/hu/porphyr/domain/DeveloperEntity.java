@@ -23,6 +23,7 @@ import java.util.Set;
  * {@code - name:} &#9;&#9;&#9; A fejlesztő neve. Egyedi. <br/>
  * {@code - developerProjects:} &#9; A projektek listája, amelyekhez a fejlesztő hozzá van rendelve. <br/>
  * <br/>
+ *
  * @see ProjectDeveloperEntity
  */
 
@@ -44,21 +45,20 @@ public class DeveloperEntity {
     @EqualsAndHashCode.Exclude
     private @NonNull List<ProjectDeveloperEntity> developerProjects;
 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "users_developers",
+        joinColumns = {@JoinColumn(name = "developer_id")},
+        inverseJoinColumns = {@JoinColumn(name = "user_id")}
+    )
+    private Set<UserEntity> users = new HashSet<>();
+
     public DeveloperEntity(final @NonNull String name) {
         this.name = name;
         this.developerProjects = new ArrayList<>();
     }
-
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    @ManyToMany( cascade = CascadeType.ALL, fetch = FetchType.EAGER )
-    @JoinTable(
-        name = "users_developers",
-        joinColumns = {@JoinColumn(name="developer_id")},
-        inverseJoinColumns = {@JoinColumn(name="user_id")}
-    )
-    private Set<UserEntity> users = new HashSet<>();
-
 
     public DeveloperEntity() {
         name = "";

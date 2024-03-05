@@ -3,6 +3,8 @@ databaseChangeLog:
     id: 1
     author: Pernyei Gabor
     changes:
+    - SQL:
+          SET DateStyle TO German;
     - createTable:
         columns:
         - column:

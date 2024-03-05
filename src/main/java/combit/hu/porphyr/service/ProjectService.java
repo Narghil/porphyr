@@ -62,9 +62,9 @@ public class ProjectService {
             @Override
             public void run() {
                 if (newProjectEntity.getName().isEmpty()) {
-                    throw (new ServiceException(ServiceException.Exceptions.PROJECT_INSERT_EMPTY_NAME));
+                    throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.PROJECT_INSERT_EMPTY_NAME));
                 } else if (!projectRepository.findAllByName(newProjectEntity.getName()).isEmpty()) {
-                    throw (new ServiceException(ServiceException.Exceptions.PROJECT_INSERT_SAME_NAME));
+                    throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.PROJECT_INSERT_SAME_NAME));
                 } else {
                     projectRepository.saveAndFlush(newProjectEntity);
                 }
@@ -73,7 +73,7 @@ public class ProjectService {
         try {
             forkJoinPool.submit(new RunnableCore(newProjectEntity)).get();
         } catch (ExecutionException exception) {
-            ServiceException.handleExecutionException(exception);
+            PorphyrServiceException.handleExecutionException(exception);
         }
     }
 
@@ -98,15 +98,15 @@ public class ProjectService {
             public void run() {
                 entityManager.detach(modifiedProjectEntity);
                 if (modifiedProjectEntity.getId() == null) {
-                    throw new ServiceException(ServiceException.Exceptions.PROJECT_MODIFY_NOT_SAVED);
+                    throw new PorphyrServiceException(PorphyrServiceException.Exceptions.PROJECT_MODIFY_NOT_SAVED);
                 } else if (modifiedProjectEntity.getName().isEmpty()) {
-                    throw new ServiceException(ServiceException.Exceptions.PROJECT_MODIFY_EMPTY_NAME);
+                    throw new PorphyrServiceException(PorphyrServiceException.Exceptions.PROJECT_MODIFY_EMPTY_NAME);
                 } else {
                     boolean isSameNamedProject = isProjectWithNameAndNotId(
                         modifiedProjectEntity.getName(), modifiedProjectEntity.getId()
                     );
                     if (isSameNamedProject) {
-                        throw new ServiceException(ServiceException.Exceptions.PROJECT_MODIFY_SAME_NAME);
+                        throw new PorphyrServiceException(PorphyrServiceException.Exceptions.PROJECT_MODIFY_SAME_NAME);
                     } else {
                         projectRepository.saveAndFlush(modifiedProjectEntity);
                     }
@@ -116,7 +116,7 @@ public class ProjectService {
         try {
             forkJoinPool.submit(new RunnableCore(modifiedProjectEntity)).get();
         } catch (ExecutionException ee) {
-            ServiceException.handleExecutionException(ee);
+            PorphyrServiceException.handleExecutionException(ee);
         }
     }
 
@@ -141,15 +141,15 @@ public class ProjectService {
             public void run() {
                 Long projectId = projectEntity.getId();
                 if (projectId == null) {
-                    throw new ServiceException(ServiceException.Exceptions.PROJECT_DELETE_NOT_SAVED);
+                    throw new PorphyrServiceException(PorphyrServiceException.Exceptions.PROJECT_DELETE_NOT_SAVED);
                 } else {
                     ProjectEntity actualProjectData = projectRepository.findAllById(projectId);
                     if (actualProjectData == null) {
-                        throw (new ServiceException(ServiceException.Exceptions.UNDEFINED));
+                        throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.UNDEFINED));
                     } else if (!actualProjectData.getProjectTasks().isEmpty()) {
-                        throw new ServiceException(ServiceException.Exceptions.PROJECT_DELETE_TASKS_ASSIGNED);
+                        throw new PorphyrServiceException(PorphyrServiceException.Exceptions.PROJECT_DELETE_TASKS_ASSIGNED);
                     } else if (!actualProjectData.getProjectDevelopers().isEmpty()) {
-                        throw new ServiceException(ServiceException.Exceptions.PROJECT_DELETE_DEVELOPERS_ASSIGNED);
+                        throw new PorphyrServiceException(PorphyrServiceException.Exceptions.PROJECT_DELETE_DEVELOPERS_ASSIGNED);
                     } else {
                         projectRepository.deleteById(projectEntity.getId());
                         entityManager.flush();
@@ -160,7 +160,7 @@ public class ProjectService {
         try {
             forkJoinPool.submit(new RunnableCore(projectEntity)).get();
         } catch (ExecutionException ee) {
-            ServiceException.handleExecutionException(ee);
+            PorphyrServiceException.handleExecutionException(ee);
         }
     }
 
@@ -178,7 +178,7 @@ public class ProjectService {
         try {
             result = forkJoinPool.submit(new CallableCore()).get();
         } catch (ExecutionException ee) {
-            ServiceException.handleExecutionException(ee);
+            PorphyrServiceException.handleExecutionException(ee);
         }
         return result;
     }
@@ -204,7 +204,7 @@ public class ProjectService {
         try {
             result = forkJoinPool.submit(new CallableCore(id)).get();
         } catch (ExecutionException ee) {
-            ServiceException.handleExecutionException(ee);
+            PorphyrServiceException.handleExecutionException(ee);
         }
         return result;
     }
@@ -231,7 +231,7 @@ public class ProjectService {
         try {
             result = forkJoinPool.submit(new CallableCore(name)).get();
         } catch (ExecutionException ee) {
-            ServiceException.handleExecutionException(ee);
+            PorphyrServiceException.handleExecutionException(ee);
         }
         return result;
     }
@@ -259,7 +259,7 @@ public class ProjectService {
         try {
             result = forkJoinPool.submit(new CallableCore(name, id)).get();
         } catch (ExecutionException ee) {
-            ServiceException.handleExecutionException(ee);
+            PorphyrServiceException.handleExecutionException(ee);
         }
         return result;
     }

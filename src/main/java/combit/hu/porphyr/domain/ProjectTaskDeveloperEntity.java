@@ -24,7 +24,8 @@ import javax.persistence.Table;
  * - {@code projectTaskEntity:} &#9;&#9;            Projektfeladat <br/>
  * - {@code projectDeveloperEntity:} &#9;           Projektfejlesztő <br/>
  * A projectTaskEntity és a projectDeveloperEntity együtt egyedi <br/>
- *   <br/>
+ * <br/>
+ *
  * @see ProjectTaskEntity
  * @see ProjectDeveloperEntity
  */

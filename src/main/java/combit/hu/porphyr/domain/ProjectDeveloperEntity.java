@@ -31,6 +31,7 @@ import java.util.List;
  * {@code - projectTaskDevelopers:} &#9; Az aktuális összerendeléshez tartozó projectTask hozzárendelések. <br/>
  * A projectEntity és a developerEntity együtt egyedi. <br/>
  * <br/>
+ *
  * @see ProjectEntity
  * @see DeveloperEntity
  * @see ProjectTaskEntity
@@ -64,7 +65,7 @@ public class ProjectDeveloperEntity {
     @JsonBackReference
     private @NonNull List<ProjectTaskDeveloperEntity> projectTaskDevelopers;
 
-    public ProjectDeveloperEntity( final @NonNull ProjectEntity project, final @NonNull DeveloperEntity developer){
+    public ProjectDeveloperEntity(final @NonNull ProjectEntity project, final @NonNull DeveloperEntity developer) {
         projectEntity = project;
         developerEntity = developer;
         projectTaskDevelopers = new ArrayList<>();

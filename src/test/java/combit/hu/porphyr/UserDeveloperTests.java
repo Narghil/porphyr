@@ -5,10 +5,9 @@ import combit.hu.porphyr.domain.UserEntity;
 import combit.hu.porphyr.repository.DeveloperRepository;
 import combit.hu.porphyr.repository.UserRepository;
 import combit.hu.porphyr.service.DeveloperService;
-import combit.hu.porphyr.service.ServiceException;
+import combit.hu.porphyr.service.PorphyrServiceException;
 import combit.hu.porphyr.service.UserService;
 import lombok.NonNull;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -34,37 +33,35 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")
 class UserDeveloperTests {
-    @Autowired
-    private @NonNull EntityManager entityManager;
+    private final @NonNull EntityManager entityManager;
+
+    private final @NonNull UserRepository spyUserRepository;
+    private final @NonNull UserService spiedUserService;
+    private final @NonNull DeveloperRepository spyDeveloperRepository;
+    private final @NonNull DeveloperService spiedDeveloperService;
 
     @Autowired
-    private @NonNull UserRepository userRepository;
-
-    @Autowired
-    private @NonNull DeveloperRepository developerRepository;
-
-    private UserRepository spyUserRepository;
-    private UserService spiedUserService;
-    private DeveloperRepository spyDeveloperRepository;
-    private DeveloperService spiedDeveloperService;
-
-    @BeforeAll
-    void setupAll() {
-        spiedUserService = new UserService( entityManager, userRepository);
-        spyUserRepository = Mockito.mock(
-            UserRepository.class, AdditionalAnswers.delegatesTo(userRepository)
+    public UserDeveloperTests(
+        final @NonNull EntityManager entityManager,
+        final @NonNull UserRepository userRepository,
+        final @NonNull DeveloperRepository developerRepository
+    ) {
+        this.entityManager = entityManager;
+        this.spiedUserService = new UserService( this.entityManager, userRepository);
+        this.spyUserRepository = Mockito.mock(
+            UserRepository.class, AdditionalAnswers.delegatesTo( userRepository)
         );
-        spiedUserService.setUserRepository(spyUserRepository);
-        spiedUserService.setEntityManager(entityManager);
+        this.spiedUserService.setUserRepository(this.spyUserRepository);
+        this.spiedUserService.setEntityManager(this.entityManager);
 
-        spiedDeveloperService = new DeveloperService( entityManager, developerRepository);
-        spyDeveloperRepository = Mockito.mock(
-            DeveloperRepository.class, AdditionalAnswers.delegatesTo(developerRepository)
+        this.spiedDeveloperService = new DeveloperService( this.entityManager, developerRepository);
+        this.spyDeveloperRepository = Mockito.mock(
+            DeveloperRepository.class, AdditionalAnswers.delegatesTo( developerRepository)
         );
-        spiedDeveloperService.setDeveloperRepository(spyDeveloperRepository);
-        spiedDeveloperService.setEntityManager(entityManager);
+        this.spiedDeveloperService.setDeveloperRepository(this.spyDeveloperRepository);
+        this.spiedDeveloperService.setEntityManager(this.entityManager);
 
-        ServiceException.initExceptionsCounter();
+        PorphyrServiceException.initExceptionsCounter();
     }
 
     @BeforeEach

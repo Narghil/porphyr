@@ -8,15 +8,18 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 //@EnableWebMvc
+// A WebMvcConfigurer implementációban, az @EnableWebMvc és a @Configuration annotációk együttes alkalmazása esetén
+// a STATIC könyvtár elemeire 404-es hibát jelez a Tomcat server.
+// Egyes fórumok szerint az @EnableWebMvc használata - ettől függetlenül is - felesleges.
 @Configuration
-public class WebConfigurator implements WebMvcConfigurer{
+public class WebConfigurator implements WebMvcConfigurer {
 
-	@Override
-	public void addViewControllers(@NotNull ViewControllerRegistry registry) {
+    @Override
+    public void addViewControllers(@NotNull ViewControllerRegistry registry) {
         registry.addViewController("/login").setViewName("authentication/login");
-		registry.addViewController("/confirm_logout").setViewName("authentication/confirm_logout");
-		registry.addViewController("/logged_out").setViewName("authentication/logged_out");
+        registry.addViewController("/confirm_logout").setViewName("authentication/confirm_logout");
+        registry.addViewController("/logged_out").setViewName("authentication/logged_out");
         registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
-	}
-
+    }
 }
+

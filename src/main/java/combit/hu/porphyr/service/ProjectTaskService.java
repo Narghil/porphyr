@@ -44,7 +44,7 @@ public class ProjectTaskService {
         final @NonNull EntityManager entityManager,
         final @NonNull ProjectTaskRepository projectTaskRepository,
         final @NonNull ProjectRepository projectRepository
-    ){
+    ) {
         this.entityManager = entityManager;
         this.projectTaskRepository = projectTaskRepository;
         this.projectRepository = projectRepository;
@@ -74,13 +74,13 @@ public class ProjectTaskService {
                 String taskName = newProjectTaskEntity.getName();
                 entityManager.detach(newProjectTaskEntity);
                 if (project.getId() == null) {
-                    throw (new ServiceException(ServiceException.Exceptions.PROJECTTASK_INSERT_PROJECT_NOT_SAVED));
+                    throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.PROJECTTASK_INSERT_PROJECT_NOT_SAVED));
                 } else if (projectRepository.findAllById(project.getId()) == null) {
-                    throw (new ServiceException(ServiceException.Exceptions.PROJECTTASK_INSERT_PROJECT_NOT_EXISTS));
+                    throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.PROJECTTASK_INSERT_PROJECT_NOT_EXISTS));
                 } else if (taskName.isEmpty()) {
-                    throw (new ServiceException(ServiceException.Exceptions.PROJECTTASK_INSERT_EMPTY_NAME));
+                    throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.PROJECTTASK_INSERT_EMPTY_NAME));
                 } else if (projectTaskRepository.findAllByProjectEntityAndName(project, taskName) != null) {
-                    throw (new ServiceException(ServiceException.Exceptions.PROJECTTASK_INSERT_SAME_PROJECT_AND_NAME));
+                    throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.PROJECTTASK_INSERT_SAME_PROJECT_AND_NAME));
                 } else {
                     projectTaskRepository.saveAndFlush(newProjectTaskEntity);
                 }
@@ -89,7 +89,7 @@ public class ProjectTaskService {
         try {
             forkJoinPool.submit(new RunnableCore(newProjectTaskEntity)).get();
         } catch (ExecutionException executionException) {
-            ServiceException.handleExecutionException(executionException);
+            PorphyrServiceException.handleExecutionException(executionException);
         }
     }
 
@@ -117,19 +117,19 @@ public class ProjectTaskService {
                 String taskName = modifiedProjectTaskEntity.getName();
                 entityManager.detach(modifiedProjectTaskEntity);
                 if (taskId == null) {
-                    throw (new ServiceException(ServiceException.Exceptions.PROJECTTASK_MODIFY_NOT_SAVED));
+                    throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.PROJECTTASK_MODIFY_NOT_SAVED));
                 } else if (project.getId() == null) {
-                    throw (new ServiceException(ServiceException.Exceptions.PROJECTTASK_MODIFY_PROJECT_NOT_SAVED));
+                    throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.PROJECTTASK_MODIFY_PROJECT_NOT_SAVED));
                 } else if (projectRepository.findAllById(project.getId()) == null) {
-                    throw (new ServiceException(ServiceException.Exceptions.PROJECTTASK_MODIFY_PROJECT_NOT_EXISTS));
+                    throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.PROJECTTASK_MODIFY_PROJECT_NOT_EXISTS));
                 } else if (taskName.isEmpty()) {
-                    throw (new ServiceException(ServiceException.Exceptions.PROJECTTASK_MODIFY_EMPTY_NAME));
+                    throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.PROJECTTASK_MODIFY_EMPTY_NAME));
                 } else if (projectTaskRepository.findAllByProjectEntityAndNameAndIdNot(
                     project,
                     taskName,
                     taskId
                 ) != null) {
-                    throw (new ServiceException(ServiceException.Exceptions.PROJECTTASK_MODIFY_SAME_PROJECT_AND_NAME));
+                    throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.PROJECTTASK_MODIFY_SAME_PROJECT_AND_NAME));
                 } else {
                     projectTaskRepository.saveAndFlush(modifiedProjectTaskEntity);
                 }
@@ -138,7 +138,7 @@ public class ProjectTaskService {
         try {
             forkJoinPool.submit(new RunnableCore(modifiedProjectTaskEntity)).get();
         } catch (ExecutionException executionException) {
-            ServiceException.handleExecutionException(executionException);
+            PorphyrServiceException.handleExecutionException(executionException);
         }
     }
 
@@ -161,11 +161,11 @@ public class ProjectTaskService {
             public void run() {
                 Long taskId = deleteProjectTaskEntity.getId();
                 if (taskId == null) {
-                    throw (new ServiceException(ServiceException.Exceptions.PROJECTTASK_DELETE_NOT_SAVED));
+                    throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.PROJECTTASK_DELETE_NOT_SAVED));
                 } else if (!Objects.requireNonNull(projectTaskRepository.findAllById(taskId))
                     .getProjectTaskDevelopers()
                     .isEmpty()) {
-                    throw (new ServiceException(ServiceException.Exceptions.PROJECTTASK_DELETE_DEVELOPERS_ASSIGNED));
+                    throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.PROJECTTASK_DELETE_DEVELOPERS_ASSIGNED));
                 } else {
                     projectTaskRepository.deleteById(taskId);
                     entityManager.flush();
@@ -175,7 +175,7 @@ public class ProjectTaskService {
         try {
             forkJoinPool.submit(new RunnableCore(deleteProjectTaskEntity)).get();
         } catch (ExecutionException executionException) {
-            ServiceException.handleExecutionException(executionException);
+            PorphyrServiceException.handleExecutionException(executionException);
         }
     }
 
@@ -194,7 +194,7 @@ public class ProjectTaskService {
         try {
             result = forkJoinPool.submit(new CallableCore()).get();
         } catch (ExecutionException executionException) {
-            ServiceException.handleExecutionException(executionException);
+            PorphyrServiceException.handleExecutionException(executionException);
         }
         return result;
     }
@@ -202,7 +202,7 @@ public class ProjectTaskService {
     /**
      * Egy projekthez tartozó valamennyi feladat lekérdezése, Project szerint
      */
-    public synchronized @NonNull List<ProjectTaskEntity> getProjectTasksByProjectEntity( final @NonNull ProjectEntity projectEntity )
+    public synchronized @NonNull List<ProjectTaskEntity> getProjectTasksByProjectEntity(final @NonNull ProjectEntity projectEntity)
         throws ExecutionException, InterruptedException {
         final class CallableCore implements Callable<List<ProjectTaskEntity>> {
             @Override
@@ -214,7 +214,7 @@ public class ProjectTaskService {
         try {
             result = forkJoinPool.submit(new CallableCore()).get();
         } catch (ExecutionException executionException) {
-            ServiceException.handleExecutionException(executionException);
+            PorphyrServiceException.handleExecutionException(executionException);
         }
         return result;
     }
@@ -240,7 +240,7 @@ public class ProjectTaskService {
         try {
             result = forkJoinPool.submit(new CallableCore(projectTaskId)).get();
         } catch (ExecutionException executionException) {
-            ServiceException.handleExecutionException(executionException);
+            PorphyrServiceException.handleExecutionException(executionException);
         }
         return result;
     }
@@ -269,7 +269,7 @@ public class ProjectTaskService {
         try {
             result = forkJoinPool.submit(new CallableCore(projectEntity, taskName)).get();
         } catch (ExecutionException executionException) {
-            ServiceException.handleExecutionException(executionException);
+            PorphyrServiceException.handleExecutionException(executionException);
         }
         return result;
     }

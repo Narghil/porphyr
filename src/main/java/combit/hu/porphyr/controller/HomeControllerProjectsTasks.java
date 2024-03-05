@@ -7,7 +7,7 @@ import combit.hu.porphyr.domain.ProjectEntity;
 import combit.hu.porphyr.domain.ProjectTaskEntity;
 import combit.hu.porphyr.service.ProjectTaskDeveloperService;
 import combit.hu.porphyr.service.ProjectTaskService;
-import combit.hu.porphyr.service.ServiceException;
+import combit.hu.porphyr.service.PorphyrServiceException;
 import lombok.NonNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,16 +26,15 @@ import static combit.hu.porphyr.controller.helpers.HomeControllerConstants.*;
 @Controller
 public class HomeControllerProjectsTasks {
 
-    private ProjectTaskService projectTaskService;
-    private ProjectTaskDeveloperService projectTaskDeveloperService;
+    private final @NonNull ProjectTaskService projectTaskService;
+    private final @NonNull ProjectTaskDeveloperService projectTaskDeveloperService;
 
     @Autowired
-    public void setProjectTaskService(ProjectTaskService projectTaskService) {
+    public HomeControllerProjectsTasks(
+        final @NonNull ProjectTaskService projectTaskService,
+        final @NonNull ProjectTaskDeveloperService projectTaskDeveloperService
+    ) {
         this.projectTaskService = projectTaskService;
-    }
-
-    @Autowired
-    public void setProjectTaskDeveloperService(ProjectTaskDeveloperService projectTaskDeveloperService) {
         this.projectTaskDeveloperService = projectTaskDeveloperService;
     }
 
@@ -53,7 +52,7 @@ public class HomeControllerProjectsTasks {
     //-------------- Projekt feladatainak listája
     @RequestMapping("/project_tasks")
     public @NonNull String loadDataBeforeProjectTasks(
-        Model model
+        final @NonNull Model model
     ) throws ExecutionException, InterruptedException {
         final ProjectEntity project = sessionData.getSelectedProject();
         model.addAttribute(ERROR, webErrorBean.getWebErrorData());
@@ -67,34 +66,35 @@ public class HomeControllerProjectsTasks {
     public @NonNull String selectOperation(
         @ModelAttribute
         @NonNull
-        TemplateData dataFromTemplate
+        final TemplateData dataFromTemplate
     ) throws ExecutionException, InterruptedException {
-        @NonNull String result;
+        @NonNull
+        final String result;
         final @Nullable Long projectTaskId = dataFromTemplate.getId();
         if (projectTaskId == null) {
-            throw new ServiceException(ServiceException.Exceptions.NULL_VALUE);
+            throw new PorphyrServiceException(PorphyrServiceException.Exceptions.NULL_VALUE);
         }
         final @Nullable ProjectTaskEntity projectTask = projectTaskService.getProjectTaskById(projectTaskId);
         if (projectTask == null) {
-            throw new ServiceException(ServiceException.Exceptions.NULL_VALUE);
+            throw new PorphyrServiceException(PorphyrServiceException.Exceptions.NULL_VALUE);
         }
         sessionData.setSelectedProjectTaskId(projectTaskId);
         switch (dataFromTemplate.getOperation()) {
-            case DEVELOPERS: {
+            case MENU_ITEM_DEVELOPERS: {
                 result = REDIRECT_TO_PROJECTTASKS_DEVELOPERS;
                 break;
             }
-            case MODIFY: {
+            case MENU_ITEM_MODIFY: {
                 result = REDIRECT_TO_PROJECTTASKS_MODIFY;
                 break;
             }
-            case DELETE: {
+            case MENU_ITEM_DELETE: {
                 deleteProjectTask();
                 result = REDIRECT_TO_PROJECTTASKS;
                 break;
             }
             default:
-                throw new ServiceException(ServiceException.Exceptions.NULL_VALUE);
+                throw new PorphyrServiceException(PorphyrServiceException.Exceptions.NULL_VALUE);
         }
         return result;
     }
@@ -102,7 +102,7 @@ public class HomeControllerProjectsTasks {
     //------------------ Fejlesztők listája
     @RequestMapping("/project_tasks_developers")
     public @NonNull String projectTaskDevelopers(
-        Model model
+        final @NonNull Model model
     ) throws ExecutionException, InterruptedException {
         final @Nullable ProjectEntity project = sessionData.getSelectedProject();
         final @Nullable ProjectTaskEntity projectTask = sessionData.getSelectedProjectTask();
@@ -122,37 +122,37 @@ public class HomeControllerProjectsTasks {
     ) throws InterruptedException, ExecutionException {
         try {
             projectTaskService.deleteProjectTask(sessionData.getSelectedProjectTask());
-        } catch (ServiceException serviceException) {
-            webErrorBean.setError(ON, ERROR_TITLE, serviceException.getMessage());
+        } catch (PorphyrServiceException porphyrServiceException) {
+            webErrorBean.setError(ON, ERROR_TITLE, porphyrServiceException.getMessage());
         }
     }
 
     //-------------- Fejlesztő törlése ------------------------
     @RequestMapping("/deleteProjectTaskDeveloper")
-    public String deleteProjectTaskDeveloper(
+    public @NonNull String deleteProjectTaskDeveloper(
         @ModelAttribute
         @NonNull
-        TemplateData dataFromTemplate
+        final TemplateData dataFromTemplate
     ) throws InterruptedException, ExecutionException {
         try {
             projectTaskDeveloperService.deleteProjectTaskDeveloper(
                 sessionData.getSelectedProjectTaskDeveloper());
-        } catch (ServiceException serviceException) {
-            webErrorBean.setError(ON, ERROR_TITLE, serviceException.getMessage());
+        } catch (PorphyrServiceException porphyrServiceException) {
+            webErrorBean.setError(ON, ERROR_TITLE, porphyrServiceException.getMessage());
         }
         return REDIRECT_TO_PROJECTTASKS_DEVELOPERS;
     }
 
     //------------------ Új feladat felvitele a projekthez ---------------------------------
     @RequestMapping("/projecttask_new_start")
-    public @NonNull String startNewProjectTask(Model model) {
+    public @NonNull String startNewProjectTask(final @NonNull Model model) {
         sessionData.setSelectedProjectTaskId(0L);
         return REDIRECT_TO_PROJECTTASKS_NEW;
     }
 
     @RequestMapping("/project_tasks_new")
-    public @NonNull String newProjectTask(Model model)
-    throws ExecutionException, InterruptedException {
+    public @NonNull String newProjectTask(final @NonNull Model model)
+        throws ExecutionException, InterruptedException {
         model.addAttribute(
             "projectName",
             sessionData.getSelectedProject().getName()
@@ -166,12 +166,13 @@ public class HomeControllerProjectsTasks {
     public @NonNull String insertNewProjectTask(
         @ModelAttribute
         @NonNull
-        TemplateData dataFromTemplate
+        final TemplateData dataFromTemplate
     ) throws InterruptedException, ExecutionException {
         @NonNull String result = REDIRECT_TO_PROJECTTASKS;
-        @Nullable String name = dataFromTemplate.getName();
+        @Nullable
+        final String name = dataFromTemplate.getName();
         if (name == null) {
-            throw new ServiceException(ServiceException.Exceptions.NULL_VALUE);
+            throw new PorphyrServiceException(PorphyrServiceException.Exceptions.NULL_VALUE);
         }
         sessionData.setDataToTemplate(dataFromTemplate);
         final @NonNull ProjectTaskEntity newProjectTask = new ProjectTaskEntity();
@@ -182,8 +183,8 @@ public class HomeControllerProjectsTasks {
         newProjectTask.setDescription(dataFromTemplate.getDescription());
         try {
             projectTaskService.insertNewProjectTask(newProjectTask);
-        } catch (ServiceException serviceException) {
-            webErrorBean.setError(ON, ERROR_TITLE, serviceException.getMessage());
+        } catch (PorphyrServiceException porphyrServiceException) {
+            webErrorBean.setError(ON, ERROR_TITLE, porphyrServiceException.getMessage());
             result = REDIRECT_TO_PROJECTTASKS_NEW;
         }
         return result;
@@ -191,8 +192,8 @@ public class HomeControllerProjectsTasks {
 
     //------------------ Projektfeladat módosítása ---------------------------------
     @RequestMapping("/project_tasks_modify")
-    public @NonNull String modifyProjectTask(Model model)
-    throws ExecutionException, InterruptedException {
+    public @NonNull String modifyProjectTask(final @NonNull Model model)
+        throws ExecutionException, InterruptedException {
         model.addAttribute(
             "projectName", sessionData.getSelectedProject().getName()
         );
@@ -208,20 +209,21 @@ public class HomeControllerProjectsTasks {
     public @NonNull String endModifyProjectTask(
         @ModelAttribute
         @NonNull
-        TemplateData dataFromTemplate
+        final TemplateData dataFromTemplate
     ) throws InterruptedException, ExecutionException {
         @NonNull String result = REDIRECT_TO_PROJECTTASKS;
-        @Nullable String name = dataFromTemplate.getName();
-        if( name == null){
-            throw new ServiceException(ServiceException.Exceptions.NULL_VALUE);
+        @Nullable
+        final String name = dataFromTemplate.getName();
+        if (name == null) {
+            throw new PorphyrServiceException(PorphyrServiceException.Exceptions.NULL_VALUE);
         }
         final @Nullable ProjectTaskEntity editedProjectTask = sessionData.getSelectedProjectTask();
         editedProjectTask.setName(name);
         editedProjectTask.setDescription(dataFromTemplate.getDescription());
         try {
             projectTaskService.modifyProjectTask(editedProjectTask);
-        } catch (ServiceException serviceException) {
-            webErrorBean.setError(ON, ERROR_TITLE, serviceException.getMessage());
+        } catch (PorphyrServiceException porphyrServiceException) {
+            webErrorBean.setError(ON, ERROR_TITLE, porphyrServiceException.getMessage());
             result = REDIRECT_TO_PROJECTTASKS_MODIFY;
         }
         return result;

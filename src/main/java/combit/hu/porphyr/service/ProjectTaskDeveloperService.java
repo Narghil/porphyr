@@ -51,7 +51,7 @@ public class ProjectTaskDeveloperService {
         final @NonNull ProjectTaskDeveloperRepository projectTaskDeveloperRepository,
         final @NonNull ProjectTaskRepository projectTaskRepository,
         final @NonNull ProjectDeveloperRepository projectDeveloperRepository
-    ){
+    ) {
         this.entityManager = entityManager;
         this.projectTaskDeveloperRepository = projectTaskDeveloperRepository;
         this.projectTaskRepository = projectTaskRepository;
@@ -76,7 +76,7 @@ public class ProjectTaskDeveloperService {
         try {
             forkJoinPool.submit(new InsertRunnableCore(projectTaskDeveloperEntity)).get();
         } catch (ExecutionException executionException) {
-            ServiceException.handleExecutionException(executionException);
+            PorphyrServiceException.handleExecutionException(executionException);
         }
     }
 
@@ -89,34 +89,34 @@ public class ProjectTaskDeveloperService {
 
         @Override
         public void run() {
-            @Nullable ServiceException serviceException = null;
+            @Nullable PorphyrServiceException porphyrServiceException = null;
             final @NonNull ProjectTaskEntity projectTaskEntity = projectTaskDeveloperEntity.getProjectTaskEntity();
             final @NonNull ProjectDeveloperEntity projectDeveloperEntity = projectTaskDeveloperEntity.getProjectDeveloperEntity();
             entityManager.detach(projectTaskDeveloperEntity);
             if (projectTaskEntity.getId() == null) {
-                serviceException = new ServiceException(ServiceException.Exceptions.PROJECTTASKDEVELOPER_INSERT_PROJECTTASK_NOT_SAVED);
+                porphyrServiceException = new PorphyrServiceException(PorphyrServiceException.Exceptions.PROJECTTASKDEVELOPER_INSERT_PROJECTTASK_NOT_SAVED);
             } else if (projectTaskRepository.findAllById(projectTaskEntity.getId()) == null) {
-                serviceException = new ServiceException(ServiceException.Exceptions.PROJECTTASKDEVELOPER_INSERT_PROJECTTASK_NOT_EXISTS);
+                porphyrServiceException = new PorphyrServiceException(PorphyrServiceException.Exceptions.PROJECTTASKDEVELOPER_INSERT_PROJECTTASK_NOT_EXISTS);
             } else if (projectDeveloperEntity.getId() == null) {
-                serviceException = new ServiceException(ServiceException.Exceptions.PROJECTTASKDEVELOPER_INSERT_PROJECTDEVELOPER_NOT_SAVED);
+                porphyrServiceException = new PorphyrServiceException(PorphyrServiceException.Exceptions.PROJECTTASKDEVELOPER_INSERT_PROJECTDEVELOPER_NOT_SAVED);
             } else if (projectDeveloperRepository.findAllById(projectDeveloperEntity.getId()) == null) {
-                serviceException = new ServiceException(ServiceException.Exceptions.PROJECTTASKDEVELOPER_INSERT_PROJECTDEVELOPER_NOT_EXISTS);
+                porphyrServiceException = new PorphyrServiceException(PorphyrServiceException.Exceptions.PROJECTTASKDEVELOPER_INSERT_PROJECTDEVELOPER_NOT_EXISTS);
             } else {
                 Long taskProjectId = projectTaskEntity.getProjectEntity().getId();
                 Long developerProjectId = projectDeveloperEntity.getProjectEntity().getId();
                 if (taskProjectId == null || developerProjectId == null) {
-                    serviceException = new ServiceException(ServiceException.Exceptions.NULL_VALUE);
+                    porphyrServiceException = new PorphyrServiceException(PorphyrServiceException.Exceptions.NULL_VALUE);
                 } else if (!taskProjectId.equals(developerProjectId)) {
-                    serviceException = new ServiceException(ServiceException.Exceptions.PROJECTTASKDEVELOPER_INSERT_TASK_OR_DEVELOPER_NOT_IN_PROJECT);
+                    porphyrServiceException = new PorphyrServiceException(PorphyrServiceException.Exceptions.PROJECTTASKDEVELOPER_INSERT_TASK_OR_DEVELOPER_NOT_IN_PROJECT);
                 } else if (projectTaskDeveloperRepository.findAllByProjectTaskEntityAndProjectDeveloperEntity(
                     projectTaskEntity, projectDeveloperEntity
                 ) != null) {
-                    serviceException = new ServiceException(ServiceException.Exceptions.PROJECTTASKDEVELOPER_INSERT_EXISTING_DATA);
+                    porphyrServiceException = new PorphyrServiceException(PorphyrServiceException.Exceptions.PROJECTTASKDEVELOPER_INSERT_EXISTING_DATA);
                 }
             }
 
-            if (serviceException != null) {
-                throw serviceException;
+            if (porphyrServiceException != null) {
+                throw porphyrServiceException;
             } else {
                 projectTaskDeveloperRepository.saveAndFlush(projectTaskDeveloperEntity);
             }
@@ -142,9 +142,9 @@ public class ProjectTaskDeveloperService {
             @Override
             public void run() {
                 if (projectTaskDeveloperEntity.getId() == null) {
-                    throw new ServiceException(ServiceException.Exceptions.PROJECTTASKDEVELOPER_MODIFY_NOT_SAVED);
+                    throw new PorphyrServiceException(PorphyrServiceException.Exceptions.PROJECTTASKDEVELOPER_MODIFY_NOT_SAVED);
                 } else if (projectTaskDeveloperEntity.getSpendTime() < 0) {
-                    throw new ServiceException(ServiceException.Exceptions.PROJECTTASKDEVELOPER_MODIFY_TIME_IS_NEGATIVE);
+                    throw new PorphyrServiceException(PorphyrServiceException.Exceptions.PROJECTTASKDEVELOPER_MODIFY_TIME_IS_NEGATIVE);
                 } else {
                     projectTaskDeveloperRepository.saveAndFlush(projectTaskDeveloperEntity);
                 }
@@ -153,7 +153,7 @@ public class ProjectTaskDeveloperService {
         try {
             forkJoinPool.submit(new RunnableCore(projectTaskDeveloperEntity)).get();
         } catch (ExecutionException executionException) {
-            ServiceException.handleExecutionException(executionException);
+            PorphyrServiceException.handleExecutionException(executionException);
         }
     }
 
@@ -176,9 +176,9 @@ public class ProjectTaskDeveloperService {
             @Override
             public void run() {
                 if (projectTaskDeveloperEntity.getId() == null) {
-                    throw new ServiceException(ServiceException.Exceptions.PROJECTTASKDEVELOPER_DELETE_NOT_SAVED);
+                    throw new PorphyrServiceException(PorphyrServiceException.Exceptions.PROJECTTASKDEVELOPER_DELETE_NOT_SAVED);
                 } else if (projectTaskDeveloperEntity.getSpendTime() > 0) {
-                    throw new ServiceException(ServiceException.Exceptions.PROJECTTASKDEVELOPER_DELETE_TIME_NOT_ZERO);
+                    throw new PorphyrServiceException(PorphyrServiceException.Exceptions.PROJECTTASKDEVELOPER_DELETE_TIME_NOT_ZERO);
                 } else {
                     projectTaskDeveloperRepository.deleteById(projectTaskDeveloperEntity.getId());
                     entityManager.flush();
@@ -188,7 +188,7 @@ public class ProjectTaskDeveloperService {
         try {
             forkJoinPool.submit(new RunnableCore(projectTaskDeveloperEntity)).get();
         } catch (ExecutionException executionException) {
-            ServiceException.handleExecutionException(executionException);
+            PorphyrServiceException.handleExecutionException(executionException);
         }
     }
 
@@ -209,7 +209,7 @@ public class ProjectTaskDeveloperService {
         try {
             result = forkJoinPool.submit(new CallableCore()).get();
         } catch (ExecutionException executionException) {
-            ServiceException.handleExecutionException(executionException);
+            PorphyrServiceException.handleExecutionException(executionException);
         }
         return result;
     }
@@ -235,7 +235,7 @@ public class ProjectTaskDeveloperService {
         try {
             result = forkJoinPool.submit(new CallableCore(id)).get();
         } catch (ExecutionException executionException) {
-            ServiceException.handleExecutionException(executionException);
+            PorphyrServiceException.handleExecutionException(executionException);
         }
         return result;
     }
@@ -269,7 +269,7 @@ public class ProjectTaskDeveloperService {
         try {
             result = forkJoinPool.submit(new CallableCore(projectTaskEntity, projectDeveloperEntity)).get();
         } catch (ExecutionException executionException) {
-            ServiceException.handleExecutionException(executionException);
+            PorphyrServiceException.handleExecutionException(executionException);
         }
         return result;
     }
@@ -296,7 +296,7 @@ public class ProjectTaskDeveloperService {
         try {
             result = forkJoinPool.submit(new CallableCore(projectTaskEntity)).get();
         } catch (ExecutionException executionException) {
-            ServiceException.handleExecutionException(executionException);
+            PorphyrServiceException.handleExecutionException(executionException);
         }
         return result;
     }
@@ -323,7 +323,7 @@ public class ProjectTaskDeveloperService {
         try {
             result = forkJoinPool.submit(new CallableCore(projectDeveloperEntity)).get();
         } catch (ExecutionException executionException) {
-            ServiceException.handleExecutionException(executionException);
+            PorphyrServiceException.handleExecutionException(executionException);
         }
         return result;
     }
@@ -349,14 +349,17 @@ public class ProjectTaskDeveloperService {
 
             @Override
             public List<ProjectTaskDeveloperEntity> call() {
-                return projectTaskDeveloperRepository.findProjectTasksDeveloperByProjectIdAndDeveloperId(projectId, developerId);
+                return projectTaskDeveloperRepository.findProjectTasksDeveloperByProjectIdAndDeveloperId(
+                    projectId,
+                    developerId
+                );
             }
         }
         @NonNull List<ProjectTaskDeveloperEntity> result = new ArrayList<>();
         try {
             result = forkJoinPool.submit(new CallableCore(projectId, developerId)).get();
         } catch (ExecutionException executionException) {
-            ServiceException.handleExecutionException(executionException);
+            PorphyrServiceException.handleExecutionException(executionException);
         }
         return result;
     }
@@ -385,9 +388,8 @@ public class ProjectTaskDeveloperService {
         try {
             result = forkJoinPool.submit(new CallableCore(developerId)).get();
         } catch (ExecutionException executionException) {
-            ServiceException.handleExecutionException(executionException);
+            PorphyrServiceException.handleExecutionException(executionException);
         }
         return result;
     }
-
 }

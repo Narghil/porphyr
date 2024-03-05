@@ -10,7 +10,7 @@ import combit.hu.porphyr.service.ProjectDeveloperService;
 import combit.hu.porphyr.service.ProjectService;
 import combit.hu.porphyr.service.ProjectTaskDeveloperService;
 import combit.hu.porphyr.service.ProjectTaskService;
-import combit.hu.porphyr.service.ServiceException;
+import combit.hu.porphyr.service.PorphyrServiceException;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -23,6 +23,12 @@ import org.springframework.web.context.annotation.SessionScope;
 
 import java.util.concurrent.ExecutionException;
 
+/**
+ * A template-nek átadott és azoktól visszakapott adatok session szintű tárolására szolgáló objektum,
+ * további műveletek és további átadások céljára.
+ *
+ * @see TemplateData
+ */
 @Component
 @Setter
 @Getter
@@ -60,8 +66,14 @@ public class SessionData {
         this.projectTaskDeveloperService = projectTaskDeveloperService;
     }
 
+    /**
+     * A template-től kapott adatok.
+     */
     @Getter
     private @NonNull TemplateData dataFromTemplate;
+    /**
+     * A template-nek átadandó adatok.
+     */
     @Getter
     private @NonNull TemplateData dataToTemplate;
 
@@ -75,7 +87,7 @@ public class SessionData {
         @Nullable ProjectEntity result;
         result = projectService.getProjectById(this.selectedProjectId);
         if (result == null) {
-            throw new ServiceException(ServiceException.Exceptions.CONTROLLER_SELECTED_PROJECT_NOT_EXISTS);
+            throw new PorphyrServiceException(PorphyrServiceException.Exceptions.CONTROLLER_SELECTED_PROJECT_NOT_EXISTS);
         }
         return result;
     }
@@ -84,7 +96,7 @@ public class SessionData {
         @Nullable DeveloperEntity result;
         result = developerService.getDeveloperById(this.selectedDeveloperId);
         if (result == null) {
-            throw new ServiceException(ServiceException.Exceptions.CONTROLLER_SELECTED_DEVELOPER_NOT_EXISTS);
+            throw new PorphyrServiceException(PorphyrServiceException.Exceptions.CONTROLLER_SELECTED_DEVELOPER_NOT_EXISTS);
         }
         return result;
     }
@@ -94,7 +106,7 @@ public class SessionData {
         @Nullable ProjectDeveloperEntity result;
         result = projectDeveloperService.getProjectDeveloperById(this.selectedProjectDeveloperId);
         if (result == null) {
-            throw new ServiceException(ServiceException.Exceptions.CONTROLLER_SELECTED_PROJECTDEVELOPER_NOT_EXISTS);
+            throw new PorphyrServiceException(PorphyrServiceException.Exceptions.CONTROLLER_SELECTED_PROJECTDEVELOPER_NOT_EXISTS);
         }
         return result;
     }
@@ -103,16 +115,17 @@ public class SessionData {
         @Nullable ProjectTaskEntity result;
         result = projectTaskService.getProjectTaskById(this.selectedProjectTaskId);
         if (result == null) {
-            throw new ServiceException(ServiceException.Exceptions.CONTROLLER_SELECTED_PROJECTTASK_NOT_EXISTS);
+            throw new PorphyrServiceException(PorphyrServiceException.Exceptions.CONTROLLER_SELECTED_PROJECTTASK_NOT_EXISTS);
         }
         return result;
     }
 
-    public @NonNull ProjectTaskDeveloperEntity getSelectedProjectTaskDeveloper()  throws InterruptedException, ExecutionException {
+    public @NonNull ProjectTaskDeveloperEntity getSelectedProjectTaskDeveloper()
+        throws InterruptedException, ExecutionException {
         @Nullable ProjectTaskDeveloperEntity result;
         result = projectTaskDeveloperService.getProjectTaskDeveloperById(this.selectedProjectTaskDeveloperId);
         if (result == null) {
-            throw new ServiceException(ServiceException.Exceptions.CONTROLLER_SELECTED_PROJECTTASKDEVELOPER_NOT_EXISTS);
+            throw new PorphyrServiceException(PorphyrServiceException.Exceptions.CONTROLLER_SELECTED_PROJECTTASKDEVELOPER_NOT_EXISTS);
         }
         return result;
     }

@@ -5,9 +5,8 @@ import combit.hu.porphyr.domain.ProjectDeveloperEntity;
 import combit.hu.porphyr.domain.ProjectEntity;
 import combit.hu.porphyr.repository.DeveloperRepository;
 import combit.hu.porphyr.service.DeveloperService;
-import combit.hu.porphyr.service.ServiceException;
+import combit.hu.porphyr.service.PorphyrServiceException;
 import lombok.NonNull;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -34,24 +33,23 @@ import static combit.hu.porphyr.TestConstants.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")
 class DeveloperTests {
-    @Autowired
-    private @NonNull EntityManager entityManager;
+    private final @NonNull EntityManager entityManager;
+    private final @NonNull DeveloperRepository spyDeveloperRepository;
+    private final @NonNull DeveloperService spiedDeveloperService;
 
     @Autowired
-    private @NonNull DeveloperRepository developerRepository;
-
-    private DeveloperRepository spyDeveloperRepository;
-    private DeveloperService spiedDeveloperService;
-
-    @BeforeAll
-    void setupAll() {
-        spiedDeveloperService = new DeveloperService(entityManager, developerRepository);
+    public DeveloperTests(
+        final @NonNull EntityManager entityManager,
+        final @NonNull DeveloperRepository developerRepository
+    ){
+        this.entityManager = entityManager;
+        spiedDeveloperService = new DeveloperService(this.entityManager, developerRepository);
         spyDeveloperRepository = Mockito.mock(
             DeveloperRepository.class, AdditionalAnswers.delegatesTo(developerRepository)
         );
         spiedDeveloperService.setDeveloperRepository(spyDeveloperRepository);
-        spiedDeveloperService.setEntityManager(entityManager);
-        ServiceException.initExceptionsCounter();
+        spiedDeveloperService.setEntityManager(this.entityManager);
+        PorphyrServiceException.initExceptionsCounter();
     }
 
     @BeforeEach
@@ -88,7 +86,7 @@ class DeveloperTests {
         verify(spyDeveloperRepository, times(1)).findAll();
         //getDeveloperById
         assertArrayEquals(
-            new Long[]{1L,2L,3L,4L},
+            new Long[]{1L, 2L, 3L, 4L},
             new Long[]{
                 Objects.requireNonNull(spiedDeveloperService.getDeveloperById(1L)).getId(),
                 Objects.requireNonNull(spiedDeveloperService.getDeveloperById(2L)).getId(),
@@ -96,7 +94,7 @@ class DeveloperTests {
                 Objects.requireNonNull(spiedDeveloperService.getDeveloperById(4L)).getId()
             }
         );
-        verify( spyDeveloperRepository, times(4)).findAllById( anyLong());
+        verify(spyDeveloperRepository, times(4)).findAllById(anyLong());
         //getDeveloperByName
         assertArrayEquals(
             developerNames,
@@ -119,7 +117,7 @@ class DeveloperTests {
             }
         );
         assertArrayEquals(
-            new Boolean[]{true,true,true,true},
+            new Boolean[]{true, true, true, true},
             new Boolean[]{
                 spiedDeveloperService.isDeveloperWithNameAndNotId(developerNames[0], 4L),
                 spiedDeveloperService.isDeveloperWithNameAndNotId(developerNames[1], 3L),
@@ -188,15 +186,19 @@ class DeveloperTests {
         // - Kitöltetlen névvel
         developerForInsert = new DeveloperEntity();
         assertEquals(
-            ServiceException.Exceptions.DEVELOPER_INSERT_EMPTY_NAME.getDescription(),
-            assertThrows(ServiceException.class, () -> spiedDeveloperService.insertNewDeveloper(developerForInsert)
+            PorphyrServiceException.Exceptions.DEVELOPER_INSERT_EMPTY_NAME.getDescription(),
+            assertThrows(
+                PorphyrServiceException.class,
+                () -> spiedDeveloperService.insertNewDeveloper(developerForInsert)
             ).getMessage()
         );
         // - Már létező névvel
         developerForInsert.setName(developerNames[0]);
         assertEquals(
-            ServiceException.Exceptions.DEVELOPER_INSERT_SAME_NAME.getDescription(),
-            assertThrows(ServiceException.class, () -> spiedDeveloperService.insertNewDeveloper(developerForInsert)
+            PorphyrServiceException.Exceptions.DEVELOPER_INSERT_SAME_NAME.getDescription(),
+            assertThrows(
+                PorphyrServiceException.class,
+                () -> spiedDeveloperService.insertNewDeveloper(developerForInsert)
             ).getMessage()
         );
         // - Még nem létező névvel
@@ -205,12 +207,12 @@ class DeveloperTests {
         verify(spyDeveloperRepository, times(1)).saveAndFlush(developerForInsert);
         // - Visszaolvasás
         developerId = developerForInsert.getId();
-        entityManager.clear();
         assertNotNull(developerId);
+        entityManager.clear();
         actualDeveloper = Objects.requireNonNull(spiedDeveloperService.getDeveloperById(developerId));
         assertEquals("5. fejlesztő", actualDeveloper.getName());
         // - Minden hibalehetőség tesztelve volt:
-        assertDoesNotThrow(() -> ServiceException.isAllExceptionsThrown(ServiceException.ExceptionGroups.DEVELOPER_INSERT));
+        assertDoesNotThrow(() -> PorphyrServiceException.isAllExceptionsThrown(PorphyrServiceException.ExceptionGroups.DEVELOPER_INSERT));
     }
 
     @Test
@@ -224,23 +226,29 @@ class DeveloperTests {
         //------------------------------ Módosítás: modifyDeveloper(); ----------------------------------------
         // - Nincs kitöltve az ID
         assertEquals(
-            ServiceException.Exceptions.DEVELOPER_MODIFY_NOT_SAVED.getDescription(),
-            assertThrows(ServiceException.class, () -> spiedDeveloperService.modifyDeveloper(developerWithEmptyId)
+            PorphyrServiceException.Exceptions.DEVELOPER_MODIFY_NOT_SAVED.getDescription(),
+            assertThrows(
+                PorphyrServiceException.class,
+                () -> spiedDeveloperService.modifyDeveloper(developerWithEmptyId)
             ).getMessage()
         );
         // - Nincs kitöltve a név
         developerWithAnyNames = Objects.requireNonNull(spiedDeveloperService.getDeveloperByName(developerNames[3]));
         developerWithAnyNames.setName("");
         assertEquals(
-            ServiceException.Exceptions.DEVELOPER_MODIFY_EMPTY_NAME.getDescription(),
-            assertThrows(ServiceException.class, () -> spiedDeveloperService.modifyDeveloper(developerWithAnyNames)
+            PorphyrServiceException.Exceptions.DEVELOPER_MODIFY_EMPTY_NAME.getDescription(),
+            assertThrows(
+                PorphyrServiceException.class,
+                () -> spiedDeveloperService.modifyDeveloper(developerWithAnyNames)
             ).getMessage()
         );
         // - Ki van töltve a név, de van már ilyen.
         developerWithAnyNames.setName(developerNames[0]);
         assertEquals(
-            ServiceException.Exceptions.DEVELOPER_MODIFY_SAME_NAME.getDescription(),
-            assertThrows(ServiceException.class, () -> spiedDeveloperService.modifyDeveloper(developerWithAnyNames)
+            PorphyrServiceException.Exceptions.DEVELOPER_MODIFY_SAME_NAME.getDescription(),
+            assertThrows(
+                PorphyrServiceException.class,
+                () -> spiedDeveloperService.modifyDeveloper(developerWithAnyNames)
             ).getMessage()
         );
         // - Ki van töltve a név, ugyanaz, ami volt: Nem hiba
@@ -266,7 +274,7 @@ class DeveloperTests {
         actualDeveloper = spiedDeveloperService.getDeveloperById(developerId);
         assertEquals("Negyedik fejlesztő", Objects.requireNonNull(actualDeveloper).getName());
         // - Minden hibalehetőség tesztelve volt:
-        assertDoesNotThrow(() -> ServiceException.isAllExceptionsThrown(ServiceException.ExceptionGroups.DEVELOPER_MODIFY));
+        assertDoesNotThrow(() -> PorphyrServiceException.isAllExceptionsThrown(PorphyrServiceException.ExceptionGroups.DEVELOPER_MODIFY));
     }
 
     @Test
@@ -282,8 +290,10 @@ class DeveloperTests {
         // - Nincs kitöltve az ID
         developerWithEmptyId = new DeveloperEntity();
         assertEquals(
-            ServiceException.Exceptions.DEVELOPER_DELETE_NOT_SAVED.getDescription(),
-            assertThrows(ServiceException.class, () -> spiedDeveloperService.deleteDeveloper(developerWithEmptyId)
+            PorphyrServiceException.Exceptions.DEVELOPER_DELETE_NOT_SAVED.getDescription(),
+            assertThrows(
+                PorphyrServiceException.class,
+                () -> spiedDeveloperService.deleteDeveloper(developerWithEmptyId)
             ).getMessage()
         );
         // - Már létező developer, de még be van osztva projekthez.
@@ -291,8 +301,10 @@ class DeveloperTests {
         developerWithProject = spiedDeveloperService.getDeveloperById(1L);
         assertNotNull(developerWithProject);
         assertEquals(
-            ServiceException.Exceptions.DEVELOPER_DELETE_ASSIGNED_TO_PROJECTS.getDescription(),
-            assertThrows(ServiceException.class, () -> spiedDeveloperService.deleteDeveloper(developerWithProject)
+            PorphyrServiceException.Exceptions.DEVELOPER_DELETE_ASSIGNED_TO_PROJECTS.getDescription(),
+            assertThrows(
+                PorphyrServiceException.class,
+                () -> spiedDeveloperService.deleteDeveloper(developerWithProject)
             ).getMessage()
         );
         // - Létező developer, nincs projekthez rendelve
@@ -311,6 +323,6 @@ class DeveloperTests {
         assertNull(spiedDeveloperService.getDeveloperById(developerId));
         assertNull(spiedDeveloperService.getDeveloperByName("Ötödik fejlesztő"));
         // - Minden hibalehetőség tesztelve volt:
-        assertDoesNotThrow(() -> ServiceException.isAllExceptionsThrown(ServiceException.ExceptionGroups.DEVELOPER_DELETE));
+        assertDoesNotThrow(() -> PorphyrServiceException.isAllExceptionsThrown(PorphyrServiceException.ExceptionGroups.DEVELOPER_DELETE));
     }
 }

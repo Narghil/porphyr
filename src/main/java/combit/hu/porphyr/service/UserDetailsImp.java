@@ -12,8 +12,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class UserDetailsImp implements UserDetails {
-
     private final transient @NonNull UserEntity user;
+
     public UserDetailsImp(final @NonNull UserEntity user) {
         this.user = user;
     }

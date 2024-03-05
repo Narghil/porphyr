@@ -5,10 +5,9 @@ import combit.hu.porphyr.domain.RoleEntity;
 import combit.hu.porphyr.domain.UserEntity;
 import combit.hu.porphyr.repository.UserRepository;
 import combit.hu.porphyr.service.UserService;
-import combit.hu.porphyr.service.ServiceException;
+import combit.hu.porphyr.service.PorphyrServiceException;
 import static combit.hu.porphyr.TestConstants.*;
 import lombok.NonNull;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -32,24 +31,24 @@ import static org.mockito.Mockito.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")
 class UserTests {
-    @Autowired
-    private @NonNull EntityManager entityManager;
+    private final @NonNull EntityManager entityManager;
+
+    private final @NonNull UserRepository spyUserRepository;
+    private final @NonNull UserService spiedUserService;
 
     @Autowired
-    private @NonNull UserRepository userRepository;
-
-    private UserRepository spyUserRepository;
-    private UserService spiedUserService;
-
-    @BeforeAll
-    void setupAll() {
-        spiedUserService = new UserService( entityManager, userRepository);
-        spyUserRepository = Mockito.mock(
-            UserRepository.class, AdditionalAnswers.delegatesTo(userRepository)
+    public UserTests(
+        final @NonNull EntityManager entityManager,
+        final @NonNull UserRepository userRepository
+    ) {
+        this.entityManager = entityManager;
+        this.spiedUserService = new UserService( this.entityManager, userRepository);
+        this.spyUserRepository = Mockito.mock(
+            UserRepository.class, AdditionalAnswers.delegatesTo( userRepository)
         );
-        spiedUserService.setUserRepository(spyUserRepository);
-        spiedUserService.setEntityManager(entityManager);
-        ServiceException.initExceptionsCounter();
+        this.spiedUserService.setUserRepository(this.spyUserRepository);
+        this.spiedUserService.setEntityManager(this.entityManager);
+        PorphyrServiceException.initExceptionsCounter();
     }
 
     @BeforeEach
@@ -170,8 +169,8 @@ class UserTests {
         // - Már létező login névvel
         userForInsert.setLoginName(loginNames[0]);
         assertEquals(
-            ServiceException.Exceptions.USER_INSERT_SAME_LOGIN_NAME.getDescription(),
-            assertThrows(ServiceException.class, () -> spiedUserService.insertNewUser(userForInsert)
+            PorphyrServiceException.Exceptions.USER_INSERT_SAME_LOGIN_NAME.getDescription(),
+            assertThrows(PorphyrServiceException.class, () -> spiedUserService.insertNewUser(userForInsert)
             ).getMessage()
         );
         // - Még nem létező névvel
@@ -185,7 +184,7 @@ class UserTests {
         actualUser = Objects.requireNonNull(spiedUserService.getUserByLoginName(NEW_USER));
         assertNotNull(actualUser);
         // - Minden hibalehetőség tesztelve volt:
-        assertDoesNotThrow(() -> ServiceException.isAllExceptionsThrown(ServiceException.ExceptionGroups.USERS_INSERT));
+        assertDoesNotThrow(() -> PorphyrServiceException.isAllExceptionsThrown(PorphyrServiceException.ExceptionGroups.USERS_INSERT));
     }
 
     @Test
@@ -200,16 +199,16 @@ class UserTests {
         //------------------------------ Módosítás: modifyUser(); ----------------------------------------
         // - Nincs kitöltve az ID
         assertEquals(
-            ServiceException.Exceptions.USER_MODIFY_NOT_SAVED.getDescription(),
-            assertThrows(ServiceException.class, () -> spiedUserService.modifyUser(userWithEmptyId)
+            PorphyrServiceException.Exceptions.USER_MODIFY_NOT_SAVED.getDescription(),
+            assertThrows(PorphyrServiceException.class, () -> spiedUserService.modifyUser(userWithEmptyId)
             ).getMessage()
         );
         // - Ki van töltve a login név, de van már ilyen.
         userWithAnyNames = Objects.requireNonNull(spiedUserService.getUserByLoginName(loginNames[0]));
         userWithAnyNames.setLoginName(loginNames[1]);
         assertEquals(
-            ServiceException.Exceptions.USER_MODIFY_SAME_LOGIN_NAME.getDescription(),
-            assertThrows(ServiceException.class, () -> spiedUserService.modifyUser(userWithAnyNames)
+            PorphyrServiceException.Exceptions.USER_MODIFY_SAME_LOGIN_NAME.getDescription(),
+            assertThrows(PorphyrServiceException.class, () -> spiedUserService.modifyUser(userWithAnyNames)
             ).getMessage()
         );
         // - Ki van töltve a név, ugyanaz, ami volt: Nem hiba
@@ -229,7 +228,7 @@ class UserTests {
         assertNotNull(actualUser);
         verify(spyUserRepository, times(2)).saveAndFlush(any(UserEntity.class));
         // - Minden hibalehetőség tesztelve volt:
-        assertDoesNotThrow(() -> ServiceException.isAllExceptionsThrown(ServiceException.ExceptionGroups.USERS_MODIFY));
+        assertDoesNotThrow(() -> PorphyrServiceException.isAllExceptionsThrown(PorphyrServiceException.ExceptionGroups.USERS_MODIFY));
     }
 
     @Test
@@ -242,8 +241,8 @@ class UserTests {
         // - Nincs kitöltve az ID
         userWithEmptyId = new UserEntity();
         assertEquals(
-            ServiceException.Exceptions.USER_DELETE_NOT_SAVED.getDescription(),
-            assertThrows(ServiceException.class, () -> spiedUserService.deleteUser(userWithEmptyId)
+            PorphyrServiceException.Exceptions.USER_DELETE_NOT_SAVED.getDescription(),
+            assertThrows(PorphyrServiceException.class, () -> spiedUserService.deleteUser(userWithEmptyId)
             ).getMessage()
         );
         // - Ki van töltve az ID
@@ -256,6 +255,6 @@ class UserTests {
         entityManager.clear();
         assertNull(spiedUserService.getUserByLoginName(loginNames[0]));
         // - Minden hibalehetőség tesztelve volt:
-        assertDoesNotThrow(() -> ServiceException.isAllExceptionsThrown(ServiceException.ExceptionGroups.USERS_DELETE));
+        assertDoesNotThrow(() -> PorphyrServiceException.isAllExceptionsThrown(PorphyrServiceException.ExceptionGroups.USERS_DELETE));
     }
 }

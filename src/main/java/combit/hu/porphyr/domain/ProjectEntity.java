@@ -28,14 +28,15 @@ import java.util.List;
  * {@code - projectTasks:} &#9;&#9; A projekthez tartotó feladatok listája. <br/>
  * {@code - projectDevelopers:} &#9; A projekthez rendelt fejlesztők listája <br/>
  * <br/>
+ *
  * @see ProjectTaskEntity
  * @see ProjectDeveloperEntity
-*/
+ */
 
 @Entity
 @Table(name = "PROJECTS")
 @Data
-public class ProjectEntity{
+public class ProjectEntity {
     @Setter //--(AccessLevel.NONE)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id

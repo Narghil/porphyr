@@ -23,7 +23,7 @@ import java.util.concurrent.ForkJoinPool;
 @Service
 @Transactional
 @ThreadSafe
-public class RoleService{
+public class RoleService {
 
     @Setter(onMethod_ = {@Synchronized})
     @GuardedBy("this")
@@ -65,7 +65,7 @@ public class RoleService{
         try {
             result = forkJoinPool.submit(new CallableCore(roleName)).get();
         } catch (ExecutionException executionException) {
-            ServiceException.handleExecutionException(executionException);
+            PorphyrServiceException.handleExecutionException(executionException);
         }
         return result;
     }
@@ -85,7 +85,7 @@ public class RoleService{
         try {
             result = forkJoinPool.submit(new CallableCore()).get();
         } catch (ExecutionException executionException) {
-            ServiceException.handleExecutionException(executionException);
+            PorphyrServiceException.handleExecutionException(executionException);
         }
         return result;
     }
@@ -116,15 +116,15 @@ public class RoleService{
         try {
             result = forkJoinPool.submit(new CallableCore(roleName, id)).get();
         } catch (ExecutionException executionException) {
-            ServiceException.handleExecutionException(executionException);
+            PorphyrServiceException.handleExecutionException(executionException);
         }
         return result;
     }
 
     /**
-     * Új role felvétele<br/>
+     * Új jogkör felvétele<br/>
      * Hibalehetőségek: <br/>
-     * - Már van ilyen nevű role <br/>
+     * - Már van ilyen nevű jogkör <br/>
      */
     public synchronized void insertNewRole(final @NonNull RoleEntity newRoleEntity)
         throws ExecutionException, InterruptedException {
@@ -138,7 +138,7 @@ public class RoleService{
             @Override
             public void run() {
                 if (roleRepository.findByRole(newRoleEntity.getRole()) != null) {
-                    throw (new ServiceException(ServiceException.Exceptions.ROLES_INSERT_SAME_NAME));
+                    throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.ROLES_INSERT_SAME_NAME));
                 } else {
                     roleRepository.saveAndFlush(newRoleEntity);
                 }
@@ -147,15 +147,15 @@ public class RoleService{
         try {
             forkJoinPool.submit(new RunnableCore(newRoleEntity)).get();
         } catch (ExecutionException exception) {
-            ServiceException.handleExecutionException(exception);
+            PorphyrServiceException.handleExecutionException(exception);
         }
     }
 
     /**
-     * role módosítása.<br/>
+     * Jogkör módosítása.<br/>
      * Hibalehetőségek: <br/>
-     * - A role még nem volt elmentve
-     * - Van másik ilyen nevű role <br/>
+     * - A jogkör még nem volt elmentve
+     * - Van másik ilyen nevű jogkör <br/>
      */
     public synchronized void modifyRole(final @NonNull RoleEntity modifiedRoleEntity)
         throws InterruptedException, ExecutionException {
@@ -170,13 +170,13 @@ public class RoleService{
             @Override
             public void run() {
                 if (modifiedRoleEntity.getId() == null) {
-                    throw (new ServiceException(ServiceException.Exceptions.ROLES_MODIFY_NOT_SAVED));
+                    throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.ROLES_MODIFY_NOT_SAVED));
                 } else {
                     entityManager.clear();
                     if (isRoleWithLoginNameAndNotId(
                         modifiedRoleEntity.getRole(), modifiedRoleEntity.getId())
                     ) {
-                        throw (new ServiceException(ServiceException.Exceptions.ROLES_MODIFY_SAME_NAME));
+                        throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.ROLES_MODIFY_SAME_NAME));
                     } else {
                         roleRepository.saveAndFlush(modifiedRoleEntity);
                     }
@@ -186,12 +186,12 @@ public class RoleService{
         try {
             forkJoinPool.submit(new RunnableCore(modifiedRoleEntity)).get();
         } catch (ExecutionException executionException) {
-            ServiceException.handleExecutionException(executionException);
+            PorphyrServiceException.handleExecutionException(executionException);
         }
     }
 
     /**
-     * Felhasználó törlése.<br/>
+     * Jogkör törlése.<br/>
      * Hibalehetőségek: <br/>
      * - Nincs kitöltve az ID <br/>
      * - Tartozik hozzá felhasználó
@@ -209,13 +209,13 @@ public class RoleService{
             public void run() {
                 Long roleID = roleEntity.getId();
                 if (roleID == null) {
-                    throw (new ServiceException(ServiceException.Exceptions.ROLES_DELETE_NOT_SAVED));
+                    throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.ROLES_DELETE_NOT_SAVED));
                 } else {
                     RoleEntity actualRoleData = roleRepository.findAllById(roleID);
                     if (actualRoleData == null) {
-                        throw (new ServiceException(ServiceException.Exceptions.UNDEFINED));
-                    } else if ( ! actualRoleData.getUsers().isEmpty()) {
-                        throw (new ServiceException(ServiceException.Exceptions.ROLES_DELETE_ATTACHED_USERS));
+                        throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.UNDEFINED));
+                    } else if (!actualRoleData.getUsers().isEmpty()) {
+                        throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.ROLES_DELETE_ATTACHED_USERS));
                     } else {
                         roleRepository.deleteById(roleID);
                         entityManager.flush();
@@ -226,7 +226,7 @@ public class RoleService{
         try {
             forkJoinPool.submit(new RunnableCore(roleEntity)).get();
         } catch (ExecutionException executionException) {
-            ServiceException.handleExecutionException(executionException);
+            PorphyrServiceException.handleExecutionException(executionException);
         }
     }
 }

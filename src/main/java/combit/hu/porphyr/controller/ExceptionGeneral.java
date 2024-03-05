@@ -1,6 +1,6 @@
 package combit.hu.porphyr.controller;
 
-import combit.hu.porphyr.service.ServiceException;
+import combit.hu.porphyr.service.PorphyrServiceException;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
@@ -17,33 +17,32 @@ import java.util.Map;
 @ControllerAdvice
 public class ExceptionGeneral {
 
-	private ErrorAttributes errorAttributes;
+    private final @NonNull ErrorAttributes errorAttributes;
 
-	@Autowired
-	public void setErrorAttributes(ErrorAttributes errorAttributes) {
-		this.errorAttributes = errorAttributes;
-	}
+    @Autowired
+    public ExceptionGeneral(final @NonNull ErrorAttributes errorAttributes) {
+        this.errorAttributes = errorAttributes;
+    }
 
-	@ExceptionHandler(Exception.class)
-	public @NonNull String exception(Exception ex, Model model, HttpServletRequest rA) {
-		if (ex instanceof ServiceException) {
-			model.addAttribute("requestURI", rA.getRequestURI());
-			model.addAttribute("errMessage", "EXCEPTION:" + ex.getMessage());
-			return "exceptionHandler";
-		} else {
-			WebRequest webRequest = new ServletWebRequest(rA);
-			ErrorAttributeOptions errorAttributeOptions = ErrorAttributeOptions.defaults()
-				.including(ErrorAttributeOptions.Include.MESSAGE);
-			Map<String, Object> error = errorAttributes.getErrorAttributes(webRequest, errorAttributeOptions);
+    @ExceptionHandler(Exception.class)
+    public @NonNull String exception(Exception ex, Model model, HttpServletRequest rA) {
+        if (ex instanceof PorphyrServiceException) {
+            model.addAttribute("requestURI", rA.getRequestURI());
+            model.addAttribute("errMessage", "EXCEPTION:" + ex.getMessage());
+            return "exceptionHandler";
+        } else {
+            WebRequest webRequest = new ServletWebRequest(rA);
+            ErrorAttributeOptions errorAttributeOptions = ErrorAttributeOptions.defaults()
+                .including(ErrorAttributeOptions.Include.MESSAGE);
+            Map<String, Object> error = errorAttributes.getErrorAttributes(webRequest, errorAttributeOptions);
 
-			model.addAttribute("timestamp", error.get("timestamp"));
-			model.addAttribute("error", "EXCEPTION: " + error.get("error"));
-			model.addAttribute("message", error.get("message"));
-			model.addAttribute("path", error.get("path"));
-			model.addAttribute("status", error.get("status"));
+            model.addAttribute("timestamp", error.get("timestamp"));
+            model.addAttribute("error", "EXCEPTION: " + error.get("error"));
+            model.addAttribute("message", error.get("message"));
+            model.addAttribute("path", error.get("path"));
+            model.addAttribute("status", error.get("status"));
 
-			return "detailedError";
-		}
-	}
-
+            return "detailedError";
+        }
+    }
 }
