@@ -37,7 +37,7 @@ public class ExceptionGeneral {
             Map<String, Object> error = errorAttributes.getErrorAttributes(webRequest, errorAttributeOptions);
 
             model.addAttribute("timestamp", error.get("timestamp"));
-            model.addAttribute("error", "EXCEPTION: " + error.get("error"));
+            model.addAttribute("errorDescription", "EXCEPTION: " + error.get("error"));
             model.addAttribute("message", error.get("message"));
             model.addAttribute("path", error.get("path"));
             model.addAttribute("status", error.get("status"));

@@ -35,7 +35,7 @@ public class ErrorPageController implements ErrorController {
         Map<String, Object> error = errorAttributes.getErrorAttributes(webRequest, errorAttributeOptions);
 
         model.addAttribute("timestamp", error.get("timestamp"));
-        model.addAttribute("error", "PAGE:" + error.get("error"));
+        model.addAttribute("errorDescription", "PAGE:" + error.get("error"));
         model.addAttribute("message", error.get("message"));
         model.addAttribute("path", error.get("path"));
         model.addAttribute("status", error.get("status"));

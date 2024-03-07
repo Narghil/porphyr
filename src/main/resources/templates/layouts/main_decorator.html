@@ -54,7 +54,7 @@
 </div>
 
 <div data-th-if="${error != null}">
-    <div data-th-if="${error.onOff ? true : false}">
+    <!-- div data-th-if="${error.onOff ? true : false}" -->
         <div data-th-if="${error.onOff == 'ON'}">
             <div class="modal show" id="messageModal" tabindex="-1" role="dialog">
                 <div class="modal-dialog" role="document">
@@ -70,7 +70,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    <!-- /div -->
 </div>
 >
 
