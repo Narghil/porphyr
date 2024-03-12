@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
@@ -313,6 +314,13 @@ class ProjectTaskTests {
         projectEntity = projectRepository.findAllById(4L);
         assertNotNull(projectEntity);
         assertEquals(1, spiedProjectTaskService.getProjectTasksByProjectEntity(projectEntity).size());
+        //getProjectTaskFullTime
+        List<ProjectTaskEntity> actualProjectTasks = spiedProjectTaskService.getProjectTasks();
+        assertEquals( 0L, spiedProjectTaskService.getProjectTaskFullTime( actualProjectTasks.get(0) ));
+        assertEquals( 0L, spiedProjectTaskService.getProjectTaskFullTime( actualProjectTasks.get(1) ));
+        assertEquals( 0L, spiedProjectTaskService.getProjectTaskFullTime( actualProjectTasks.get(2) ));
+        assertEquals( 1L, spiedProjectTaskService.getProjectTaskFullTime( actualProjectTasks.get(3) ));
+        assertEquals( 0L, spiedProjectTaskService.getProjectTaskFullTime( actualProjectTasks.get(4) ));
     }
 
     @Test

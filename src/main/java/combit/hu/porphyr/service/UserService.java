@@ -1,5 +1,6 @@
 package combit.hu.porphyr.service;
 
+import combit.hu.porphyr.domain.ProjectEntity;
 import combit.hu.porphyr.domain.UserEntity;
 import combit.hu.porphyr.repository.UserRepository;
 import lombok.NonNull;
@@ -245,4 +246,5 @@ public class UserService implements UserDetailsService {
             PorphyrServiceException.handleExecutionException(executionException);
         }
     }
+
 }

@@ -55,6 +55,9 @@ public class HomeControllerProjectsTasks {
         final @NonNull Model model
     ) throws ExecutionException, InterruptedException {
         final ProjectEntity project = sessionData.getSelectedProject();
+        for( ProjectTaskEntity projectTask : project.getProjectTasks()){
+            projectTaskService.getProjectTaskFullTime(projectTask);
+        }
         model.addAttribute(ERROR, webErrorBean.getWebErrorData());
         model.addAttribute("project", project);
         model.addAttribute("dataFromTemplate", sessionData.getDataFromTemplate());

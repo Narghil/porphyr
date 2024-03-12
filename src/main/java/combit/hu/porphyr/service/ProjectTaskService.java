@@ -193,6 +193,9 @@ public class ProjectTaskService {
         @NonNull List<ProjectTaskEntity> result = new ArrayList<>();
         try {
             result = forkJoinPool.submit(new CallableCore()).get();
+            for( ProjectTaskEntity projectTask : result){
+                getProjectTaskFullTime(projectTask);
+            }
         } catch (ExecutionException executionException) {
             PorphyrServiceException.handleExecutionException(executionException);
         }
@@ -213,6 +216,9 @@ public class ProjectTaskService {
         @NonNull List<ProjectTaskEntity> result = new ArrayList<>();
         try {
             result = forkJoinPool.submit(new CallableCore()).get();
+            for( ProjectTaskEntity projectTask : result){
+                getProjectTaskFullTime(projectTask);
+            }
         } catch (ExecutionException executionException) {
             PorphyrServiceException.handleExecutionException(executionException);
         }
@@ -239,6 +245,7 @@ public class ProjectTaskService {
         @Nullable ProjectTaskEntity result = null;
         try {
             result = forkJoinPool.submit(new CallableCore(projectTaskId)).get();
+            if( result != null) getProjectTaskFullTime(result);
         } catch (ExecutionException executionException) {
             PorphyrServiceException.handleExecutionException(executionException);
         }
@@ -268,8 +275,39 @@ public class ProjectTaskService {
         @Nullable ProjectTaskEntity result = null;
         try {
             result = forkJoinPool.submit(new CallableCore(projectEntity, taskName)).get();
+            if( result != null) getProjectTaskFullTime(result);
         } catch (ExecutionException executionException) {
             PorphyrServiceException.handleExecutionException(executionException);
+        }
+        return result;
+    }
+
+    /**
+     * Egy feladatra fordított munkaidő, összesen
+     */
+    public synchronized @NonNull Long getProjectTaskFullTime( final @NonNull ProjectTaskEntity projectTask)
+        throws ExecutionException, InterruptedException{
+        final class CallableCore implements Callable<Long>{
+            private final @NonNull ProjectTaskEntity projectTask;
+
+            public CallableCore( final @NonNull ProjectTaskEntity projectTask){
+                this.projectTask = projectTask;
+            }
+
+            @Override
+            public @NonNull Long call(){
+                @NonNull Long result;
+                @Nullable Long projectTaskId = projectTask.getId();
+                result = (projectTaskId == null) ? 0L : projectTaskRepository.sumSpendTimeByProjectTaskId( projectTaskId );
+                projectTask.setSpendTime(result);
+                return result;
+            }
+        }
+        @NonNull Long result = 0L;
+        try{
+            result = forkJoinPool.submit( new CallableCore(projectTask)).get();
+        } catch (ExecutionException ee){
+            PorphyrServiceException.handleExecutionException(ee);
         }
         return result;
     }

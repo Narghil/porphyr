@@ -55,14 +55,19 @@ public class DeveloperEntity {
     )
     private Set<UserEntity> users = new HashSet<>();
 
+    @Transient
+    private @NonNull Long spendTime;
+
     public DeveloperEntity(final @NonNull String name) {
         this.name = name;
         this.developerProjects = new ArrayList<>();
+        this.spendTime = 0L;
     }
 
     public DeveloperEntity() {
         name = "";
         developerProjects = new ArrayList<>();
+        this.spendTime = 0L;
     }
 }
 

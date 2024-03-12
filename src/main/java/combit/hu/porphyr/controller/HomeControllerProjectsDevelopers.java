@@ -93,6 +93,10 @@ public class HomeControllerProjectsDevelopers {
         final @Nullable ProjectEntity project = sessionData.getSelectedProject();
         final @NonNull List<ProjectDeveloperEntity> projectDeveloperList = project.getProjectDevelopers();
 
+        for( ProjectDeveloperEntity projectDeveloper : projectDeveloperList){
+            projectDeveloperService.getDeveloperFullTimeInProject( projectDeveloper );
+        }
+
         model.addAttribute("error", webErrorBean.getWebErrorData());
         model.addAttribute("project_name", project.getName());
         model.addAttribute("projectDevelopers", projectDeveloperList);

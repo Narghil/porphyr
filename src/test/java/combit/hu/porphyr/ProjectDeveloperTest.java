@@ -10,6 +10,7 @@ import combit.hu.porphyr.repository.ProjectTaskDeveloperRepository;
 import combit.hu.porphyr.service.ProjectDeveloperService;
 import combit.hu.porphyr.service.PorphyrServiceException;
 import lombok.NonNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -24,9 +25,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -282,8 +287,8 @@ class ProjectDeveloperTest {
     @Transactional
     @Rollback
     void projectDeveloperServiceQueriesTest() throws ExecutionException, InterruptedException {
-        DeveloperEntity developerEntity;
-        ProjectEntity projectEntity;
+        final @Nullable DeveloperEntity developerEntity;
+        final @Nullable ProjectEntity projectEntity;
         // - getProjectDevelopers
         assertEquals(7, spiedProjectDeveloperService.getProjectDevelopers().size());
         // - getProjectDevelopersByDeveloper
@@ -301,5 +306,21 @@ class ProjectDeveloperTest {
             projectEntity,
             developerEntity
         ));
+        // getDeveloperFullTimeInProject
+        List<ProjectDeveloperEntity> projectDevelopers =
+            spiedProjectDeveloperService.getProjectDevelopers()
+                .stream()
+                .sorted(Comparator.comparing(projectDeveloper -> projectDeveloper.getId() == null
+                                                                 ? 0L : projectDeveloper.getId()))
+                .collect(Collectors.toList());
+        Mockito.clearInvocations(spyProjectDeveloperRepository);
+        assertEquals(0L, spiedProjectDeveloperService.getDeveloperFullTimeInProject(projectDevelopers.get(0)));
+        assertEquals(0L, spiedProjectDeveloperService.getDeveloperFullTimeInProject(projectDevelopers.get(1)));
+        assertEquals(0L, spiedProjectDeveloperService.getDeveloperFullTimeInProject(projectDevelopers.get(2)));
+        assertEquals(0L, spiedProjectDeveloperService.getDeveloperFullTimeInProject(projectDevelopers.get(3)));
+        assertEquals(0L, spiedProjectDeveloperService.getDeveloperFullTimeInProject(projectDevelopers.get(4)));
+        assertEquals(1L, spiedProjectDeveloperService.getDeveloperFullTimeInProject(projectDevelopers.get(5)));
+        assertEquals(0L, spiedProjectDeveloperService.getDeveloperFullTimeInProject(projectDevelopers.get(6)));
+        verify(spyProjectDeveloperRepository, times(7)).sumSpendTimeByDeveloperIdAndProjectId(anyLong(), anyLong());
     }
 }

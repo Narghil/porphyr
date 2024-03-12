@@ -4,6 +4,7 @@ import combit.hu.porphyr.domain.DeveloperEntity;
 import combit.hu.porphyr.domain.ProjectDeveloperEntity;
 import combit.hu.porphyr.domain.ProjectEntity;
 import combit.hu.porphyr.repository.DeveloperRepository;
+import combit.hu.porphyr.repository.ProjectRepository;
 import combit.hu.porphyr.service.DeveloperService;
 import combit.hu.porphyr.service.PorphyrServiceException;
 import lombok.NonNull;
@@ -19,8 +20,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -40,7 +44,8 @@ class DeveloperTests {
     @Autowired
     public DeveloperTests(
         final @NonNull EntityManager entityManager,
-        final @NonNull DeveloperRepository developerRepository
+        final @NonNull DeveloperRepository developerRepository,
+        final @NonNull ProjectRepository projectRepository
     ){
         this.entityManager = entityManager;
         spiedDeveloperService = new DeveloperService(this.entityManager, developerRepository);
@@ -49,6 +54,7 @@ class DeveloperTests {
         );
         spiedDeveloperService.setDeveloperRepository(spyDeveloperRepository);
         spiedDeveloperService.setEntityManager(this.entityManager);
+
         PorphyrServiceException.initExceptionsCounter();
     }
 
@@ -126,6 +132,14 @@ class DeveloperTests {
             }
         );
         verify(spyDeveloperRepository, times(8)).findAllByNameAndIdNot(anyString(), anyLong());
+        // getDeveloperFullTime
+        List<DeveloperEntity> actualDevelopers = spiedDeveloperService.getDevelopers().stream().sorted(
+            Comparator.comparing(DeveloperEntity::getName)).collect(Collectors.toList())
+            ;
+        assertEquals( 0L, spiedDeveloperService.getDeveloperFullTime( actualDevelopers.get(0)));
+        assertEquals( 0L, spiedDeveloperService.getDeveloperFullTime( actualDevelopers.get(1)));
+        assertEquals( 0L, spiedDeveloperService.getDeveloperFullTime( actualDevelopers.get(2)));
+        assertEquals( 1L, spiedDeveloperService.getDeveloperFullTime( actualDevelopers.get(3)));
     }
 
     //--------------------------- Repository műveletek tesztje -----------------------------

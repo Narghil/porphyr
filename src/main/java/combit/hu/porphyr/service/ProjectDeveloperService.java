@@ -157,6 +157,8 @@ public class ProjectDeveloperService {
         }
     }
 
+    // ------------------------------------------- Lekérdezések --------------------------------------------------------------
+
     /**
      * Project - Developer összerendelés lekérdezése ID szerint.
      */
@@ -177,6 +179,7 @@ public class ProjectDeveloperService {
         @Nullable ProjectDeveloperEntity result = null;
         try {
             result = forkJoinPool.submit(new CallableCore(id)).get();
+            if( result != null) getDeveloperFullTimeInProject(result);
         } catch (ExecutionException executionException) {
             PorphyrServiceException.handleExecutionException(executionException);
         }
@@ -207,6 +210,7 @@ public class ProjectDeveloperService {
         @Nullable ProjectDeveloperEntity result = null;
         try {
             result = forkJoinPool.submit(new CallableCore(project, developer)).get();
+            if( result != null) getDeveloperFullTimeInProject(result);
         } catch (ExecutionException executionException) {
             PorphyrServiceException.handleExecutionException(executionException);
         }
@@ -227,6 +231,9 @@ public class ProjectDeveloperService {
         @NonNull List<ProjectDeveloperEntity> result = new ArrayList<>();
         try {
             result = forkJoinPool.submit(new CallableCore()).get();
+            for (ProjectDeveloperEntity projectDeveloper : result) {
+                getDeveloperFullTimeInProject(projectDeveloper);
+            }
         } catch (ExecutionException executionException) {
             PorphyrServiceException.handleExecutionException(executionException);
         }
@@ -253,6 +260,9 @@ public class ProjectDeveloperService {
         @NonNull List<ProjectDeveloperEntity> result = new ArrayList<>();
         try {
             result = forkJoinPool.submit(new CallableCore(developer)).get();
+            for (ProjectDeveloperEntity projectDeveloper : result) {
+                getDeveloperFullTimeInProject(projectDeveloper);
+            }
         } catch (ExecutionException executionException) {
             PorphyrServiceException.handleExecutionException(executionException);
         }
@@ -279,9 +289,47 @@ public class ProjectDeveloperService {
         @NonNull List<ProjectDeveloperEntity> result = new ArrayList<>();
         try {
             result = forkJoinPool.submit(new CallableCore(project)).get();
+            for (ProjectDeveloperEntity projectDeveloper : result) {
+                getDeveloperFullTimeInProject(projectDeveloper);
+            }
         } catch (ExecutionException executionException) {
             PorphyrServiceException.handleExecutionException(executionException);
         }
         return result;
     }
+
+    /**
+     * Egy developer egy project-re fordított teljes munkaideje
+     */
+    public synchronized @NonNull Long getDeveloperFullTimeInProject(
+        final @NonNull ProjectDeveloperEntity projectDeveloper
+    )
+        throws ExecutionException, InterruptedException {
+        final class CallableCore implements Callable<Long> {
+            private final @NonNull ProjectDeveloperEntity projectDeveloper;
+
+            public CallableCore(final @NonNull ProjectDeveloperEntity projectDeveloper) {
+                this.projectDeveloper = projectDeveloper;
+            }
+
+            @Override
+            public @NonNull Long call() {
+                @NonNull Long result;
+                @Nullable Long developerId = projectDeveloper.getDeveloperEntity().getId();
+                @Nullable Long projectId = projectDeveloper.getProjectEntity().getId();
+                result = (developerId == null || projectId == null)
+                         ? 0L : projectDeveloperRepository.sumSpendTimeByDeveloperIdAndProjectId(developerId, projectId);
+                projectDeveloper.setSpendTime(result);
+                return result;
+            }
+        }
+        @NonNull Long result = 0L;
+        try {
+            result = forkJoinPool.submit(new CallableCore(projectDeveloper)).get();
+        } catch (ExecutionException ee) {
+            PorphyrServiceException.handleExecutionException(ee);
+        }
+        return result;
+    }
+
 }

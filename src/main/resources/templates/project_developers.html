@@ -16,8 +16,11 @@
             <div class="col col-lg-1 text-center" style="text-decoration:underline">
                 <span>ID</span>
             </div>
-            <div class="col col-lg-9 text-center" style="text-decoration:underline">
+            <div class="col col-lg-8 text-center" style="text-decoration:underline">
                 <span>Név</span>
+            </div>
+            <div class="col col-lg-1 text-center" style="text-decoration:underline">
+                <span>Idő</span>
             </div>
             <div class="col col-lg-2 text-center" style="text-decoration:underline">
                 <span>Műveletek</span>
@@ -29,8 +32,11 @@
                 <div class="col col-lg-1 border" style="text-align:right">
                     <span data-th-text="${projectDeveloper.developerEntity.id}">ID</span>
                 </div>
-                <div class="col col-lg-9 border">
+                <div class="col col-lg-8 border">
                     <span data-th-text="${projectDeveloper.developerEntity.name}">Fejlesztő neve</span>
+                </div>
+                <div class="col col-lg-1 border" style="text-align:right">
+                    <span data-th-text="${projectDeveloper.spendTime}">ID</span>
                 </div>
                 <!-- Function icons -->
                 <div class="col col-lg-2 border" style="text-align:center">

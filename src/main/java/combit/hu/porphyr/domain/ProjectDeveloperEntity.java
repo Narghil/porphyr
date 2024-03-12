@@ -18,6 +18,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,16 +66,21 @@ public class ProjectDeveloperEntity {
     @JsonBackReference
     private @NonNull List<ProjectTaskDeveloperEntity> projectTaskDevelopers;
 
+    @Transient
+    private @NonNull Long spendTime;
+
     public ProjectDeveloperEntity(final @NonNull ProjectEntity project, final @NonNull DeveloperEntity developer) {
         projectEntity = project;
         developerEntity = developer;
         projectTaskDevelopers = new ArrayList<>();
+        spendTime = 0L;
     }
 
     public ProjectDeveloperEntity() {
         projectEntity = new ProjectEntity();
         developerEntity = new DeveloperEntity();
         projectTaskDevelopers = new ArrayList<>();
+        spendTime = 0L;
     }
 
     public void setProjectAndDeveloper(

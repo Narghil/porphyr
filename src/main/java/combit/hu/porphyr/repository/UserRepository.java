@@ -21,4 +21,5 @@ public interface UserRepository extends CrudRepository<UserEntity, Long> {
     @Query( value = "DELETE FROM Users WHERE id = :id", nativeQuery = true)
     void deleteById(@Param("id") @NonNull Long id)
      */
+
 }
