@@ -1,6 +1,6 @@
 databaseChangeLog:
 - changeSet:
-    id: 18
+    id: 22
     author: Pernyei Gabor
     changes:
     # ---------------------
@@ -402,3 +402,84 @@ databaseChangeLog:
             name: DEVELOPER_ID
             valueNumeric: 3
         tableName: USERS_DEVELOPERS
+    # --------------------
+    # Inserts into PERMITS
+    # --------------------
+    - insert:
+        tableName: PERMITS
+        columns:
+        - column:
+            name: NAME
+            value: "PROJECTS"
+        - column:
+            name: DESCRIPTION
+            value: "Főmenü / Projektek"
+    - insert:
+        tableName: PERMITS
+        columns:
+        - column:
+            name: NAME
+            value: "DEVELOPERS"
+        - column:
+            name: DESCRIPTION
+            value: "Főmenü / Fejlesztők"
+    - insert:
+        tableName: PERMITS
+        columns:
+        - column:
+            name: NAME
+            value: "DBCONSOLE"
+        - column:
+            name: DESCRIPTION
+            value: "Főmenü / DB konzol"
+    # --------------------
+    # Inserts into ROLES_PERMITS
+    # --------------------
+    # USER
+    - insert:
+        tableName: ROLES_PERMITS
+        columns:
+        - column:
+            name: ROLE_ID
+            valueNumeric: 1
+        - column:
+            name: PERMIT_ID
+            valueNumeric: 1
+    - insert:
+        tableName: ROLES_PERMITS
+        columns:
+        - column:
+            name: ROLE_ID
+            valueNumeric: 1
+        - column:
+            name: PERMIT_ID
+            valueNumeric: 2
+    # ADMIN
+    - insert:
+        tableName: ROLES_PERMITS
+        columns:
+        - column:
+            name: ROLE_ID
+            valueNumeric: 2
+        - column:
+            name: PERMIT_ID
+            valueNumeric: 1
+    - insert:
+        tableName: ROLES_PERMITS
+        columns:
+        - column:
+            name: ROLE_ID
+            valueNumeric: 2
+        - column:
+            name: PERMIT_ID
+            valueNumeric: 2
+    - insert:
+        tableName: ROLES_PERMITS
+        columns:
+        - column:
+            name: ROLE_ID
+            valueNumeric: 2
+        - column:
+            name: PERMIT_ID
+            valueNumeric: 3
+    # GUEST - none

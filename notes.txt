@@ -1,7 +1,7 @@
 Elméletileg lehetséges, hogy a HTML file-ok ne a user role-jai alapján, hanem a role-okhoz tartozó engedélyek alapján
 kerüljenek megjelenítésre.
 Ehhez szükséges:
-- PERMITS tábla: ID, NAME, PATH, REAL_PATH
+- PERMITS tábla: ID, NAME, DESCRIPTION
 - ROLE_PERMITS kapcsolótábla a ROLE és PERMITS között (many-to-many)
 - A Thymeleaf-nek át kell adni a User role-jaihoz tartotó permit-eket. (Model.permits)
 - A WebMVCConfigurer implementációjában a PATH-oknak meg kell feleltetni a fizikai elérési utakat (REAL_PATH)
@@ -22,3 +22,11 @@ UserService:
         - org.springframework.security.core.userdetails.UserDetailsService
         - public UserDetails loadUserByUsername(...) returns UserDetailsImp
 
+ThyMeLeaf eszköz:
+-----------------
+<div th:if="${testResponse != null
+       and #arrays.contains(testResponse.test1.itemTypes, 'here')}">
+    <ul>
+        <li><span>I'm here</span></li>
+    </ul>
+</div>

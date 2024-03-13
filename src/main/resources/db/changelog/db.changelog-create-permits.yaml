@@ -1,0 +1,104 @@
+# PERMITS
+databaseChangeLog:
+- changeSet:
+    id: 18
+    author: Pernyei Gabor
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: PK_PERMITS_ID
+            name: ID
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+              unique: true
+            name: NAME
+            type: VARCHAR(100)
+        - column:
+            constraints:
+              nullable: false
+              unique: false
+            name: DESCRIPTION
+            type: CHARACTER LARGE OBJECT
+        tableName: PERMITS
+- changeSet:
+    id: 19
+    author: Pernyei Gabor
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: NAME
+        indexName: IDX_PERMITS_NAME
+        tableName: PERMITS
+- changeSet:
+    id: 20
+    author: Pernyei Gabor
+    changes:
+    - createTable:
+        tableName: ROLES_PERMITS
+        columns:
+        - column:
+            name: ID
+            type: BIGINT
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: PK_ROLES_PERMITS_ID
+        - column:
+            name: ROLE_ID
+            type: BIGINT
+            constraints:
+                nullable: false
+                unique: false
+        - column:
+            name: PERMIT_ID
+            type: BIGINT
+            constraints:
+                nullable: false
+                unique: false
+- changeSet:
+    id: 21
+    author: Pernyei Gabor
+    changes:
+    - createIndex:
+        tableName: ROLES_PERMITS
+        indexName: IDX_ROLES_PERMITS_ROLE_ID
+        columns:
+        - column:
+            name: ROLE_ID
+    - createIndex:
+        tableName: ROLES_PERMITS
+        indexName: IDX_ROLES_PERMITS_PERMIT_ID
+        columns:
+        - column:
+            name: PERMIT_ID
+    - addForeignKeyConstraint:
+        baseColumnNames: ROLE_ID
+        baseTableName: ROLES_PERMITS
+        constraintName: FK_ROLES_PERMITS_ROLE_ID
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: CASCADE
+        onUpdate: CASCADE
+        referencedColumnNames: ID
+        referencedTableName: ROLES
+        validate: true
+    - addForeignKeyConstraint:
+        baseColumnNames: PERMIT_ID
+        baseTableName: ROLES_PERMITS
+        constraintName: FK_ROLES_PERMITS_PERMIT_ID
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: CASCADE
+        onUpdate: CASCADE
+        referencedColumnNames: ID
+        referencedTableName: PERMITS
+        validate: true

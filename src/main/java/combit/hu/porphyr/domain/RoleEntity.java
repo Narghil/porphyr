@@ -46,6 +46,17 @@ public class RoleEntity {
     )
     private Set<UserEntity> users = new HashSet<>();
 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @ManyToMany()
+    @JoinTable(
+        name = "roles_permits",
+        joinColumns = {@JoinColumn(name = "role_id")},
+        inverseJoinColumns = {@JoinColumn(name = "permit_id")}
+    )
+    private Set<PermitEntity> permits = new HashSet<>();
+
+
     @Override
     public String toString() {
         return "Role [id=" + id + ", role=" + role + "]";

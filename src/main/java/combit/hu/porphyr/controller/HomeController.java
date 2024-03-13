@@ -16,13 +16,13 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @Controller
-public class HomeControllerRoot {
+public class HomeController {
 
     private final @NonNull ProjectService projectService;
     private final @NonNull DeveloperService developerService;
 
     @Autowired
-    public HomeControllerRoot(
+    public HomeController(
         final @NonNull ProjectService projectService,
         final @NonNull DeveloperService developerService
     ) {

@@ -29,14 +29,14 @@ import static combit.hu.porphyr.Constants.ON;
 import static combit.hu.porphyr.controller.helpers.HomeControllerConstants.*;
 
 @Controller
-public class HomeControllerProjectsDevelopersTasks {
+public class ProjectsDevelopersTasksController {
 
     private final @NonNull ProjectTaskService projectTaskService;
     private final @NonNull ProjectDeveloperService projectDeveloperService;
     private final @NonNull ProjectTaskDeveloperService projectTaskDeveloperService;
 
     @Autowired
-    public HomeControllerProjectsDevelopersTasks(
+    public ProjectsDevelopersTasksController(
         final @NonNull ProjectTaskService projectTaskService,
         final @NonNull ProjectDeveloperService projectDeveloperService,
         final @NonNull ProjectTaskDeveloperService projectTaskDeveloperService

@@ -1,6 +1,7 @@
 package combit.hu.porphyr.service;
 
-import combit.hu.porphyr.domain.ProjectEntity;
+import combit.hu.porphyr.domain.PermitEntity;
+import combit.hu.porphyr.domain.RoleEntity;
 import combit.hu.porphyr.domain.UserEntity;
 import combit.hu.porphyr.repository.UserRepository;
 import lombok.NonNull;
@@ -247,4 +248,35 @@ public class UserService implements UserDetailsService {
         }
     }
 
+    /**
+     * Felhasználó valamennyi permit-jének lekérdezése
+     */
+    public synchronized @NonNull String[] getUserPermits(final @NonNull UserEntity userEntity)
+        throws ExecutionException, InterruptedException
+    {
+        final class CallableCore implements Callable< ArrayList<String> > {
+            private final @NonNull UserEntity userEntity;
+            public CallableCore( final @NonNull UserEntity userEntity){
+                this.userEntity = userEntity;
+            }
+            @Override
+            public ArrayList<String> call(){
+                final @NonNull ArrayList<String> permits = new ArrayList<>();
+                for( RoleEntity role : userEntity.getRoles() ){
+                    for( PermitEntity permit : role.getPermits()) {
+                        if( ! permits.contains( permit.getName())) permits.add(permit.getName());
+                    }
+                }
+                return permits;
+            }
+        }
+        @NonNull String[] result = new String[]{};
+        try {
+            result = forkJoinPool.submit(new CallableCore(userEntity)).get().toArray(new String[0]);
+        } catch (ExecutionException executionException) {
+            PorphyrServiceException.handleExecutionException(executionException);
+        }
+        return result;
+    }
 }
+

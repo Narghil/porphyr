@@ -26,6 +26,12 @@ public class TestConstants {
     };
 
     static @NonNull
+    final String[] userPermits = new String[] {"PROJECTS","DEVELOPERS"};
+
+    static @NonNull
+    final String[] adminPermits = new String[] {"PROJECTS","DEVELOPERS","DBCONSOLE"};
+
+    static @NonNull
     final String[] roleNames = new String[]{
         "1-USER", "2-ADMIN", "3-GUEST"
     };

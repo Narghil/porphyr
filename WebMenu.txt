@@ -1,0 +1,26 @@
+Menüstruktúra:
+- Főmenü
+	- Projektek
+		- Fejlesztők
+			- Fejlesztő feladatai a projektben
+				- Idő módosítása
+				- Feladat törlése a fejlesztőtől
+			- Fejlesztő törlése a projektből
+			- Fejlesztő hozzárendelése a projekthez
+		- Feladatok
+			- Feladat fejlesztői
+				- Idő módosítása
+				- Feladat törlése a fejlesztőtől
+			- Feladat módosítása
+			- Feladat törlése
+			- Új feladat a projekthez
+		- Módosítás/törlés
+		- Új projekt
+	- Fejlesztők
+		- Fejlesztő feladatai
+			- Idő módosítása
+		- Fejlesztő módosítása
+		- Fejlesztő törlése
+		- Új fejlesztő
+	- Db Konzol
+	- Kilépés

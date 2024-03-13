@@ -24,12 +24,12 @@ import static combit.hu.porphyr.Constants.ON;
 import static combit.hu.porphyr.controller.helpers.HomeControllerConstants.*;
 
 @Controller
-public class HomeControllerProjects {
+public class ProjectsController {
 
     private final @NonNull ProjectService projectService;
 
     @Autowired
-    public HomeControllerProjects(final @NonNull ProjectService projectService) {
+    public ProjectsController(final @NonNull ProjectService projectService) {
         this.projectService = projectService;
     }
 

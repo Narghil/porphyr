@@ -20,6 +20,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
@@ -98,6 +99,19 @@ class UserTests {
             }
         );
         verify( spyUserRepository, times(2)).findByLoginName(anyString());
+        //getUserPermits()
+        UserEntity user = spiedUserService.getUserByLoginName( loginNames[0] );
+        assertNotNull( user );
+        assertArrayEquals(
+            Arrays.stream(userPermits).sorted(String::compareTo).toArray(String[]::new),
+            Arrays.stream(spiedUserService.getUserPermits( user )).sorted(String::compareTo).toArray(String[]::new)
+        );
+        user = spiedUserService.getUserByLoginName( loginNames[1] );
+        assertNotNull( user );
+        assertArrayEquals(
+            Arrays.stream(adminPermits).sorted(String::compareTo).toArray(String[]::new),
+            Arrays.stream(spiedUserService.getUserPermits( user )).sorted(String::compareTo).toArray(String[]::new)
+        );
     }
 
 
