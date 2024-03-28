@@ -24,8 +24,8 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
-import static combit.hu.porphyr.TestConstants.loginNames;
-import static combit.hu.porphyr.TestConstants.developerNames;
+import static combit.hu.porphyr.TestConstants.LOGIN_NAMES;
+import static combit.hu.porphyr.TestConstants.DEVELOPER_NAMES;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -77,9 +77,9 @@ class UserDeveloperTests {
         final @NonNull String NEW_DEVELOPER = "5. fejlesztő";
         //Létező developer felvitele a user-hez
         final @NonNull UserEntity expectedUser =
-            Objects.requireNonNull( spiedUserService.getUserByLoginName( loginNames[0] ))
+            Objects.requireNonNull( spiedUserService.getUserByLoginName( LOGIN_NAMES[0] ))
         ;
-        @NonNull DeveloperEntity newDeveloper = Objects.requireNonNull( spiedDeveloperService.getDeveloperByName( developerNames[1]));
+        @NonNull DeveloperEntity newDeveloper = Objects.requireNonNull( spiedDeveloperService.getDeveloperByName( DEVELOPER_NAMES[1]));
         expectedUser.getDevelopers().add( newDeveloper );
         spyUserRepository.saveAndFlush(expectedUser);
         entityManager.clear();
@@ -106,13 +106,13 @@ class UserDeveloperTests {
         );
         //Létező developer felvitele a user-hez, ami már van nála: Nem jön létre duplikáció
         entityManager.clear();
-        newDeveloper = Objects.requireNonNull( spiedDeveloperService.getDeveloperByName( developerNames[0]));
+        newDeveloper = Objects.requireNonNull( spiedDeveloperService.getDeveloperByName( DEVELOPER_NAMES[0]));
         expectedUser.getDevelopers().add( newDeveloper );
         spyUserRepository.saveAndFlush(expectedUser);
         actualUser = Objects.requireNonNull( spiedUserService.getUserByLoginName( expectedUser.getLoginName() ));
         assertArrayEquals(
             actualUser.getDevelopers().stream().map( DeveloperEntity::getName ).sorted().toArray(),
-            new String[]{ developerNames[0], developerNames[1], NEW_DEVELOPER }
+            new String[]{ DEVELOPER_NAMES[0], DEVELOPER_NAMES[1], NEW_DEVELOPER }
         );
         //
         //developer-ok elvétele a user-től.
@@ -123,6 +123,6 @@ class UserDeveloperTests {
         actualUser = Objects.requireNonNull( spiedUserService.getUserByLoginName( expectedUser.getLoginName() ));
         assertEquals( 0, actualUser.getDevelopers().size() );
         //De eze nem befolyásolja a meglévő developer-ok számát.
-        assertEquals( spiedDeveloperService.getDevelopers().size(), developerNames.length +1 );
+        assertEquals( spiedDeveloperService.getDevelopers().size(), DEVELOPER_NAMES.length +1 );
     }
 }

@@ -72,8 +72,8 @@ class DeveloperTests {
     void developerEntityQueriesTest() {
         //getDeveloperProjects
         assertArrayEquals(
-            new String[]{projectNames[0], projectNames[1]},
-            spyDeveloperRepository.findAllByName(developerNames[1]).get(0).
+            new String[]{PROJECT_NAMES[0], PROJECT_NAMES[1]},
+            spyDeveloperRepository.findAllByName(DEVELOPER_NAMES[1]).get(0).
                 getDeveloperProjects().stream().map(ProjectDeveloperEntity::getProjectEntity).
                 map(ProjectEntity::getName).
                 toArray(String[]::new)
@@ -86,7 +86,7 @@ class DeveloperTests {
     void developerServiceQueriesTest() throws ExecutionException, InterruptedException {
         //getDevelopers() --------------------------
         assertArrayEquals(
-            developerNames,
+            DEVELOPER_NAMES,
             spiedDeveloperService.getDevelopers().stream().map(DeveloperEntity::getName).toArray(String[]::new)
         );
         verify(spyDeveloperRepository, times(1)).findAll();
@@ -103,7 +103,7 @@ class DeveloperTests {
         verify(spyDeveloperRepository, times(4)).findAllById(anyLong());
         //getDeveloperByName
         assertArrayEquals(
-            developerNames,
+            DEVELOPER_NAMES,
             new String[]{
                 Objects.requireNonNull(spiedDeveloperService.getDeveloperByName("1. fejlesztő")).getName(),
                 Objects.requireNonNull(spiedDeveloperService.getDeveloperByName("2. fejlesztő")).getName(),
@@ -116,19 +116,19 @@ class DeveloperTests {
         assertArrayEquals(
             new Boolean[]{false, false, false, false},
             new Boolean[]{
-                spiedDeveloperService.isDeveloperWithNameAndNotId(developerNames[0], 1L),
-                spiedDeveloperService.isDeveloperWithNameAndNotId(developerNames[1], 2L),
-                spiedDeveloperService.isDeveloperWithNameAndNotId(developerNames[2], 3L),
-                spiedDeveloperService.isDeveloperWithNameAndNotId(developerNames[3], 4L)
+                spiedDeveloperService.isDeveloperWithNameAndNotId(DEVELOPER_NAMES[0], 1L),
+                spiedDeveloperService.isDeveloperWithNameAndNotId(DEVELOPER_NAMES[1], 2L),
+                spiedDeveloperService.isDeveloperWithNameAndNotId(DEVELOPER_NAMES[2], 3L),
+                spiedDeveloperService.isDeveloperWithNameAndNotId(DEVELOPER_NAMES[3], 4L)
             }
         );
         assertArrayEquals(
             new Boolean[]{true, true, true, true},
             new Boolean[]{
-                spiedDeveloperService.isDeveloperWithNameAndNotId(developerNames[0], 4L),
-                spiedDeveloperService.isDeveloperWithNameAndNotId(developerNames[1], 3L),
-                spiedDeveloperService.isDeveloperWithNameAndNotId(developerNames[2], 2L),
-                spiedDeveloperService.isDeveloperWithNameAndNotId(developerNames[3], 1L)
+                spiedDeveloperService.isDeveloperWithNameAndNotId(DEVELOPER_NAMES[0], 4L),
+                spiedDeveloperService.isDeveloperWithNameAndNotId(DEVELOPER_NAMES[1], 3L),
+                spiedDeveloperService.isDeveloperWithNameAndNotId(DEVELOPER_NAMES[2], 2L),
+                spiedDeveloperService.isDeveloperWithNameAndNotId(DEVELOPER_NAMES[3], 1L)
             }
         );
         verify(spyDeveloperRepository, times(8)).findAllByNameAndIdNot(anyString(), anyLong());
@@ -207,7 +207,7 @@ class DeveloperTests {
             ).getMessage()
         );
         // - Már létező névvel
-        developerForInsert.setName(developerNames[0]);
+        developerForInsert.setName(DEVELOPER_NAMES[0]);
         assertEquals(
             PorphyrServiceException.Exceptions.DEVELOPER_INSERT_SAME_NAME.getDescription(),
             assertThrows(
@@ -247,7 +247,7 @@ class DeveloperTests {
             ).getMessage()
         );
         // - Nincs kitöltve a név
-        developerWithAnyNames = Objects.requireNonNull(spiedDeveloperService.getDeveloperByName(developerNames[3]));
+        developerWithAnyNames = Objects.requireNonNull(spiedDeveloperService.getDeveloperByName(DEVELOPER_NAMES[3]));
         developerWithAnyNames.setName("");
         assertEquals(
             PorphyrServiceException.Exceptions.DEVELOPER_MODIFY_EMPTY_NAME.getDescription(),
@@ -257,7 +257,7 @@ class DeveloperTests {
             ).getMessage()
         );
         // - Ki van töltve a név, de van már ilyen.
-        developerWithAnyNames.setName(developerNames[0]);
+        developerWithAnyNames.setName(DEVELOPER_NAMES[0]);
         assertEquals(
             PorphyrServiceException.Exceptions.DEVELOPER_MODIFY_SAME_NAME.getDescription(),
             assertThrows(
@@ -266,14 +266,14 @@ class DeveloperTests {
             ).getMessage()
         );
         // - Ki van töltve a név, ugyanaz, ami volt: Nem hiba
-        developerWithAnyNames.setName(developerNames[3]);
+        developerWithAnyNames.setName(DEVELOPER_NAMES[3]);
         assertDoesNotThrow(
             () -> spiedDeveloperService.modifyDeveloper(developerWithAnyNames)
         );
         entityManager.clear();
         actualDeveloper = spiedDeveloperService.getDeveloperById(4L);
         assertNotNull(actualDeveloper);
-        assertEquals(developerNames[3], actualDeveloper.getName());
+        assertEquals(DEVELOPER_NAMES[3], actualDeveloper.getName());
         verify(spyDeveloperRepository, times(1)).saveAndFlush(any(DeveloperEntity.class));
         // - Ki van töltve a név, másra
         developerWithAnyNames.setName("Negyedik fejlesztő");

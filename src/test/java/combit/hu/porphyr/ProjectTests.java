@@ -70,7 +70,7 @@ class ProjectTests {
         actualProject = spyProjectRepository.findAllById(1L);
         assert actualProject != null;
         assertArrayEquals(
-            new String[]{developerNames[0], developerNames[1], developerNames[2]},
+            new String[]{DEVELOPER_NAMES[0], DEVELOPER_NAMES[1], DEVELOPER_NAMES[2]},
             actualProject.getProjectDevelopers()
                 .stream()
                 .map(ProjectDeveloperEntity::getDeveloperEntity)
@@ -79,7 +79,7 @@ class ProjectTests {
         );
         //getProjectTasks
         assertArrayEquals(
-            taskNames[0],
+            TASK_NAMES[0],
             actualProject.getProjectTasks()
                 .stream()
                 .map(ProjectTaskEntity::getName)
@@ -104,7 +104,7 @@ class ProjectTests {
         //getProjects()
         final List<ProjectEntity> actualProjects = spiedProjectService.getProjects();
         assertArrayEquals(
-            projectNames,
+            PROJECT_NAMES,
             actualProjects.stream().map(ProjectEntity::getName).sorted().toArray(String[]::new)
         );
         verify(spyProjectRepository, times(1)).findAll();
@@ -121,12 +121,12 @@ class ProjectTests {
         verify(spyProjectRepository, times(4)).findAllById(anyLong());
         //getProjectByName
         assertArrayEquals(
-            projectNames,
+            PROJECT_NAMES,
             new String[]{
-                Objects.requireNonNull(spiedProjectService.getProjectByName(projectNames[0])).getName(),
-                Objects.requireNonNull(spiedProjectService.getProjectByName(projectNames[1])).getName(),
-                Objects.requireNonNull(spiedProjectService.getProjectByName(projectNames[2])).getName(),
-                Objects.requireNonNull(spiedProjectService.getProjectByName(projectNames[3])).getName()
+                Objects.requireNonNull(spiedProjectService.getProjectByName(PROJECT_NAMES[0])).getName(),
+                Objects.requireNonNull(spiedProjectService.getProjectByName(PROJECT_NAMES[1])).getName(),
+                Objects.requireNonNull(spiedProjectService.getProjectByName(PROJECT_NAMES[2])).getName(),
+                Objects.requireNonNull(spiedProjectService.getProjectByName(PROJECT_NAMES[3])).getName()
             }
         );
         verify(spyProjectRepository, times(4)).findAllByName(anyString());
@@ -134,19 +134,19 @@ class ProjectTests {
         assertArrayEquals(
             new Boolean[]{false, false, false, false},
             new Boolean[]{
-                spiedProjectService.isProjectWithNameAndNotId(projectNames[0], 1L),
-                spiedProjectService.isProjectWithNameAndNotId(projectNames[1], 2L),
-                spiedProjectService.isProjectWithNameAndNotId(projectNames[2], 3L),
-                spiedProjectService.isProjectWithNameAndNotId(projectNames[3], 4L)
+                spiedProjectService.isProjectWithNameAndNotId(PROJECT_NAMES[0], 1L),
+                spiedProjectService.isProjectWithNameAndNotId(PROJECT_NAMES[1], 2L),
+                spiedProjectService.isProjectWithNameAndNotId(PROJECT_NAMES[2], 3L),
+                spiedProjectService.isProjectWithNameAndNotId(PROJECT_NAMES[3], 4L)
             }
         );
         assertArrayEquals(
             new Boolean[]{true, true, true, true},
             new Boolean[]{
-                spiedProjectService.isProjectWithNameAndNotId(projectNames[0], 4L),
-                spiedProjectService.isProjectWithNameAndNotId(projectNames[1], 3L),
-                spiedProjectService.isProjectWithNameAndNotId(projectNames[2], 2L),
-                spiedProjectService.isProjectWithNameAndNotId(projectNames[3], 1L)
+                spiedProjectService.isProjectWithNameAndNotId(PROJECT_NAMES[0], 4L),
+                spiedProjectService.isProjectWithNameAndNotId(PROJECT_NAMES[1], 3L),
+                spiedProjectService.isProjectWithNameAndNotId(PROJECT_NAMES[2], 2L),
+                spiedProjectService.isProjectWithNameAndNotId(PROJECT_NAMES[3], 1L)
             }
         );
         verify(spyProjectRepository, times(8)).findAllByNameAndIdNot(anyString(), anyLong());
@@ -169,7 +169,7 @@ class ProjectTests {
         ProjectEntity actualProject;
         //-------------------------------- Project felvétele --
         // - Már létező névvel (constraint ellenőrzése)
-        projectWithSameName = new ProjectEntity(projectNames[0], "");
+        projectWithSameName = new ProjectEntity(PROJECT_NAMES[0], "");
         assertThrows(Exception.class, () -> spyProjectRepository.saveAndFlush(projectWithSameName));
         entityManager.clear();
         // - Még nem létező névvel
@@ -199,10 +199,10 @@ class ProjectTests {
         actualProject = spyProjectRepository.findAllById(projectId);
         assertNull(actualProject);
         // - projekt törlése, amihez fejlesztő van rendelve, de feladat nincs (foreign key ellenőrzése)
-        projectWithDeveloper = Objects.requireNonNull(spiedProjectService.getProjectByName(projectNames[2]));
+        projectWithDeveloper = Objects.requireNonNull(spiedProjectService.getProjectByName(PROJECT_NAMES[2]));
         assertThrows(Exception.class, () -> spiedProjectService.deleteProject(projectWithDeveloper));
         // - projekt törlése, amihez feladat van rendelve, de projekt nincs (foreign key ellenőrzése)
-        projectWithTask = Objects.requireNonNull(spiedProjectService.getProjectByName(projectNames[3]));
+        projectWithTask = Objects.requireNonNull(spiedProjectService.getProjectByName(PROJECT_NAMES[3]));
         assertThrows(Exception.class, () -> spiedProjectService.deleteProject(projectWithTask));
     }
 
@@ -222,7 +222,7 @@ class ProjectTests {
             PorphyrServiceException.Exceptions.PROJECT_INSERT_EMPTY_NAME.getDescription()
         );
         // - Már létező névvel
-        projectForInsert.setName(projectNames[0]);
+        projectForInsert.setName(PROJECT_NAMES[0]);
         assertThrows(
             PorphyrServiceException.class,
             () -> spiedProjectService.insertNewProject(projectForInsert),
@@ -266,14 +266,14 @@ class ProjectTests {
             PorphyrServiceException.Exceptions.PROJECT_MODIFY_EMPTY_NAME.getDescription()
         );
         // - Ki van töltve a név, de van már ilyen.
-        projectWithAnyNames.setName(projectNames[0]);
+        projectWithAnyNames.setName(PROJECT_NAMES[0]);
         assertThrows(
             PorphyrServiceException.class,
             () -> spiedProjectService.modifyProject(projectWithAnyNames),
             PorphyrServiceException.Exceptions.PROJECT_MODIFY_SAME_NAME.getDescription()
         );
         // - Ki van töltve a név, ugyanaz, ami volt: Nem hiba
-        projectWithAnyNames.setName(projectNames[1]);
+        projectWithAnyNames.setName(PROJECT_NAMES[1]);
         assertDoesNotThrow(
             () -> spiedProjectService.modifyProject(projectWithAnyNames)
         );
@@ -319,7 +319,7 @@ class ProjectTests {
         );
         // - Már létező project, de még be van osztva hozzá fejlesztő
         entityManager.clear();
-        projectWithDeveloper = spiedProjectService.getProjectByName(projectNames[2]);
+        projectWithDeveloper = spiedProjectService.getProjectByName(PROJECT_NAMES[2]);
         assertNotNull(projectWithDeveloper);
         assertThrows(
             PorphyrServiceException.class,
@@ -328,7 +328,7 @@ class ProjectTests {
         );
         // - Már létező project, de még van hozzá feladat
         entityManager.clear();
-        projectWithTask = spiedProjectService.getProjectByName(projectNames[3]);
+        projectWithTask = spiedProjectService.getProjectByName(PROJECT_NAMES[3]);
         assertNotNull(projectWithTask);
         assertThrows(
             PorphyrServiceException.class,

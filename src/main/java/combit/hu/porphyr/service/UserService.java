@@ -1,15 +1,18 @@
 package combit.hu.porphyr.service;
 
+import combit.hu.porphyr.domain.DeveloperEntity;
 import combit.hu.porphyr.domain.PermitEntity;
 import combit.hu.porphyr.domain.RoleEntity;
 import combit.hu.porphyr.domain.UserEntity;
 import combit.hu.porphyr.repository.UserRepository;
+import combit.hu.porphyr.RequestsConstants;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.Synchronized;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -251,32 +254,98 @@ public class UserService implements UserDetailsService {
     /**
      * Felhasználó valamennyi permit-jének lekérdezése
      */
-    public synchronized @NonNull String[] getUserPermits(final @NonNull UserEntity userEntity)
-        throws ExecutionException, InterruptedException
-    {
-        final class CallableCore implements Callable< ArrayList<String> > {
+    public synchronized Boolean getUserPermits(
+        final @NonNull UserEntity userEntity,
+        final @NonNull List<String> userPermitNames,
+        final @NonNull List<String> userPermittedRequestCalls,
+        final @NonNull List<DeveloperEntity> userDevelopers
+    )
+        throws ExecutionException, InterruptedException {
+        final class CallableCore implements Callable<Boolean> {
             private final @NonNull UserEntity userEntity;
-            public CallableCore( final @NonNull UserEntity userEntity){
+            private final @NonNull List<String> userPermitNames;
+            private final @NonNull List<String> userPermittedRequestCalls;
+            private final @NonNull List<DeveloperEntity> userDevelopers;
+
+            public CallableCore(
+                final @NonNull UserEntity userEntity,
+                final @NonNull List<String> userPermitNames,
+                final @NonNull List<String> userPermittedRequestCalls,
+                final @NonNull List<DeveloperEntity> userDevelopers
+            ) {
                 this.userEntity = userEntity;
+                this.userPermitNames = userPermitNames;
+                this.userPermittedRequestCalls = userPermittedRequestCalls;
+                this.userDevelopers = userDevelopers;
             }
+
             @Override
-            public ArrayList<String> call(){
-                final @NonNull ArrayList<String> permits = new ArrayList<>();
-                for( RoleEntity role : userEntity.getRoles() ){
-                    for( PermitEntity permit : role.getPermits()) {
-                        if( ! permits.contains( permit.getName())) permits.add(permit.getName());
+            public Boolean call() {
+                userDevelopers.addAll( userEntity.getDevelopers() );
+                for (RoleEntity role : userEntity.getRoles()) {
+                    for (PermitEntity permit : role.getPermits()) {
+                        addPermit(permit.getName());
                     }
                 }
-                return permits;
+                return true;
+            }
+
+            //Ezek a subroutine-ok csak azért vannak itt, hogy a komplexitás ne legyen nagyobb 15-nél.
+            //Ezúttal ezt a megkötést kifejezetten fölöslegesnek tartom.
+            private void addPermit(final @NonNull String permitName) {
+                if (!userPermitNames.contains(permitName)) {
+                    userPermitNames.add(permitName);
+                    addPermitContinue(permitName);
+                }
+            }
+
+            private void addPermitContinue(final @NonNull String permitName){
+                List<String> requestCalls;
+                requestCalls = RequestsConstants.PROTECTED_REQUEST_CALLS.get(permitName);
+                if (requestCalls == null) {
+                    throw new NullPointerException("Empty requestCalls at:" + permitName);
+                } else {
+                    addRequestCalls(RequestsConstants.PROTECTED_REQUEST_CALLS.get(permitName));
+                }
+            }
+
+            private void addRequestCalls(final @NonNull List<String> requestCalls) {
+                for (String requestCall : requestCalls) {
+                    addRequestCallsContinue( requestCall );
+                }
+            }
+
+            private void addRequestCallsContinue( final @NonNull String requestCall ){
+                if (!userPermittedRequestCalls.contains(requestCall)) {
+                    userPermittedRequestCalls.add(requestCall);
+                }
             }
         }
-        @NonNull String[] result = new String[]{};
+
+        @NonNull Boolean result = false;
         try {
-            result = forkJoinPool.submit(new CallableCore(userEntity)).get().toArray(new String[0]);
+            userPermitNames.clear();
+            userPermittedRequestCalls.clear();
+            userDevelopers.clear();
+            result = forkJoinPool.submit(new CallableCore(userEntity, userPermitNames, userPermittedRequestCalls, userDevelopers)).get();
         } catch (ExecutionException executionException) {
             PorphyrServiceException.handleExecutionException(executionException);
         }
         return result;
     }
-}
 
+    /**
+     * Az aktuális felhasználó valamennyi permit-jének lekérdezése
+     */
+    @SneakyThrows
+    public synchronized @NonNull Boolean getActualUserPermits(
+        final @NonNull List<String> userPermitNames,
+        final @NonNull List<String> userPermittedRequestCalls,
+        final @NonNull List<DeveloperEntity> userDevelopers
+    ) {
+        final @Nullable UserEntity userEntity = getUserByLoginName(
+            SecurityContextHolder.getContext().getAuthentication().getName()
+        );
+        return (userEntity != null) && getUserPermits(userEntity, userPermitNames, userPermittedRequestCalls, userDevelopers);
+    }
+}

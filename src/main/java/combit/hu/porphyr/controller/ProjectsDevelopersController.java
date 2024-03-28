@@ -23,7 +23,7 @@ import java.util.concurrent.ExecutionException;
 import javax.annotation.Resource;
 
 import static combit.hu.porphyr.Constants.ON;
-import static combit.hu.porphyr.controller.helpers.HomeControllerConstants.*;
+import static combit.hu.porphyr.controller.helpers.ControllerConstants.*;
 
 @Controller
 public class ProjectsDevelopersController {

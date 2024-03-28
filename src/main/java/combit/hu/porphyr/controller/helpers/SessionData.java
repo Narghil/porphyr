@@ -21,6 +21,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
 
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -41,31 +42,6 @@ public class SessionData {
     private ProjectTaskService projectTaskService;
     private ProjectTaskDeveloperService projectTaskDeveloperService;
 
-    @Autowired
-    public void setProjectService(ProjectService projectService) {
-        this.projectService = projectService;
-    }
-
-    @Autowired
-    public void setDeveloperService(DeveloperService developerService) {
-        this.developerService = developerService;
-    }
-
-    @Autowired
-    public void setProjectDeveloperService(ProjectDeveloperService projectDeveloperService) {
-        this.projectDeveloperService = projectDeveloperService;
-    }
-
-    @Autowired
-    public void setProjectTaskService(ProjectTaskService projectTaskService) {
-        this.projectTaskService = projectTaskService;
-    }
-
-    @Autowired
-    public void setProjectTaskDeveloperService(ProjectTaskDeveloperService projectTaskDeveloperService) {
-        this.projectTaskDeveloperService = projectTaskDeveloperService;
-    }
-
     /**
      * A template-től kapott adatok.
      */
@@ -82,6 +58,10 @@ public class SessionData {
     private @NonNull Long selectedProjectDeveloperId;
     private @NonNull Long selectedProjectTaskId;
     private @NonNull Long selectedProjectTaskDeveloperId;
+    private @NonNull String userLoginName;
+    private @NonNull ArrayList<String> userPermitNames;
+    private @NonNull ArrayList<String> userPermittedRequestCalls;
+    private @NonNull ArrayList<DeveloperEntity> userDevelopers;
 
     public @NonNull ProjectEntity getSelectedProject() throws InterruptedException, ExecutionException {
         @Nullable ProjectEntity result;
@@ -130,7 +110,19 @@ public class SessionData {
         return result;
     }
 
-    public SessionData() {
+    @Autowired
+    public SessionData(final @NonNull ProjectService projectService,
+        final @NonNull DeveloperService developerService,
+        final @NonNull ProjectDeveloperService projectDeveloperService,
+        final @NonNull ProjectTaskService projectTaskService,
+        final @NonNull ProjectTaskDeveloperService projectTaskDeveloperService
+    ) {
+        this.projectService = projectService;
+        this.developerService = developerService;
+        this.projectDeveloperService = projectDeveloperService;
+        this.projectTaskService = projectTaskService;
+        this.projectTaskDeveloperService = projectTaskDeveloperService;
+
         dataFromTemplate = new TemplateData();
         dataToTemplate = new TemplateData();
         selectedProjectId = 0L;
@@ -138,6 +130,10 @@ public class SessionData {
         selectedProjectDeveloperId = 0L;
         selectedProjectTaskId = 0L;
         selectedProjectTaskDeveloperId = 0L;
+        userLoginName = "anonymus";
+        userPermitNames = new ArrayList<>() ;
+        userPermittedRequestCalls = new ArrayList<>();
+        userDevelopers = new ArrayList<>();
     }
 
     public void moveDataFromToTemplate() {
@@ -150,8 +146,21 @@ public class SessionData {
 
     @Bean
     @SessionScope
-    public SessionData getSessionData() {
-        return new SessionData();
+    @Autowired
+    public SessionData getSessionData(
+        ProjectService projectService,
+        DeveloperService developerService,
+        ProjectDeveloperService projectDeveloperService,
+        ProjectTaskService projectTaskService,
+        ProjectTaskDeveloperService projectTaskDeveloperService
+    ){
+        return new SessionData(
+            projectService,
+            developerService,
+            projectDeveloperService,
+            projectTaskService,
+            projectTaskDeveloperService
+        );
     }
 }
 

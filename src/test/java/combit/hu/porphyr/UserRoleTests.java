@@ -20,6 +20,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
@@ -72,11 +73,11 @@ class UserRoleTests {
     @Transactional
     @Rollback
     void userRoleTests() throws ExecutionException, InterruptedException {
-        final @NonNull String NEW_ROLE = "4-NEW_ROLE";
+        final @NonNull String NEW_ROLE = "NEW_ROLE";
         //Létező role felvitele a user-hez
         final @NonNull UserEntity expectedUser =
-            Objects.requireNonNull(spiedUserService.getUserByLoginName(loginNames[0]));
-        @NonNull RoleEntity newRole = Objects.requireNonNull(spiedRoleService.getRoleByRole(roleNames[1]));
+            Objects.requireNonNull(spiedUserService.getUserByLoginName(LOGIN_NAMES[0]));
+        @NonNull RoleEntity newRole = Objects.requireNonNull(spiedRoleService.getRoleByRole(ROLE_NAMES[1]));
         expectedUser.getRoles().add(newRole);
         spyUserRepository.saveAndFlush(expectedUser);
         entityManager.clear();
@@ -102,13 +103,13 @@ class UserRoleTests {
         );
         //Létező role felvitele a user-hez, ami már van nála: Nem jön létre duplikáció
         entityManager.clear();
-        newRole = Objects.requireNonNull(spiedRoleService.getRoleByRole(roleNames[0]));
+        newRole = Objects.requireNonNull(spiedRoleService.getRoleByRole(ROLE_NAMES[0]));
         expectedUser.getRoles().add(newRole);
         spyUserRepository.saveAndFlush(expectedUser);
         actualUser = Objects.requireNonNull(spiedUserService.getUserByLoginName(expectedUser.getLoginName()));
         assertArrayEquals(
             actualUser.getRoles().stream().map(RoleEntity::getRole).sorted().toArray(),
-            new String[]{roleNames[0], roleNames[1], NEW_ROLE}
+            Arrays.stream(new String[]{ROLE_NAMES[0], ROLE_NAMES[1], NEW_ROLE}).sorted().toArray()
         );
         //
         //role-ok elvétele a user-től.
@@ -119,6 +120,6 @@ class UserRoleTests {
         actualUser = Objects.requireNonNull(spiedUserService.getUserByLoginName(expectedUser.getLoginName()));
         assertEquals(0, actualUser.getRoles().size());
         //De eze nem befolyásolja a meglévő role-ok számát.
-        assertEquals(spiedRoleService.getRoles().size(), roleNames.length + 1);
+        assertEquals(spiedRoleService.getRoles().size(), ROLE_NAMES.length + 1);
     }
 }

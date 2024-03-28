@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="hu" data-layout-decorate="~{layouts/error_decorator}">
+<body>
+<div data-layout-fragment="errorContent">
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <div class="navbar-brand">Hiba!</div>
+            </div>
+        </div>
+    </nav>
+    <article>
+        <header>
+            <h1>Jogosultsági hiba!</h1>
+        </header>
+        <section>
+            <p data-th-text="${message}">Message</p>
+        </section>
+    </article>
+</div>
+</body>
+</html>

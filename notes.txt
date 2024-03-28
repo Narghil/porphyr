@@ -30,3 +30,84 @@ ThyMeLeaf eszköz:
         <li><span>I'm here</span></li>
     </ul>
 </div>
+
+<span data-th-if="${#arrays.contains(userPermits, 'DBCONSOLE'}>
+</div>
+
+--------------------------------------------------------------------------------------------------------------
+    private @NonNull UserService userService;
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+
+        httpSecurity.csrf().ignoringRequestMatchers(toH2Console());
+        httpSecurity.headers().frameOptions().sameOrigin();
+        httpSecurity.authorizeHttpRequests(auth ->
+        {
+            auth.antMatchers("/").authenticated();
+            //A login_decorator használ CSS-t, de ha nincs megadva rá az engedély, csak a belépés után éri el
+            //Eredmény: A belépés UTÁN tölti be a css-t, és text-ként megjeleníti, a fő oldal HELYETT.
+            //Ugyanezt más változtatások is képesek előidézni. MINDEN módosítás előtt menteni kell az előző állapotot!
+            auth.antMatchers("/css/**").permitAll();
+            auth.antMatchers("/icons/**").permitAll();
+            auth.antMatchers("/confirm_logout").authenticated();
+            auth.antMatchers("/logged_out").authenticated();
+            //
+
+            //auth.requestMatchers(toH2Console()).hasAuthority(ROLE_ADMIN);
+            //auth.antMatchers("/projects").authenticated();
+            //auth.antMatchers("/developers").authenticated();
+            //
+            List<String> userPermits = new ArrayList<>();
+            List<String> userPermittedTemplates = new ArrayList<>();
+            final @Nullable UserEntity userEntity;
+            final @Nullable Authentication contextAuth = SecurityContextHolder.getContext().getAuthentication();
+
+            //https://medium.com/@tanmaysaxena2904/spring-security-the-security-filter-chain-e09e1f53b73d
+            //https://www.baeldung.com/spring-security-custom-filter
+
+            System.out.println("*********************************");
+            System.out.println( contextAuth == null ? "NULL" : "NOT NULL" );
+            System.out.println("*********************************");
+
+            /*
+            try {
+                userEntity = userService.getUserByLoginName( contextAuth.getName() );  //ERROR!!!
+                if( userEntity == null){
+                    System.out.println("*********************** USERENTITY IS NULL *******************");
+                } else {
+                    userService.getUserPermits(userEntity, userPermits, userPermittedTemplates);
+                }
+            } catch (ExecutionException e) {
+                throw new IllegalStateException(e);
+            } catch (InterruptedException e) {
+                throw new IllegalStateException(e);
+            }
+
+            for (String template : userPermittedTemplates) {
+                if (template.equals("h2console")) {
+                    auth.requestMatchers(toH2Console()).authenticated();
+                } else {
+                    auth.antMatchers("/" + template).authenticated();
+                }
+            }
+            //
+            auth.anyRequest().denyAll();
+             */
+        })
+        ;
+
+        httpSecurity.formLogin(withDefaults());
+        httpSecurity.formLogin().loginPage("/login").permitAll();
+        httpSecurity.logout().logoutSuccessUrl("/logged_out")
+            .invalidateHttpSession(true)
+            .deleteCookies("JSESSIONID")
+            .permitAll();
+
+        return httpSecurity.build();
+    }

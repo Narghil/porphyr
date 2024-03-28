@@ -2,13 +2,18 @@
 <html lang="hu" data-layout-decorate="~{layouts/main_decorator}">
 <body>
 <div data-layout-fragment="mainContent">
-
     <nav class="navbar bg-light justify-content-center p-3">
-        <a class="btn btn-outline-secondary" data-th-href="@{'/projects'}">Projektek</a>
-        <span class="placeholder-glow col-1"></span>
-        <a class="btn btn-outline-secondary" data-th-href="@{'/developers'}">Fejlesztők</a>
+        <span data-th-if="${userPermitNames != null and #arrays.contains(userPermitNames, 'projects')}">
+            <a class="btn btn-outline-secondary" data-th-href="@{'/projects'}">Projektek</a>
+        </span>
+        <span
+            data-th-if="${userPermitNames != null and #arrays.contains(userPermitNames, 'projects') and #arrays.contains(userPermitNames, 'developers')}"
+            class="placeholder-glow col-1">
+        </span>
+        <span data-th-if="${userPermitNames != null and #arrays.contains(userPermitNames, 'developers')}">
+            <a class="btn btn-outline-secondary" data-th-href="@{'/developers'}">Fejlesztők</a>
+        </span>
     </nav>
-
 </div>
 </body>
 </html>

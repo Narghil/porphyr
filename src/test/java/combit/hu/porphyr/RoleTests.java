@@ -66,18 +66,18 @@ class RoleTests {
         //Lekérdezés ID szerint ("USER", 1 felhasználóhoz rendelve)
         RoleEntity actualRoleEntity = spyRoleRepository.findAllById(1L);
         assertNotNull(actualRoleEntity);
-        assertEquals(roleNames[0], actualRoleEntity.getRole());
+        assertEquals(ROLE_NAMES[0], actualRoleEntity.getRole());
         assertArrayEquals(
-            new String[]{loginNames[0]},
+            new String[]{LOGIN_NAMES[0]},
             actualRoleEntity.getUsers().stream().map(UserEntity::getLoginName).toArray(String[]::new)
         );
         //Lekérdezés név szerint ("ADMIN", 1 felhasználóhoz rendelve)
         entityManager.clear();
-        actualRoleEntity = spyRoleRepository.findByRole(roleNames[1]);
+        actualRoleEntity = spyRoleRepository.findByRole(ROLE_NAMES[1]);
         assertNotNull(actualRoleEntity);
-        assertEquals(roleNames[1], actualRoleEntity.getRole());
+        assertEquals(ROLE_NAMES[1], actualRoleEntity.getRole());
         assertArrayEquals(
-            new String[]{loginNames[1]},
+            new String[]{LOGIN_NAMES[1]},
             actualRoleEntity.getUsers().stream().map(UserEntity::getLoginName).toArray(String[]::new)
         );
     }
@@ -88,24 +88,24 @@ class RoleTests {
     void roleServiceQueriesTest() throws ExecutionException, InterruptedException {
         //getRoles() --------------------------
         assertArrayEquals(
-            roleNames,
+            ROLE_NAMES,
             spiedRoleService.getRoles().stream().map(RoleEntity::getRole)
                 .sorted().toArray(String[]::new)
         );
         verify(spyRoleRepository, times(1)).findAll();
         //get Roles By Names
         assertArrayEquals(
-            roleNames,
+            ROLE_NAMES,
             new String[]{
-                Objects.requireNonNull(spiedRoleService.getRoleByRole(roleNames[0])).getRole(),
-                Objects.requireNonNull(spiedRoleService.getRoleByRole(roleNames[1])).getRole(),
-                Objects.requireNonNull(spiedRoleService.getRoleByRole(roleNames[2])).getRole()
+                Objects.requireNonNull(spiedRoleService.getRoleByRole(ROLE_NAMES[0])).getRole(),
+                Objects.requireNonNull(spiedRoleService.getRoleByRole(ROLE_NAMES[1])).getRole(),
+                Objects.requireNonNull(spiedRoleService.getRoleByRole(ROLE_NAMES[2])).getRole()
             }
         );
         verify(spyRoleRepository, times(3)).findByRole(anyString());
         //findAllByRoleAndIdNot
-        assertEquals(0, spyRoleRepository.findAllByRoleAndIdNot(roleNames[0], 1L).size());
-        assertEquals(1, spyRoleRepository.findAllByRoleAndIdNot(roleNames[0], 2L).size());
+        assertEquals(0, spyRoleRepository.findAllByRoleAndIdNot(ROLE_NAMES[0], 1L).size());
+        assertEquals(1, spyRoleRepository.findAllByRoleAndIdNot(ROLE_NAMES[0], 2L).size());
     }
 
     //--------------------------- Repository műveletek tesztje -----------------------------
@@ -117,7 +117,7 @@ class RoleTests {
         RoleEntity actualRole;
         //-------------------------------- Role felvétele --
         // - Már létező névvel (constraint ellenőrzése)
-        expectedRole.setRole(roleNames[0]);
+        expectedRole.setRole(ROLE_NAMES[0]);
         assertThrows(Exception.class, () -> spiedRoleService.insertNewRole(expectedRole));
         // - Még nem létező névvel
         expectedRole.setRole("NEW_ROLE");
@@ -129,9 +129,9 @@ class RoleTests {
         assertEquals(expectedRole, actualRole);
         //--------------------------------- Role módosítása ---------------------------------
         entityManager.clear();
-        final RoleEntity roleWithExistingName = spyRoleRepository.findByRole(roleNames[0]);
+        final RoleEntity roleWithExistingName = spyRoleRepository.findByRole(ROLE_NAMES[0]);
         assertNotNull(roleWithExistingName);
-        roleWithExistingName.setRole(roleNames[1]);
+        roleWithExistingName.setRole(ROLE_NAMES[1]);
         assertThrows(Exception.class, () -> spiedRoleService.modifyRole(roleWithExistingName));
         //
         entityManager.clear();
@@ -168,7 +168,7 @@ class RoleTests {
         //----------------------- Felvétel: insertNewRole(); -----------------------------------------
         roleForInsert = new RoleEntity();
         // - Már létező login névvel
-        roleForInsert.setRole(roleNames[0]);
+        roleForInsert.setRole(ROLE_NAMES[0]);
         assertEquals(
             PorphyrServiceException.Exceptions.ROLES_INSERT_SAME_NAME.getDescription(),
             assertThrows(PorphyrServiceException.class, () -> spiedRoleService.insertNewRole(roleForInsert)
@@ -205,15 +205,15 @@ class RoleTests {
         );
         // - Ki van töltve a login név, de van már ilyen.
         entityManager.clear();
-        roleWithAnyNames = Objects.requireNonNull(spiedRoleService.getRoleByRole(roleNames[0]));
-        roleWithAnyNames.setRole(roleNames[1]);
+        roleWithAnyNames = Objects.requireNonNull(spiedRoleService.getRoleByRole(ROLE_NAMES[0]));
+        roleWithAnyNames.setRole(ROLE_NAMES[1]);
         assertEquals(
             PorphyrServiceException.Exceptions.ROLES_MODIFY_SAME_NAME.getDescription(),
             assertThrows(PorphyrServiceException.class, () -> spiedRoleService.modifyRole(roleWithAnyNames)
             ).getMessage()
         );
         // - Ki van töltve a név, ugyanaz, ami volt: Nem hiba
-        roleWithAnyNames.setRole(roleNames[0]);
+        roleWithAnyNames.setRole(ROLE_NAMES[0]);
         assertDoesNotThrow(
             () -> spiedRoleService.modifyRole(roleWithAnyNames)
         );
@@ -245,7 +245,7 @@ class RoleTests {
             ).getMessage()
         );
         // - Ki van töltve az ID - de van hozzá user
-        final RoleEntity roleWithUser = spiedRoleService.getRoleByRole(roleNames[0]);
+        final RoleEntity roleWithUser = spiedRoleService.getRoleByRole(ROLE_NAMES[0]);
         assertNotNull(roleWithUser);
         assertEquals(
             PorphyrServiceException.Exceptions.ROLES_DELETE_ATTACHED_USERS.getDescription(),
@@ -253,12 +253,12 @@ class RoleTests {
             ).getMessage()
         );
         // - GUEST törlése - nincs hozzá user
-        final RoleEntity roleWithoutUser = spiedRoleService.getRoleByRole(roleNames[2]);
+        final RoleEntity roleWithoutUser = spiedRoleService.getRoleByRole(ROLE_NAMES[2]);
         assertNotNull(roleWithoutUser);
         assertDoesNotThrow(() -> spiedRoleService.deleteRole(roleWithoutUser));
         // - Visszaolvasás
         entityManager.clear();
-        assertNull(spiedRoleService.getRoleByRole(roleNames[2]));
+        assertNull(spiedRoleService.getRoleByRole(ROLE_NAMES[2]));
         // - Minden hibalehetőség tesztelve volt:
         assertDoesNotThrow(() -> PorphyrServiceException.isAllExceptionsThrown(PorphyrServiceException.ExceptionGroups.ROLES_DELETE));
     }

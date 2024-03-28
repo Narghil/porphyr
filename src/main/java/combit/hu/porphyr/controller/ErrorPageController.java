@@ -29,17 +29,24 @@ public class ErrorPageController implements ErrorController {
 
     @RequestMapping("/error")
     public @NonNull String error(Model model, HttpServletRequest request) {
+        String errorPage = "detailedError";
+
         WebRequest webRequest = new ServletWebRequest(request);
-        ErrorAttributeOptions errorAttributeOptions = ErrorAttributeOptions.defaults()
-            .including(ErrorAttributeOptions.Include.MESSAGE);
-        Map<String, Object> error = errorAttributes.getErrorAttributes(webRequest, errorAttributeOptions);
+        Map<String, Object> error = errorAttributes.getErrorAttributes(
+            webRequest,
+            ErrorAttributeOptions.defaults().including(ErrorAttributeOptions.Include.MESSAGE)
+        );
 
         model.addAttribute("timestamp", error.get("timestamp"));
         model.addAttribute("errorDescription", "PAGE:" + error.get("error"));
-        model.addAttribute("message", error.get("message"));
+        model.addAttribute("message", error.get("message") );
         model.addAttribute("path", error.get("path"));
-        model.addAttribute("status", error.get("status"));
+        model.addAttribute("status", error.get("status") );
 
-        return "detailedError";
+        if( errorAttributes.getError(webRequest) instanceof PorphyrNotPermittedException ) {
+            errorPage = "authError";
+        }
+
+        return errorPage;
     }
 }

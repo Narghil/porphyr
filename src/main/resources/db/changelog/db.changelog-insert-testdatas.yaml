@@ -337,19 +337,19 @@ databaseChangeLog:
         columns:
         - column:
             name: ROLE
-            value: 1-USER
+            value: USER
         tableName: ROLES
     - insert:
         columns:
         - column:
             name: ROLE
-            value: 2-ADMIN
+            value: ADMIN
         tableName: ROLES
     - insert:
         columns:
         - column:
             name: ROLE
-            value: 3-GUEST
+            value: GUEST
         tableName: ROLES
     # ------------------------
     # Inserts into USERS_ROLES
@@ -385,6 +385,15 @@ databaseChangeLog:
             valueNumeric: 1
         tableName: USERS_DEVELOPERS
     - insert:
+          columns:
+              - column:
+                    name: USER_ID
+                    valueNumeric: 2
+              - column:
+                    name: DEVELOPER_ID
+                    valueNumeric: 1
+          tableName: USERS_DEVELOPERS
+    - insert:
         columns:
         - column:
             name: USER_ID
@@ -402,84 +411,660 @@ databaseChangeLog:
             name: DEVELOPER_ID
             valueNumeric: 3
         tableName: USERS_DEVELOPERS
+    - insert:
+          columns:
+              - column:
+                    name: USER_ID
+                    valueNumeric: 2
+              - column:
+                    name: DEVELOPER_ID
+                    valueNumeric: 4
+          tableName: USERS_DEVELOPERS
     # --------------------
     # Inserts into PERMITS
     # --------------------
     - insert:
-        tableName: PERMITS
-        columns:
-        - column:
-            name: NAME
-            value: "PROJECTS"
-        - column:
-            name: DESCRIPTION
-            value: "Főmenü / Projektek"
+          tableName: PERMITS
+          columns:
+              - column:
+                    name: NAME
+                    value: "root"
+              - column:
+                    name: DESCRIPTION
+                    value: "Főoldal"
     - insert:
-        tableName: PERMITS
-        columns:
-        - column:
-            name: NAME
-            value: "DEVELOPERS"
-        - column:
-            name: DESCRIPTION
-            value: "Főmenü / Fejlesztők"
+          tableName: PERMITS
+          columns:
+              - column:
+                    name: NAME
+                    value: "error"
+              - column:
+                    name: DESCRIPTION
+                    value: "Hibák megjelenítése"
     - insert:
-        tableName: PERMITS
-        columns:
-        - column:
-            name: NAME
-            value: "DBCONSOLE"
-        - column:
-            name: DESCRIPTION
-            value: "Főmenü / DB konzol"
+          tableName: PERMITS
+          columns:
+              - column:
+                    name: NAME
+                    value: "dbConsole"
+              - column:
+                    name: DESCRIPTION
+                    value: "Adatbázis-konzol"
+    - insert:
+          tableName: PERMITS
+          columns:
+              - column:
+                    name: NAME
+                    value: "logout"
+              - column:
+                    name: DESCRIPTION
+                    value: "Kilépés"
+    - insert:
+          tableName: PERMITS
+          columns:
+              - column:
+                    name: NAME
+                    value: "rawDeveloperList"
+              - column:
+                    name: DESCRIPTION
+                    value: "Nyers lista a fejlesztőkről, teszteléshez"
+    - insert:
+          tableName: PERMITS
+          columns:
+              - column:
+                    name: NAME
+                    value: "developers"
+              - column:
+                    name: DESCRIPTION
+                    value: "Fejlesztők"
+    - insert:
+          tableName: PERMITS
+          columns:
+              - column:
+                    name: NAME
+                    value: "newDeveloper"
+              - column:
+                    name: DESCRIPTION
+                    value: "Új fejlesztő felvétele"
+    - insert:
+          tableName: PERMITS
+          columns:
+              - column:
+                    name: NAME
+                    value: "modifyDeveloper"
+              - column:
+                    name: DESCRIPTION
+                    value: "Fejlesztő módosítása"
+    - insert:
+          tableName: PERMITS
+          columns:
+              - column:
+                    name: NAME
+                    value: "developerTasks"
+              - column:
+                    name: DESCRIPTION
+                    value: "Fejlesztő feladatai"
+    - insert:
+          tableName: PERMITS
+          columns:
+              - column:
+                    name: NAME
+                    value: "modifyDeveloperTask"
+              - column:
+                    name: DESCRIPTION
+                    value: "Fejlesztő feladatának módosítása"
+    - insert:
+          tableName: PERMITS
+          columns:
+              - column:
+                    name: NAME
+                    value: "projects"
+              - column:
+                    name: DESCRIPTION
+                    value: "Projektek"
+    - insert:
+          tableName: PERMITS
+          columns:
+              - column:
+                    name: NAME
+                    value: "modifyProject"
+              - column:
+                    name: DESCRIPTION
+                    value: "Projekt módosítása"
+    - insert:
+          tableName: PERMITS
+          columns:
+              - column:
+                    name: NAME
+                    value: "newProject"
+              - column:
+                    name: DESCRIPTION
+                    value: "Új projekt felvétele"
+    - insert:
+          tableName: PERMITS
+          columns:
+              - column:
+                    name: NAME
+                    value: "deleteProject"
+              - column:
+                    name: DESCRIPTION
+                    value: "Projekt törlése"
+    - insert:
+          tableName: PERMITS
+          columns:
+              - column:
+                    name: NAME
+                    value: "projectDevelopers"
+              - column:
+                    name: DESCRIPTION
+                    value: "Projekt fejlesztői"
+    - insert:
+          tableName: PERMITS
+          columns:
+              - column:
+                    name: NAME
+                    value: "newProjectDeveloper"
+              - column:
+                    name: DESCRIPTION
+                    value: "Fejlesztő hozzárendelése a projekthez"
+    - insert:
+          tableName: PERMITS
+          columns:
+              - column:
+                    name: NAME
+                    value: "projectDeveloperTasks"
+              - column:
+                    name: DESCRIPTION
+                    value: "Fejlesztő feladatai a projektben"
+    - insert:
+          tableName: PERMITS
+          columns:
+              - column:
+                    name: NAME
+                    value: "newProjectDeveloperTask"
+              - column:
+                    name: DESCRIPTION
+                    value: "Új projektfeladat hozzárendelése a fejlesztőhöz"
+    - insert:
+          tableName: PERMITS
+          columns:
+              - column:
+                    name: NAME
+                    value: "projectTasks"
+              - column:
+                    name: DESCRIPTION
+                    value: "A projekt feladatai"
+    - insert:
+          tableName: PERMITS
+          columns:
+              - column:
+                    name: NAME
+                    value: "newProjectTask"
+              - column:
+                    name: DESCRIPTION
+                    value: "Új projektfeladat"
+    - insert:
+          tableName: PERMITS
+          columns:
+              - column:
+                    name: NAME
+                    value: "modifyProjectTask"
+              - column:
+                    name: DESCRIPTION
+                    value: "Projektfeladat módosítása"
+    - insert:
+          tableName: PERMITS
+          columns:
+              - column:
+                    name: NAME
+                    value: "projectTaskDevelopers"
+              - column:
+                    name: DESCRIPTION
+                    value: "A projektfeladaton dolgozó fejlesztők"
+    - insert:
+          tableName: PERMITS
+          columns:
+              - column:
+                    name: NAME
+                    value: "newProjectTaskDeveloper"
+              - column:
+                    name: DESCRIPTION
+                    value: "Fejlesztő hozzárendelése a projektfeladathoz"
+    - insert:
+          tableName: PERMITS
+          columns:
+              - column:
+                    name: NAME
+                    value: "deleteProjectTaskDeveloper"
+              - column:
+                    name: DESCRIPTION
+                    value: "Fejlesztő eltávolítása a projektfeladatból"
     # --------------------
     # Inserts into ROLES_PERMITS
     # --------------------
-    # USER
+    # USER: minden, kivéve 3 (dbconsole)
     - insert:
-        tableName: ROLES_PERMITS
-        columns:
-        - column:
-            name: ROLE_ID
-            valueNumeric: 1
-        - column:
-            name: PERMIT_ID
-            valueNumeric: 1
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 1
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 1
     - insert:
-        tableName: ROLES_PERMITS
-        columns:
-        - column:
-            name: ROLE_ID
-            valueNumeric: 1
-        - column:
-            name: PERMIT_ID
-            valueNumeric: 2
-    # ADMIN
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 1
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 2
     - insert:
-        tableName: ROLES_PERMITS
-        columns:
-        - column:
-            name: ROLE_ID
-            valueNumeric: 2
-        - column:
-            name: PERMIT_ID
-            valueNumeric: 1
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 1
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 4
     - insert:
-        tableName: ROLES_PERMITS
-        columns:
-        - column:
-            name: ROLE_ID
-            valueNumeric: 2
-        - column:
-            name: PERMIT_ID
-            valueNumeric: 2
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 1
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 5
     - insert:
-        tableName: ROLES_PERMITS
-        columns:
-        - column:
-            name: ROLE_ID
-            valueNumeric: 2
-        - column:
-            name: PERMIT_ID
-            valueNumeric: 3
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 1
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 6
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 1
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 7
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 1
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 8
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 1
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 9
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 1
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 10
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 1
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 11
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 1
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 12
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 1
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 13
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 1
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 14
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 1
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 15
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 1
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 16
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 1
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 17
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 1
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 18
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 1
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 19
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 1
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 20
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 1
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 21
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 1
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 22
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 1
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 23
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 1
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 24
+    # ADMIN: minden
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 2
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 1
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 2
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 2
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 2
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 3
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 2
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 4
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 2
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 5
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 2
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 6
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 2
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 7
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 2
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 8
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 2
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 9
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 2
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 10
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 2
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 11
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 2
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 12
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 2
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 13
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 2
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 14
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 2
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 15
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 2
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 16
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 2
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 17
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 2
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 18
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 2
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 19
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 2
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 20
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 2
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 21
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 2
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 22
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 2
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 23
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 2
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 24
     # GUEST - none

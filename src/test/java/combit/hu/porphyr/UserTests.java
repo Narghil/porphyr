@@ -3,7 +3,9 @@ package combit.hu.porphyr;
 import combit.hu.porphyr.domain.DeveloperEntity;
 import combit.hu.porphyr.domain.RoleEntity;
 import combit.hu.porphyr.domain.UserEntity;
+import combit.hu.porphyr.repository.DeveloperRepository;
 import combit.hu.porphyr.repository.UserRepository;
+import combit.hu.porphyr.service.DeveloperService;
 import combit.hu.porphyr.service.UserService;
 import combit.hu.porphyr.service.PorphyrServiceException;
 import static combit.hu.porphyr.TestConstants.*;
@@ -20,7 +22,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
@@ -36,11 +41,13 @@ class UserTests {
 
     private final @NonNull UserRepository spyUserRepository;
     private final @NonNull UserService spiedUserService;
+    private final @NonNull DeveloperService developerService;
 
     @Autowired
     public UserTests(
         final @NonNull EntityManager entityManager,
-        final @NonNull UserRepository userRepository
+        final @NonNull UserRepository userRepository,
+        final @NonNull DeveloperRepository developerRepository
     ) {
         this.entityManager = entityManager;
         this.spiedUserService = new UserService( this.entityManager, userRepository);
@@ -49,6 +56,9 @@ class UserTests {
         );
         this.spiedUserService.setUserRepository(this.spyUserRepository);
         this.spiedUserService.setEntityManager(this.entityManager);
+
+        this.developerService = new DeveloperService( this.entityManager, developerRepository );
+
         PorphyrServiceException.initExceptionsCounter();
     }
 
@@ -66,15 +76,15 @@ class UserTests {
     void userEntityQueriesTest() {
         //Roles
         assertArrayEquals(
-            new String[]{roleNames[1]},
-            Objects.requireNonNull( spyUserRepository.findByLoginName(loginNames[1]))
+            new String[]{ROLE_NAMES[1]},
+            Objects.requireNonNull( spyUserRepository.findByLoginName(LOGIN_NAMES[1]))
                 .getRoles()
                 .stream().map(RoleEntity::getRole).toArray(String[]::new)
         );
         //Developers
         assertArrayEquals(
-            new String[]{ developerNames[1], developerNames[2]},
-            Objects.requireNonNull(spyUserRepository.findByLoginName(loginNames[1]))
+            DEVELOPER_NAMES,
+            Objects.requireNonNull(spyUserRepository.findByLoginName(LOGIN_NAMES[1]))
                 .getDevelopers().stream().map(DeveloperEntity::getName).sorted()
                 .toArray(String[]::new)
         );
@@ -84,36 +94,51 @@ class UserTests {
     @Transactional
     @Rollback
     void userServiceQueriesTest() throws ExecutionException, InterruptedException {
+        @NonNull List<String> actualUserPermitNames = new ArrayList<>();
+        @NonNull List<String> actualUserPermittedRequestCalls = new ArrayList<>();
+        @NonNull List<DeveloperEntity> actualUserDevelopers = new ArrayList<>();
+
+        @NonNull List<DeveloperEntity> requestedUserDevelopers =
+            Collections.singletonList(developerService.getDeveloperById(1L)) ;
+        @NonNull List<DeveloperEntity> requestedAdminDevelopers =
+            Arrays.asList(
+                developerService.getDeveloperById(1L), developerService.getDeveloperById(2L),
+                developerService.getDeveloperById(3L), developerService.getDeveloperById(4L)
+            );
         //getUsers() --------------------------
         assertArrayEquals(
-            loginNames,
+            LOGIN_NAMES,
             spiedUserService.getUsers().stream().map(UserEntity::getLoginName).toArray(String[]::new)
         );
         verify(spyUserRepository, times(1)).findAll();
         //getUserByLoginNames
         assertArrayEquals(
-            userFullNames,
+            USER_FULL_NAMES,
             new String[]{
-                Objects.requireNonNull(spiedUserService.getUserByLoginName(loginNames[0])).getFullName(),
-                Objects.requireNonNull(spiedUserService.getUserByLoginName(loginNames[1])).getFullName()
+                Objects.requireNonNull(spiedUserService.getUserByLoginName(LOGIN_NAMES[0])).getFullName(),
+                Objects.requireNonNull(spiedUserService.getUserByLoginName(LOGIN_NAMES[1])).getFullName()
             }
         );
         verify( spyUserRepository, times(2)).findByLoginName(anyString());
-        //getUserPermits()
-        UserEntity user = spiedUserService.getUserByLoginName( loginNames[0] );
+        //getUserPermits() : "user" user
+        UserEntity user = spiedUserService.getUserByLoginName( LOGIN_NAMES[0] );
         assertNotNull( user );
+        assertTrue( spiedUserService.getUserPermits( user, actualUserPermitNames, actualUserPermittedRequestCalls, actualUserDevelopers ) );
+        assertEquals( 23, actualUserPermitNames.size());
         assertArrayEquals(
-            Arrays.stream(userPermits).sorted(String::compareTo).toArray(String[]::new),
-            Arrays.stream(spiedUserService.getUserPermits( user )).sorted(String::compareTo).toArray(String[]::new)
+            requestedUserDevelopers.stream().map(DeveloperEntity::getName).sorted().toArray(),
+            actualUserDevelopers.stream().map(DeveloperEntity::getName).sorted().toArray()
         );
-        user = spiedUserService.getUserByLoginName( loginNames[1] );
+        //getUserPermits() : "admin" user
+        user = spiedUserService.getUserByLoginName( LOGIN_NAMES[1] );
         assertNotNull( user );
+        assertTrue( spiedUserService.getUserPermits( user, actualUserPermitNames, actualUserPermittedRequestCalls, actualUserDevelopers ) );
+        assertEquals( 24, actualUserPermitNames.size() );
         assertArrayEquals(
-            Arrays.stream(adminPermits).sorted(String::compareTo).toArray(String[]::new),
-            Arrays.stream(spiedUserService.getUserPermits( user )).sorted(String::compareTo).toArray(String[]::new)
+            requestedAdminDevelopers.stream().map(DeveloperEntity::getName).sorted().toArray(),
+            actualUserDevelopers.stream().map(DeveloperEntity::getName).sorted().toArray()
         );
     }
-
 
     //--------------------------- Repository műveletek tesztje -----------------------------
     @Test
@@ -181,7 +206,7 @@ class UserTests {
         //----------------------- Felvétel: insertNewUser(); -----------------------------------------
         userForInsert = new UserEntity();
         // - Már létező login névvel
-        userForInsert.setLoginName(loginNames[0]);
+        userForInsert.setLoginName(LOGIN_NAMES[0]);
         assertEquals(
             PorphyrServiceException.Exceptions.USER_INSERT_SAME_LOGIN_NAME.getDescription(),
             assertThrows(PorphyrServiceException.class, () -> spiedUserService.insertNewUser(userForInsert)
@@ -218,15 +243,15 @@ class UserTests {
             ).getMessage()
         );
         // - Ki van töltve a login név, de van már ilyen.
-        userWithAnyNames = Objects.requireNonNull(spiedUserService.getUserByLoginName(loginNames[0]));
-        userWithAnyNames.setLoginName(loginNames[1]);
+        userWithAnyNames = Objects.requireNonNull(spiedUserService.getUserByLoginName(LOGIN_NAMES[0]));
+        userWithAnyNames.setLoginName(LOGIN_NAMES[1]);
         assertEquals(
             PorphyrServiceException.Exceptions.USER_MODIFY_SAME_LOGIN_NAME.getDescription(),
             assertThrows(PorphyrServiceException.class, () -> spiedUserService.modifyUser(userWithAnyNames)
             ).getMessage()
         );
         // - Ki van töltve a név, ugyanaz, ami volt: Nem hiba
-        userWithAnyNames.setLoginName(loginNames[0]);
+        userWithAnyNames.setLoginName(LOGIN_NAMES[0]);
         assertDoesNotThrow(
             () -> spiedUserService.modifyUser(userWithAnyNames)
         );
@@ -260,14 +285,14 @@ class UserTests {
             ).getMessage()
         );
         // - Ki van töltve az ID
-        actualUser = spiedUserService.getUserByLoginName(loginNames[0]);
+        actualUser = spiedUserService.getUserByLoginName(LOGIN_NAMES[0]);
         assertNotNull(actualUser);
         assertDoesNotThrow(
             () -> spiedUserService.deleteUser(actualUser)
         );
         // - Visszaolvasás
         entityManager.clear();
-        assertNull(spiedUserService.getUserByLoginName(loginNames[0]));
+        assertNull(spiedUserService.getUserByLoginName(LOGIN_NAMES[0]));
         // - Minden hibalehetőség tesztelve volt:
         assertDoesNotThrow(() -> PorphyrServiceException.isAllExceptionsThrown(PorphyrServiceException.ExceptionGroups.USERS_DELETE));
     }

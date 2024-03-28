@@ -26,7 +26,7 @@
                 <span data-th-text="#{MainPageTitle}">headerText</span>
             </div>
             <div class="col-1" style="text-align:center">
-                 <span data-th-if="${#strings.contains(#authentication.getAuthorities(), 'ADMIN')}">
+                <span data-th-if="${userPermitNames != null and #arrays.contains(userPermitNames, 'dbConsole')}">
                      <a data-th-href="@{/porphyr}" target="_new">DB Konzol</a>
                  </span>
             </div>
@@ -54,7 +54,6 @@
 </div>
 
 <div data-th-if="${error != null}">
-    <!-- div data-th-if="${error.onOff ? true : false}" -->
         <div data-th-if="${error.onOff == 'ON'}">
             <div class="modal show" id="messageModal" tabindex="-1" role="dialog">
                 <div class="modal-dialog" role="document">
@@ -70,9 +69,7 @@
                 </div>
             </div>
         </div>
-    <!-- /div -->
 </div>
->
 
 </body>
 </html>
