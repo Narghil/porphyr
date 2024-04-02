@@ -24,9 +24,12 @@ import javax.annotation.concurrent.ThreadSafe;
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
+
+import static combit.hu.porphyr.RequestsConstants.PROTECTED_REQUEST_CALLS;
 
 @Service
 @Transactional
@@ -284,41 +287,11 @@ public class UserService implements UserDetailsService {
                 userDevelopers.addAll( userEntity.getDevelopers() );
                 for (RoleEntity role : userEntity.getRoles()) {
                     for (PermitEntity permit : role.getPermits()) {
-                        addPermit(permit.getName());
+                        addPermit(permit.getName(), userPermitNames, userPermittedRequestCalls);
                     }
                 }
+                changeIfPermitAll(userPermitNames,userPermittedRequestCalls);
                 return true;
-            }
-
-            //Ezek a subroutine-ok csak azért vannak itt, hogy a komplexitás ne legyen nagyobb 15-nél.
-            //Ezúttal ezt a megkötést kifejezetten fölöslegesnek tartom.
-            private void addPermit(final @NonNull String permitName) {
-                if (!userPermitNames.contains(permitName)) {
-                    userPermitNames.add(permitName);
-                    addPermitContinue(permitName);
-                }
-            }
-
-            private void addPermitContinue(final @NonNull String permitName){
-                List<String> requestCalls;
-                requestCalls = RequestsConstants.PROTECTED_REQUEST_CALLS.get(permitName);
-                if (requestCalls == null) {
-                    throw new NullPointerException("Empty requestCalls at:" + permitName);
-                } else {
-                    addRequestCalls(RequestsConstants.PROTECTED_REQUEST_CALLS.get(permitName));
-                }
-            }
-
-            private void addRequestCalls(final @NonNull List<String> requestCalls) {
-                for (String requestCall : requestCalls) {
-                    addRequestCallsContinue( requestCall );
-                }
-            }
-
-            private void addRequestCallsContinue( final @NonNull String requestCall ){
-                if (!userPermittedRequestCalls.contains(requestCall)) {
-                    userPermittedRequestCalls.add(requestCall);
-                }
             }
         }
 
@@ -331,6 +304,7 @@ public class UserService implements UserDetailsService {
         } catch (ExecutionException executionException) {
             PorphyrServiceException.handleExecutionException(executionException);
         }
+
         return result;
     }
 
@@ -348,4 +322,42 @@ public class UserService implements UserDetailsService {
         );
         return (userEntity != null) && getUserPermits(userEntity, userPermitNames, userPermittedRequestCalls, userDevelopers);
     }
+
+    // --------------------------- Helpers --------------------
+    // Egy permit és a hozzá tartozó URI-k felvétele a gyűjtőkbe
+    private void addPermit(
+        final @NonNull String permitName,
+        final @NonNull List<String> userPermitNames,
+        final @NonNull List<String> userPermittedRequestCalls
+    ) {
+        if (!userPermitNames.contains(permitName)) {
+            userPermitNames.add(permitName);
+            List<String> requestCalls = PROTECTED_REQUEST_CALLS.get(permitName);
+            if (requestCalls == null) {
+                throw new NullPointerException("Empty requestCalls at:" + permitName);
+            } else {
+                for (String requestCall : requestCalls) {
+                    if (!userPermittedRequestCalls.contains(requestCall)) {
+                        userPermittedRequestCalls.add(requestCall);
+                    }
+                }
+            }
+        }
+    }
+
+    // Ha a user-nek van PERMIT_ALL jogosultsága, akkor minden jogosultságot megkap.
+    private void changeIfPermitAll(
+        final @NonNull List<String> userPermitNames,
+        final @NonNull List<String> userPermittedRequestCalls
+    ){
+        if( userPermitNames.contains( RequestsConstants.PERMIT_ALL)) {
+            userPermitNames.clear();
+            userPermittedRequestCalls.clear();
+            for (Map.Entry<String, List<String>> entry : PROTECTED_REQUEST_CALLS.entrySet() ) {
+                userPermitNames.add(entry.getKey());
+                userPermittedRequestCalls.addAll(entry.getValue());
+            }
+        }
+    }
+
 }

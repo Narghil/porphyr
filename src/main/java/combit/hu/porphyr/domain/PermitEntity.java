@@ -20,8 +20,6 @@ import javax.persistence.Table;
 import java.util.HashSet;
 import java.util.Set;
 
-import static combit.hu.porphyr.Constants.log;
-
 /**
  * Szerepkörökhöz tartozó engedélyek nyilvántartása <br />
  * <br />
@@ -68,7 +66,5 @@ public class PermitEntity {
     public PermitEntity(final @NonNull String permitName, final @NonNull String description ) {
         this.name = permitName;
         this.description = description;
-
-        log.info(" *** DEPRECATED FIELD *** A httpRequestCall mező fölösleges, mert az értéke programon belül rögzített! *** ");
     }
 }

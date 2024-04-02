@@ -1,5 +1,7 @@
 package combit.hu.porphyr.service;
 
+import combit.hu.porphyr.RequestsConstants;
+import combit.hu.porphyr.controller.helpers.SessionData;
 import combit.hu.porphyr.domain.ProjectEntity;
 import combit.hu.porphyr.repository.ProjectRepository;
 import lombok.NonNull;
@@ -7,11 +9,11 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.Synchronized;
 import org.jetbrains.annotations.Nullable;
-//-- import org.springframework.beans.factory.annotation.Autowired --
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.persistence.EntityManager;
@@ -32,6 +34,9 @@ public class ProjectService {
     @Setter(onMethod_ = {@Synchronized})
     @GuardedBy("this")
     private @NonNull ProjectRepository projectRepository;
+
+    @Resource(name = "getSessionData")
+    SessionData sessionData;
 
     @Autowired
     public ProjectService(
@@ -294,4 +299,30 @@ public class ProjectService {
         }
         return result;
     }
+
+    /**
+     * A bejelentkezett user-hez tartozó projektek listájának lekérdezése
+     * Ha PERMIT_PROJECT_NEW joga van, akkor minden projektet láthat.
+     */
+    public synchronized @NonNull List<ProjectEntity> getActualUserProjects() throws ExecutionException, InterruptedException {
+        final class CallableCore implements Callable<List<ProjectEntity>> {
+            @Override
+            public List<ProjectEntity> call() {
+                if (sessionData.getUserPermitNames().contains(RequestsConstants.PERMIT_PROJECT_NEW)) {
+                    return projectRepository.findAll();
+                } else {
+                    return projectRepository.findAllByActualUserDevelopers(sessionData.getUserDevelopers());
+                }
+            }
+        }
+        @NonNull List<ProjectEntity> result = new ArrayList<>();
+        try {
+            result = forkJoinPool.submit(new CallableCore()).get();
+            for( ProjectEntity project : result ){ getProjectFullTime( project );}
+        } catch (ExecutionException ee) {
+            PorphyrServiceException.handleExecutionException(ee);
+        }
+        return result;
+    }
+
 }

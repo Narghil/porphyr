@@ -59,6 +59,7 @@ public class HomeController {
             sessionData.setUserLoginName( auth.getName() );
             sessionData.setUserPermitNames( userPermitNames );
             sessionData.setUserPermittedRequestCalls( userPermittedRequestCalls );
+            sessionData.setUserDevelopers( userDevelopers );
         }
 
         model.addAttribute(ERROR, webErrorBean.getWebErrorData());
@@ -69,7 +70,8 @@ public class HomeController {
     @RequestMapping("/projects")
     public @NonNull String projects(final @NonNull Model model) throws ExecutionException, InterruptedException {
         model.addAttribute(ERROR, webErrorBean.getWebErrorData());
-        model.addAttribute("projectsList", projectService.getProjects());
+        // --- model.addAttribute("projectsList", projectService.getProjects())
+        model.addAttribute("projectsList", projectService.getActualUserProjects());
         model.addAttribute("dataFromTemplate", sessionData.getDataFromTemplate());
         return "projects";
     }

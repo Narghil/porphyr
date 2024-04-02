@@ -133,7 +133,7 @@ class UserTests {
         user = spiedUserService.getUserByLoginName( LOGIN_NAMES[1] );
         assertNotNull( user );
         assertTrue( spiedUserService.getUserPermits( user, actualUserPermitNames, actualUserPermittedRequestCalls, actualUserDevelopers ) );
-        assertEquals( 24, actualUserPermitNames.size() );
+        assertEquals( 25, actualUserPermitNames.size() );
         assertArrayEquals(
             requestedAdminDevelopers.stream().map(DeveloperEntity::getName).sorted().toArray(),
             actualUserDevelopers.stream().map(DeveloperEntity::getName).sorted().toArray()

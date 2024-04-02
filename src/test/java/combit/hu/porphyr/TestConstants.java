@@ -5,6 +5,7 @@ import org.jetbrains.annotations.TestOnly;
 
 @TestOnly
 public class TestConstants {
+
     protected static @NonNull
     final String[] PROJECT_NAMES = new String[]{
         "1. projekt", "2. projekt", "Projekt fejlesztővel", "Projekt feladattal"
