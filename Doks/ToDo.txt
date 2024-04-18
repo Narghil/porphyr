@@ -1,9 +1,3 @@
-Test unitok aktualizálása:
-- ProjectTaskTests
-- ProjectDeveloperTests
-- ProjectTaskDeveloperTests
-
-Login rendszer létrehozása Spring Security rendszerrel
 
 Postolási lehetőség biztosítása a ProjectTaskEntity-khez.
 (Megjegyzés: Csak azoknak a felhasználóknak, akik az adott Projecthet hozzá vannak rendelve + admin)
