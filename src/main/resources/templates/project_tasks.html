@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="hu" data-layout-decorate="~{layouts/main_decorator}">
+<head><title>Projekt feladatai</title></head>
 <body>
 <div data-layout-fragment="mainContent">
     <nav class="navbar bg-light navbar-light" style="padding-left:1rem">
@@ -92,7 +93,7 @@
     <form hidden data-th-action="@{/selectProjectTaskOperation}" data-th-object="${dataFromTemplate}">
         <label for="operation"></label>
         <input type="number" class="form-control" id="operation" name="operation">
-        <label for="id"></label>
+        <label for="id">&nbsp;</label>
         <input type="number" class="form-control" id="id" name="id">
         <button id="submit_button"></button>
     </form>

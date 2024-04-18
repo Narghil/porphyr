@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="hu" data-layout-decorate="~{layouts/main_decorator}">
+<head><title>Feladat módosítása</title></head>
 <body>
 <div data-layout-fragment="mainContent">
     <nav class="navbar bg-light navbar-light" style="padding-left:1rem">
@@ -15,13 +16,13 @@
           class="form">
         <br/>
         <div class="input-group mb-3">
-            <label for="name" class="form-label"></label>
+            <label for="name" class="form-label">&nbsp;</label>
             <span class="input-group-text" style="width:4em">Név:</span>
             <input type="text" class="form-control" id="name" name="name" data-th-field="*{name}"
                    placeholder="Feladat neve"/>
         </div>
         <div class="input-group mb-3">
-            <label for="description" class="form-label"></label>
+            <label for="description" class="form-label">&nbsp;</label>
             <span class="input-group-text" style="width:4em">Leírás:</span>
             <textarea class="form-control" id="description" name="description" data-th-field="*{description}"
                       placeholder="Feladat leírása"></textarea>

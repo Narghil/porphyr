@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="hu" data-layout-decorate="~{layouts/login_decorator}">
+<head><title>Login</title></head>
 <body>
 <div data-layout-fragment="loginContent">
     <div class="container">
-        <div id="loginModal" class="modal" tabindex="1" role="dialog" aria-hidden="true">
+        <div id="loginModal" class="modal" role="dialog" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <form name="login" data-th-action="@{/login}" method="post" class="form col-md-12 center-block">
@@ -18,13 +19,13 @@
                         </div>
                         <div class="modal-body">
                             <div class="input-group mb-3">
-                                <label hidden for="username" class="form-label"></label>
+                                <label hidden for="username" class="form-label">&nbsp;</label>
                                 <span class="input-group-text" style="width:7em">Felhasználó:</span>
                                 <input type="text" class="form-control" id="username" name="username"
                                        placeholder="Felhasználó neve" required autofocus/>
                             </div>
                             <div class="input-group mb-3">
-                                <label hidden for="password" class="form-label"></label>
+                                <label hidden for="password" class="form-label">&nbsp;</label>
                                 <span class="input-group-text" style="width:7em">Jelszó:</span>
                                 <input type="password" class="form-control" id="password" name="password"
                                        placeholder="Jelszó" required/>

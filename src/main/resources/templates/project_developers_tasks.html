@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="hu" data-layout-decorate="~{layouts/main_decorator}">
+<head><title>Fejlesztő feladatai</title></head>
 <body>
 <div data-layout-fragment="mainContent">
     <nav class="navbar bg-light navbar-light" style="padding-left:1rem">
@@ -41,7 +42,7 @@
                     >Feladat leírása</textarea>
                 </div>
                 <div class="col col-lg-2 border" style="text-align:right">
-                    <label hidden for="none"></label>
+                    <label hidden for="none">&nbsp;</label>
                     <input type="number" class="form-control"
                            data-th-value="${projectTaskDeveloper.spendTime}"
                            min="0" id='none'
@@ -91,10 +92,10 @@
         <label for="operation"></label>
         <input type="text" class="form-control" id="operation" name="operation" data-th-field="*{operation}"
                placeholder="Operation"/>
-        <label for="id"></label>
+        <label for="id">&nbsp;</label>
         <input type="text" class="form-control" id="id" name="id"
                data-th-field="*{id}" placeholder="projectTaskDeveloper ID"/>
-        <label for="longData"></label>
+        <label for="longData">&nbsp;</label>
         <input type="number" class="form-control" id="longData" name="longData" data-th-field="*{longData}"
                placeholder="0"/>
         <button type="submit" id="submitButton" class="btn btn-outline-secondary">Idő rögzítése</button>

@@ -25,19 +25,19 @@
             <div class="col-5">
                 <span data-th-text="#{MainPageTitle}">headerText</span>
             </div>
-            <div class="col-1" style="text-align:center">
+            <div class="col-2" style="text-align:center">
                 <span data-th-if="${userPermitNames != null and #arrays.contains(userPermitNames, 'dbConsole')}">
-                     <a data-th-href="@{/porphyr}" target="_new">DB Konzol</a>
+                     <a class="btn btn-light btn-sm" data-th-href="@{/porphyr}" target="_new">DB Konzol</a>
                  </span>
             </div>
-            <div class="col-4" style="text-align:right">
+            <div class="col-3" style="text-align:right">
                 Felhasználó: <span data-th-text="${#authentication.name}">Anonymous</span>
             </div>
             <div class="col-2" style="text-align:right">
                 <form data-th-if="${#authentication.isAuthenticated()}" id="frm_logout"
                       data-th-action="@{/confirm_logout}"
                       method="get" class="form-inline">
-                    <a href="javascript:{}" onclick="document.getElementById('frm_logout').submit(); return false;">Kijelentkezés</a>
+                      <button class="btn btn-light btn-sm" onclick="document.getElementById('frm_logout').submit(); return false;">Kijelentkezés</button>
                 </form>
             </div>
         </div>

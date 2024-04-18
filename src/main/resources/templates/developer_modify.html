@@ -1,5 +1,7 @@
 <!DOCTYPE html>
+<title>Fejlesztők</title>
 <html lang="hu" data-layout-decorate="~{layouts/main_decorator}">
+<head><title>Hiba!</title></head>
 <body>
 <div data-layout-fragment="mainContent">
 
@@ -13,14 +15,14 @@
           class="form">
         <br/>
         <div hidden>
-            <label for="id"></label>
             <span class="input-group-text" style="width:4em">ID:</span>
+            <label for="id">&nbsp;</label>
             <input type="text" class="form-control" id="id" name="id" data-th-field="*{id}"
                    placeholder="ID"/>
         </div>
         <div class="input-group mb-11">
-            <label for="name" class="form-label"></label>
             <span class="input-group-text" style="width:4em">Név:</span>
+            <label for="name" class="form-label">&nbsp;</label>
             <input type="text" class="form-control" id="name" name="name" data-th-field="*{name}"
                    placeholder="Fejlesztő neve"/>
         </div>

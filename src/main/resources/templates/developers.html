@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="hu" data-layout-decorate="~{layouts/main_decorator}">
+<head><title>Fejlesztők</title></head>
 <body>
 <div data-layout-fragment="mainContent">
     <nav class="navbar bg-light navbar-light" style="padding-left:1rem">
@@ -82,7 +83,7 @@
     <form hidden data-th-action="@{/selectDeveloperOperation}" data-th-object="${dataFromTemplate}">
         <label for="operation"></label>
         <input type="number" class="form-control" id="operation" name="operation">
-        <label for="id"></label>
+        <label for="id">&nbsp;</label>
         <input type="number" class="form-control" id="id" name="Id">
         <button type="submit" id="submit_button"></button>
     </form>
