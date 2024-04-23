@@ -38,7 +38,7 @@ import static org.mockito.Mockito.verify;
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")
-class ProjectDeveloperTest {
+class ProjectDeveloperTests {
     private final @NonNull EntityManager entityManager;
     private final @NonNull ProjectDeveloperRepository projectDeveloperRepository;
     private final @NonNull ProjectRepository projectRepository;
@@ -47,7 +47,7 @@ class ProjectDeveloperTest {
     private final @NonNull ProjectDeveloperService spiedProjectDeveloperService;
 
     @Autowired
-    public ProjectDeveloperTest(
+    public ProjectDeveloperTests(
         final @NonNull EntityManager entityManager,
         final @NonNull ProjectDeveloperRepository projectDeveloperRepository,
         final @NonNull ProjectRepository projectRepository,

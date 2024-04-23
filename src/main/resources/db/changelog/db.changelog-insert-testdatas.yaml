@@ -1,6 +1,6 @@
 databaseChangeLog:
 - changeSet:
-    id: 22
+    id: 23
     author: Pernyei Gabor
     changes:
     # ---------------------
@@ -870,3 +870,36 @@ databaseChangeLog:
                     name: PERMIT_ID
                     valueNumeric: 25
     # GUEST - none
+    # ------------------
+    # Inserts into POSTS
+    # ------------------
+    - insert:
+        tableName: POSTS
+        columns:
+            - column:
+                name: CREATED
+                value: 2024-04-22 11.32.30
+            - column:
+                name: PROJECTTASK_ID
+                valueNumeric: 1
+            - column:
+                name: DEVELOPER_ID
+                valueNumeric: 1
+            - column:
+                name: DESCRIPTION
+                value: Az Első Fejlesztő postja az Első Feladathoz
+    - insert:
+        tableName: POSTS
+        columns:
+            - column:
+                name: CREATED
+                value: "now()"
+            - column:
+                name: PROJECTTASK_ID
+                valueNumeric: 1
+            - column:
+                name: DEVELOPER_ID
+                valueNumeric: 2
+            - column:
+                name: DESCRIPTION
+                value: A Második Fejlesztő postja az Első Feladathoz

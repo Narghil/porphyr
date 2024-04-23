@@ -34,13 +34,13 @@ databaseChangeLog:
         columns:
         - column:
             name: PROJECTDEVELOPER_ID
-        indexName: FK_PROJECTTASKDEVELOPERS_PROJECTDEVELOPER_ID_INDEX_F
+        indexName: IDX_PROJECTTASKDEVELOPERS_PROJECTDEVELOPER_ID_INDEX_F
         tableName: PROJECTTASKDEVELOPERS
     - createIndex:
         columns:
         - column:
             name: PROJECTTASK_ID
-        indexName: FK_PROJECTTASKDEVELOPERS_PROJECTTASK_ID_INDEX_F
+        indexName: IDX_PROJECTTASKDEVELOPERS_PROJECTTASK_ID_INDEX_F
         tableName: PROJECTTASKDEVELOPERS
     - createIndex:
         columns:

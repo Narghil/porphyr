@@ -1,0 +1,69 @@
+databaseChangeLog:
+- changeSet:
+    id: 22
+    author: Pernyei Gabor
+    changes:
+    - createTable:
+        tableName: POSTS
+        columns:
+        - column:
+            name: ID
+            type: BIGINT
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: PK_POSTS_ID
+        - column:
+            name: CREATED
+            type: DATETIME
+            constraints:
+              nullable: false
+        - column:
+            name: PROJECTTASK_ID
+            type: BIGINT
+            constraints:
+              nullable: false
+        - column:
+            name: DEVELOPER_ID
+            type: BIGINT
+            constraints:
+              nullable: false
+        - column:
+            name: DESCRIPTION
+            type: CLOB
+        - createIndex:
+            tableName: POSTS
+            indexName: IDX_POSTS_PROJECTTASK_ID
+            columns:
+            - column:
+                name: PROJECTTASK_ID
+        - createIndex:
+            tableName: POSTS
+            indexName: IDX_POSTS_DEVELOPER_ID            
+            columns:
+            - column:
+                name: DEVELOPER_ID
+        - addForeignKeyConstraint:
+            constraintName: FK_POSTS_PROJECTTASK_ID
+            baseTableName: POSTS
+            baseColumnNames: PROJECTTASK_ID
+            referencedTableName: PROJECTTASKS
+            referencedColumnNames: ID
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: RESTRICT
+            onUpdate: RESTRICT
+            validate: true
+        - addForeignKeyConstraint:
+            constraintName: FK_POSTS_DEVELOPER_ID
+            baseTableName: POSTS
+            baseColumnNames: DEVELOPER_ID
+            referencedTableName: DEVELOPERS
+            referencedColumnNames: ID
+            deferrable: false
+            initiallyDeferred: false
+            onDelete: RESTRICT
+            onUpdate: RESTRICT
+            validate: true
+            

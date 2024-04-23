@@ -34,7 +34,10 @@ public class PorphyrServiceException extends IllegalArgumentException {
         USERS_DELETE,
         ROLES_INSERT,
         ROLES_MODIFY,
-        ROLES_DELETE
+        ROLES_DELETE,
+        POSTS_INSERT,
+        POSTS_MODIFY,
+        POSTS_DELETE
     }
 
     public enum Exceptions {
@@ -193,7 +196,7 @@ public class PorphyrServiceException extends IllegalArgumentException {
             "A fejlesztő nem törölhető a projektből, még dolgozik a projekt feladatain!",
             0
         ),
-
+        // ------- ProjectTaskDeveloper hibák ----------
         PROJECTTASKDEVELOPER_INSERT_PROJECTTASK_NOT_SAVED(
             ExceptionGroups.PROJECTTASKDEVELOPERS_INSERT,
             "A kiválasztott feladat nincs elmentve, az összerendelés nem végezhető el!",
@@ -224,7 +227,6 @@ public class PorphyrServiceException extends IllegalArgumentException {
             "A kiválasztott feladaton már dolgozik a kiválasztott fejlesztő!",
             0
         ),
-
         PROJECTTASKDEVELOPER_MODIFY_NOT_SAVED(
             ExceptionGroups.PROJECTTASKDEVELOPERS_MODIFY,
             "Az összerendelés nincs elmentve, a módosítás nem végezhető el!",
@@ -235,7 +237,6 @@ public class PorphyrServiceException extends IllegalArgumentException {
             "Az eltöltött idő nem lehet nullánál kisebb!",
             0
         ),
-
         PROJECTTASKDEVELOPER_DELETE_NOT_SAVED(
             ExceptionGroups.PROJECTTASKDEVELOPERS_DELETE,
             "Az összerendelés nincs elmentve, nem törölhető!",
@@ -246,10 +247,38 @@ public class PorphyrServiceException extends IllegalArgumentException {
             "Az eltöltött idő nem nulla, az összerendelés nem törölhető!",
             0
         ),
-
+        // ------------------ Post hibák ------------------
+        POST_INSERT_PROJECTTASK_NOT_SAVED(ExceptionGroups.POSTS_INSERT,
+            "A kiválasztott feladat nincs elmentve, a hozzászólás nem rögzíthető!", 0
+        ),
+        POST_INSERT_PROJECTTASK_NOT_EXISTS(ExceptionGroups.POSTS_INSERT,
+            "A kiválasztott feladatot törölték, a hozzászólás nem rögzíthető!", 0
+        ),
+        POST_INSERT_DEVELOPER_NOT_SAVED(ExceptionGroups.POSTS_INSERT,
+            "A kiválasztott fejlesztő nincs elmentve, a hozzászólás nem rögzíthető!", 0
+        ),
+        POST_INSERT_DEVELOPER_NOT_EXISTS(ExceptionGroups.POSTS_INSERT,
+            "A kiválasztott fejlesztőt törölték, a hozzászólás nem rögzíthető!", 0
+        ),
+        POST_INSERT_TASK_OR_DEVELOPER_NOT_IN_PROJECT(ExceptionGroups.POSTS_INSERT,
+            "A feladat és a fejlesztő nem tartozik ugyanazon projekthez!", 0
+        ),
+        POST_INSERT_DESCRIPTION_IS_NULL(ExceptionGroups.POSTS_INSERT,
+            "A hozzászólás nem lehet üres!", 0
+        ),
+        POST_MODIFY_NOT_SAVED(ExceptionGroups.POSTS_MODIFY,
+            "A hozzászólás nincs elmentve, a módosítás nem végezhető el!", 0
+        ),
+        POST_MODIFY_DESCRIPTION_IS_NULL(ExceptionGroups.POSTS_MODIFY,
+            "A hozzászólást nem lehet üresre módosítani!", 0
+        ),
+        POST_DELETE_NOT_SAVED(ExceptionGroups.POSTS_DELETE,
+            "A hozzászólás nincs elmentve, nem törölhető!", 0
+        ),
+        // ------------------ Egyéb hibák -----------------
         UNDEFINED(ExceptionGroups.UNDEFINED, "Undefined", 0),
         NULL_VALUE(ExceptionGroups.UNDEFINED, "Adathiba: Üres érték, nem várt helyen.", 0),
-
+        // ---------------- Controllerek hibaüzenetei ------------------
         CONTROLLER_SELECTED_PROJECT_NOT_EXISTS(
             ExceptionGroups.CONTROLLERS,
             "A kiválasztott projekt nem érhető el vagy törölték.",
@@ -317,12 +346,18 @@ public class PorphyrServiceException extends IllegalArgumentException {
         }
     }
 
-    public PorphyrServiceException(@NonNull Exceptions exception) {
+    public PorphyrServiceException(
+        @NonNull
+        Exceptions exception
+    ) {
         super(exception.getDescription());
         exception.incrementCounter();
     }
 
-    public PorphyrServiceException(@NonNull String exceptionMessage) {
+    public PorphyrServiceException(
+        @NonNull
+        String exceptionMessage
+    ) {
         super(exceptionMessage);
     }
 

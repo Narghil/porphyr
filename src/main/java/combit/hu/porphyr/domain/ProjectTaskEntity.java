@@ -57,6 +57,12 @@ public class ProjectTaskEntity {
     @JsonBackReference
     private @NonNull List<ProjectTaskDeveloperEntity> projectTaskDevelopers;
 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @OneToMany(mappedBy = "projectTaskEntity")
+    @JsonBackReference
+    private @NonNull List<PostEntity> posts;
+
     @Transient
     private @NonNull Long spendTime;
 
@@ -70,6 +76,7 @@ public class ProjectTaskEntity {
         this.description = description;
         this.projectTaskDevelopers = new ArrayList<>();
         this.spendTime = 0L;
+        this.posts = new ArrayList<>();
     }
 
     public ProjectTaskEntity() {
@@ -77,5 +84,6 @@ public class ProjectTaskEntity {
         projectEntity = new ProjectEntity();
         name = "";
         this.spendTime = 0L;
+        this.posts = new ArrayList<>();
     }
 }
