@@ -68,6 +68,12 @@
                         >
                     </span>
                     <a class="btn btn-sm p-1 btn-outline-light"
+                       data-bs-toggle="tooltip" data-bs-placement="top" title="Postok">
+                        <img data-th-src="@{~/icons/posts.svg}" src="../static/icons/posts.svg" width="20" alt=""
+                             data-th-onclick="'setFields( ' + #{POSTS} + ',' + ${projectTask.id} + ')'"
+                        />
+                    </a>
+                    <a class="btn btn-sm p-1 btn-outline-light"
                        data-bs-toggle="tooltip" data-bs-placement="top" title="A feladat törlése">
                         <img data-th-src="@{~/icons/delete.svg}" src="../static/icons/delete.svg" width="20" alt=""
                              data-th-onclick="'setFields( ' + #{DELETE} + ',' + ${projectTask.id} + ')'"

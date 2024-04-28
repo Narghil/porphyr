@@ -29,6 +29,7 @@ public class RequestsConstants {
     public static final @NonNull String PERMIT_PROJECT_TASK_DEVELOPER_NEW = "newProjectTaskDeveloper";
     public static final @NonNull String PERMIT_PROJECT_TASK_DEVELOPERS = "projectTaskDevelopers";
     public static final @NonNull String PERMIT_PROJECT_TASK_DEVELOPER_DELETE = "deleteProjectTaskDeveloper";
+    public static final @NonNull String PERMIT_PROJECT_TASK_POSTS = "projectTaskPosts";
     public static final @NonNull String PERMIT_DEVELOPERS = "developers";
     public static final @NonNull String PERMIT_DEVELOPER_NEW = "newDeveloper";
     public static final @NonNull String PERMIT_DEVELOPER_MODIFY = "modifyDeveloper";
@@ -82,6 +83,8 @@ public class RequestsConstants {
     public static final @NonNull String CALL_SELECT_PROJECT_TASKS_DEVELOPER_OPERATION = "/selectProjectTasksDeveloperOperation";
     public static final @NonNull String CALL_START_NEW_PROJECT_TASK_DEVELOPER = "/project_tasks_developers_new";
     public static final @NonNull String CALL_NEW_PROJECT_TASK_DEVELOPER = "/newProjectTaskDeveloper";
+    public static final @NonNull String CALL_PROJECT_TASK_POSTS = "/project_tasks_posts";
+    public static final @NonNull String CALL_SELECT_PROJECT_TASK_POSTS_OPERATION = "/selectProjectTaskPostOperation";
     public static final @NonNull String CALL_LOGOUT_CONFIRM = "/confirm_logout";
 
     //A PERMITS táblába a kulcsok kerülnek bele. Így egy funkcióhoz (engedélyhez) több request is tartozhat.
@@ -104,6 +107,7 @@ public class RequestsConstants {
         tmpMap.put(PERMIT_PROJECT_TASK_DEVELOPERS, new ArrayList<>(Arrays.asList(CALL_PROJECT_TASK_DEVELOPERS, CALL_SELECT_PROJECT_TASKS_DEVELOPER_OPERATION)) );
         tmpMap.put(PERMIT_PROJECT_TASK_DEVELOPER_NEW, new ArrayList<>(Arrays.asList(  CALL_START_NEW_PROJECT_TASK_DEVELOPER, CALL_NEW_PROJECT_TASK_DEVELOPER )) );
         tmpMap.put(PERMIT_PROJECT_TASK_DEVELOPER_DELETE, new ArrayList<>(Collections.singletonList(CALL_DELETE_PROJECT_TASK_DEVELOPER)) );
+        tmpMap.put(PERMIT_PROJECT_TASK_POSTS, new ArrayList<>(Arrays.asList(CALL_PROJECT_TASK_POSTS, CALL_SELECT_PROJECT_TASK_POSTS_OPERATION)) );
         tmpMap.put(PERMIT_DEVELOPERS, new ArrayList<>(Arrays.asList(CALL_DEVELOPERS, CALL_SELECT_DEVELOPER_OPERATION)) );
         tmpMap.put(PERMIT_DEVELOPER_NEW, new ArrayList<>(Arrays.asList(  CALL_START_NEW_DEVELOPER, CALL_NEW_DEVELOPER, CALL_INSERT_NEW_DEVELOPER)) );
         tmpMap.put(PERMIT_DEVELOPER_MODIFY, new ArrayList<>(Arrays.asList(  CALL_START_MODIFY_DEVELOPER, CALL_MODIFY_DEVELOPER)) );

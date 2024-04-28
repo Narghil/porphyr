@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="hu" data-layout-decorate="~{layouts/main_decorator}">
+<head><title>Feladat bejegyzései</title></head>
+<body>
+<div data-layout-fragment="mainContent">
+    <nav class="navbar bg-light navbar-light" style="padding-left:1rem">
+        <a class="navbar-brand">
+            <span data-th-text="${projectName}">[projekt neve]</span> projekt
+            <span data-th-text="${projectTaskName}">[feladat neve]</span> feladatának bejegyzései</a>
+        <a class="btn btn-outline-secondary" data-th-href="@{/project_tasks}">
+            <span>Vissza a projekt feladataihoz</span>
+        </a>
+    </nav>
+
+    <br/>
+    <div>
+        <button type="button" class="btn btn-outline-secondary"
+                id="newPostButton"
+                data-th-onclick="|startNewPost( #{INSERT} )|"
+        >
+            Új bejegyzés
+        </button>
+    </div>
+
+    <form hidden id="newPostForm">
+        <br/>
+        <div class="row">
+            <div class="col col-lg-2">
+                <label hidden for="newCreated"></label>
+                <input type="datetime-local" id="newCreated">
+            </div>
+            <div class="col col-lg-1"><span>&nbsp;</span></div>
+            <div class="col col-lg-4">
+                <label hidden for="newDeveloper"></label>
+                <select id="newDeveloper">
+                    <option data-th-each="developer : ${developers}"
+                            data-th-value="${developer.id}"
+                            data-th-text="${developer.name}">
+                        fejlesztő neve
+                    </option>
+                </select>
+            </div>
+            <div class="col col-lg-3"><span>&nbsp;</span></div>
+            <!-- Function icons -->
+            <div class="col col-lg-2 border" style="text-align:center">
+                <a class="btn btn-sm p-1 btn-outline-light"
+                   id="newPostAcceptIcon"
+                   data-bs-toggle="tooltip" data-bs-placement="top" title="Mentés">
+                    <img data-th-src="@{~/icons/accept.svg}" src="../static/icons/accept.svg" width="20" alt=""
+                         data-th-onclick="|acceptNewPost( #{INSERT} )|"
+                    />
+                </a>
+                <a class="btn btn-sm p-1 btn-outline-light"
+                   id="newPostCancelIcon"
+                   data-bs-toggle="tooltip" data-bs-placement="top" title="Mégsem">
+                    <img data-th-src="@{~/icons/cancel.svg}" src="../static/icons/cancel.svg" width="20" alt=""
+                         onclick="cancelNewPost()"
+                    />
+                </a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col col-lg-12 border">
+                <label hidden for="newDescription"></label>
+                <input type="text" class="form-control" required
+                       id='newDescription'
+                       style="background-color:white; height:40px; border-style:none;"
+                       placeholder="Bejegyzés"
+                >
+            </div>
+        </div>
+    </form>
+
+    <article data-th-each="post : ${posts}">
+        <br/>
+        <div class="row">
+            <div class="col col-lg-2 border">
+                <span data-th-text="${#dates.format(post.created, 'yyyy-MM-dd HH:mm:ss')}">Létrehozás dátuma</span>
+            </div>
+            <div class="col col-lg-1"><span>&nbsp;</span></div>
+            <div class="col col-lg-4 border">
+                <span data-th-text="${post.developerEntity.name}">Létrehozta</span>
+            </div>
+            <div class="col col-lg-3"><span>&nbsp;</span></div>
+            <!-- Function icons -->
+            <div class="col col-lg-2 border" style="text-align:center">
+                <a class="btn btn-sm p-1 btn-outline-light"
+                   data-th-id="'modifyIcon' + ${post.id}"
+                   data-bs-toggle="tooltip" data-bs-placement="top" title="Módosítás">
+                    <img data-th-src="@{~/icons/modify.svg}" src="../static/icons/modify.svg" width="20" alt=""
+                         data-th-name="'allModifyIcons'"
+                         data-th-onclick="|startModifyPost( #{INSERT}, #{MODIFY}, #{DELETE} , ${post.id} )|"/>
+                </a>
+                <a class="btn btn-sm p-1 btn-outline-light"
+                   data-th-id="'acceptIcon' + ${post.id}"
+                   hidden
+                   data-bs-toggle="tooltip" data-bs-placement="top" title="Mentés">
+                    <img data-th-src="@{~/icons/accept.svg}" src="../static/icons/accept.svg" width="20" alt=""
+                         data-th-onclick="|acceptModifyPost( #{MODIFY}, ${post.id} )|"
+                    />
+                </a>
+                <a class="btn btn-sm p-1 btn-outline-light"
+                   data-th-id="'cancelIcon' + ${post.id}"
+                   hidden
+                   data-bs-toggle="tooltip" data-bs-placement="top" title="Mégsem">
+                    <img data-th-src="@{~/icons/cancel.svg}" src="../static/icons/cancel.svg" width="20" alt=""
+                         data-th-onclick="|cancelModifyPost( #{MODIFY} , ${post.id} )|"
+                    />
+                </a>
+                <a class="btn btn-sm p-1 btn-outline-light"
+                   data-th-id="'deleteIcon' + ${post.id}"
+                   data-bs-toggle="tooltip" data-bs-placement="top" title="Törlés">
+                    <img data-th-src="@{~/icons/delete.svg}" src="../static/icons/delete.svg" width="20" alt=""
+                         data-th-name="'allDeleteIcons'"
+                         data-th-onclick="|startDeletePost( #{INSERT}, #{MODIFY}, #{DELETE} , ${post.id} )|"
+                    />
+                </a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col col-lg-12 border">
+                <!-- label hidden for="description"></label -->
+                <textarea disabled class="form-control"
+                          data-th-id="'description' + ${post.id}" name="description"
+                          data-th-text="${post.description}"
+                          style="background-color:white; height:40px; border-style:none;">
+                    Bejegyzés
+                </textarea>
+            </div>
+        </div>
+    </article>
+
+    <form hidden id="templateForm" method="post" data-th-action="@{/selectProjectTaskPostOperation}" data-th-object="${dataFromTemplate}">
+        <label for="operation"></label>
+        <input type="number" class="form-control" value="0" id="operation" name="operation" data-th-field="*{operation}">
+        <label for="id">&nbsp;</label>
+        <input type="number" class="form-control" id="id" name="id" data-th-field="*{id}">
+        <label for="longData">&nbsp;</label>
+        <input type="number" class="form-control" id="longData" name="longData" data-th-field="*{longData}">
+        <label for="description">&nbsp;</label>
+        <input type="text" class="form-control" id="description" name="description" data-th-field="*{description}">
+        <button id="submit_button" type="submit" form="templateForm"></button>
+    </form>
+
+    <script>
+        function startModifyPost( insertCode, modifyCode, deleteCode, id ) {
+            var formOperationElement = document.getElementById( 'operation' );
+            if( formOperationElement.value == 0){
+                formOperationElement.value = modifyCode;
+                var descriptionElement = document.getElementById( 'description' + id );
+                var modifyIcon = document.getElementById( 'modifyIcon' + id );
+                var deleteIcon = document.getElementById( 'deleteIcon' + id );
+                var acceptIcon = document.getElementById( 'acceptIcon' + id );
+                var cancelIcon = document.getElementById( 'cancelIcon' + id );
+                var formDescriptionElement = document.getElementById( 'description' );
+
+                modifyIcon.setAttribute("hidden","");
+                deleteIcon.setAttribute("hidden","");
+                acceptIcon.removeAttribute("hidden");
+                cancelIcon.removeAttribute("hidden");
+
+                descriptionElement.removeAttribute("disabled");
+                descriptionElement.focus();
+                document.getElementById("id").setAttribute('value', id );
+                formDescriptionElement.value = descriptionElement.value ;
+
+                document.getElementById('newPostButton').disabled = true;
+            } else {
+                if( formOperationElement.value == modifyCode ){
+                    document.getElementById( 'description' + document.getElementById('id').value ).focus();
+                } else if ( formOperationElement.value == insertCode ){
+                    document.getElementById( 'newDescription' ).focus();
+                }
+            }
+        }
+
+        function cancelModifyPost( modifyCode, id ){
+            var formOperationElement = document.getElementById( 'operation' );
+            if( formOperationElement.value == modifyCode ){
+                formOperationElement.value = 0;
+                var descriptionElement = document.getElementById( 'description' + id );
+                var modifyIcon = document.getElementById( 'modifyIcon' + id );
+                var deleteIcon = document.getElementById( 'deleteIcon' + id );
+                var acceptIcon = document.getElementById( 'acceptIcon' + id );
+                var cancelIcon = document.getElementById( 'cancelIcon' + id );
+                var formDescriptionElement = document.getElementById( 'description' );
+
+                modifyIcon.removeAttribute("hidden");
+                deleteIcon.removeAttribute("hidden");
+                acceptIcon.setAttribute("hidden","");
+                cancelIcon.setAttribute("hidden","");
+
+                descriptionElement.value = formDescriptionElement.value ;
+                descriptionElement.setAttribute("disabled", true);
+
+                document.getElementById('newPostButton').disabled = false;
+            }
+        }
+
+        function acceptModifyPost( modifyCode, id ){
+            document.getElementById( 'operation' ).value = modifyCode;
+            document.getElementById( 'id' ).value = id ;
+            document.getElementById( 'description' ).value = document.getElementById( 'description' + id ).value;
+            document.getElementById( 'submit_button' ).click();
+        }
+
+        function startDeletePost( insertCode, modifyCode, deleteCode, id ) {
+            var formOperationElement = document.getElementById( 'operation' );
+            if( formOperationElement.value == 0){
+                acceptDeletePost( deleteCode, id );
+            } else {
+                if( formOperationElement.value == modifyCode ){
+                    document.getElementById( 'description' + document.getElementById('id').value ).focus();
+                } else if ( formOperationElement.value == insertCode ){
+                    document.getElementById( 'newDescription' ).focus();
+                }
+            }
+        }
+
+        function acceptDeletePost( deleteCode, id ){
+            document.getElementById( 'operation' ).value = deleteCode;
+            document.getElementById( 'id' ).value = id;
+            document.getElementById( 'submit_button' ).click();
+        }
+
+        function startNewPost( insertCode ){
+            var formOperationElement = document.getElementById( 'operation' );
+            if( formOperationElement.value == 0){
+                let newDate = new Date();
+                let numericDate = Math.round((newDate.valueOf()-newDate.getTimezoneOffset()*60000) / 1000 ) * 1000;
+
+                document.getElementById('newCreated').valueAsNumber = numericDate;
+                document.getElementById('newPostButton').disabled = true;
+                document.getElementById('newPostForm').removeAttribute("hidden");
+                document.getElementById('newDescription' ).focus();
+                formOperationElement.value = insertCode;
+                document.getElementById('newPostButton').disabled = true;
+            }
+        }
+
+        function acceptNewPost( insertCode ){
+            let newDate = new Date();
+            let numericDate = Math.round((newDate.valueOf()-newDate.getTimezoneOffset()*60000) / 1000 ) * 1000;
+            
+            document.getElementById( 'operation' ).value = insertCode;
+            document.getElementById( 'longData' ).value = document.getElementById( 'newDeveloper' ).value;
+            document.getElementById( 'description' ).value = document.getElementById( 'newDescription' ).value;
+            document.getElementById( 'submit_button' ).click();
+        }
+
+        function cancelNewPost(){
+            document.getElementById('newPostButton').disabled = false;
+            document.getElementById('newPostForm').setAttribute("hidden","");
+            document.getElementById( 'operation' ).value = 0;
+        }
+    </script>
+</div>
+
+</body>
+</html>

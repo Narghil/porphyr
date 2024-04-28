@@ -1,6 +1,7 @@
 package combit.hu.porphyr;
 
 import combit.hu.porphyr.domain.DeveloperEntity;
+import combit.hu.porphyr.domain.PostEntity;
 import combit.hu.porphyr.domain.ProjectDeveloperEntity;
 import combit.hu.porphyr.domain.ProjectEntity;
 import combit.hu.porphyr.domain.ProjectTaskDeveloperEntity;
@@ -130,6 +131,32 @@ class ProjectTaskTests {
                 .map(ProjectTaskDeveloperEntity::getProjectDeveloperEntity)
                 .map(ProjectDeveloperEntity::getDeveloperEntity)
                 .map(DeveloperEntity::getName).toArray(String[]::new)
+        );
+        // getProjectTaskPosts
+        assertArrayEquals(
+            new String[]{"Az 1. fejlesztő bejegyzése az első feladathoz", "A 2. fejlesztő bejegyzése az első feladathoz"},
+            Objects.requireNonNull(projectTaskRepository.findAllById(1L)).getProjectTaskPosts().stream()
+                .map(PostEntity::getDescription).toArray(String[]::new)
+        );
+        assertArrayEquals(
+            new String[]{},
+            Objects.requireNonNull(projectTaskRepository.findAllById(2L)).getProjectTaskPosts().stream()
+                .map(PostEntity::getDescription).toArray(String[]::new)
+        );
+        assertArrayEquals(
+            new String[]{},
+            Objects.requireNonNull(projectTaskRepository.findAllById(3L)).getProjectTaskPosts().stream()
+                .map(PostEntity::getDescription).toArray(String[]::new)
+        );
+        assertArrayEquals(
+            new String[]{},
+            Objects.requireNonNull(projectTaskRepository.findAllById(4L)).getProjectTaskPosts().stream()
+                .map(PostEntity::getDescription).toArray(String[]::new)
+        );
+        assertArrayEquals(
+            new String[]{},
+            Objects.requireNonNull(projectTaskRepository.findAllById(5L)).getProjectTaskPosts().stream()
+                .map(PostEntity::getDescription).toArray(String[]::new)
         );
     }
 

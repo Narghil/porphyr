@@ -648,6 +648,15 @@ databaseChangeLog:
               - column:
                     name: DESCRIPTION
                     value: "Minden jogosultság"
+    - insert:
+          tableName: PERMITS
+          columns:
+              - column:
+                    name: NAME
+                    value: "projectTaskPosts"
+              - column:
+                    name: DESCRIPTION
+                    value: "Projekt feladatának bejegyzései"
     # --------------------
     # Inserts into ROLES_PERMITS
     # --------------------
@@ -859,6 +868,15 @@ databaseChangeLog:
               - column:
                     name: PERMIT_ID
                     valueNumeric: 24
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 1
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 26
     # ADMIN: minden : permit_all
     - insert:
           tableName: ROLES_PERMITS
@@ -887,7 +905,7 @@ databaseChangeLog:
                 valueNumeric: 1
             - column:
                 name: DESCRIPTION
-                value: Az Első Fejlesztő postja az Első Feladathoz
+                value: Az 1. fejlesztő bejegyzése az első feladathoz
     - insert:
         tableName: POSTS
         columns:
@@ -902,4 +920,4 @@ databaseChangeLog:
                 valueNumeric: 2
             - column:
                 name: DESCRIPTION
-                value: A Második Fejlesztő postja az Első Feladathoz
+                value: A 2. fejlesztő bejegyzése az első feladathoz

@@ -5,6 +5,7 @@ import combit.hu.porphyr.domain.ProjectDeveloperEntity;
 import combit.hu.porphyr.domain.ProjectEntity;
 import combit.hu.porphyr.repository.DeveloperRepository;
 import combit.hu.porphyr.repository.ProjectRepository;
+import combit.hu.porphyr.repository.ProjectTaskRepository;
 import combit.hu.porphyr.service.DeveloperService;
 import combit.hu.porphyr.service.PorphyrServiceException;
 import lombok.NonNull;
@@ -20,6 +21,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -40,12 +42,14 @@ class DeveloperTests {
     private final @NonNull EntityManager entityManager;
     private final @NonNull DeveloperRepository spyDeveloperRepository;
     private final @NonNull DeveloperService spiedDeveloperService;
+    private final @NonNull ProjectTaskRepository projectTaskRepository;
 
     @Autowired
     public DeveloperTests(
         final @NonNull EntityManager entityManager,
         final @NonNull DeveloperRepository developerRepository,
-        final @NonNull ProjectRepository projectRepository
+        final @NonNull ProjectRepository projectRepository,
+        final @NonNull ProjectTaskRepository projectTaskRepository
     ){
         this.entityManager = entityManager;
         spiedDeveloperService = new DeveloperService(this.entityManager, developerRepository);
@@ -54,6 +58,7 @@ class DeveloperTests {
         );
         spiedDeveloperService.setDeveloperRepository(spyDeveloperRepository);
         spiedDeveloperService.setEntityManager(this.entityManager);
+        this.projectTaskRepository = projectTaskRepository;
 
         PorphyrServiceException.initExceptionsCounter();
     }
@@ -83,6 +88,36 @@ class DeveloperTests {
     @Test
     @Transactional
     @Rollback
+    void developerRepositoryQueriesTest(){
+        //findProjectTaskDevelopers
+        assertArrayEquals(
+            Arrays.stream(new DeveloperEntity[]{
+                spyDeveloperRepository.findAllById(1L),
+                spyDeveloperRepository.findAllById(2L)
+            }).sorted(Comparator.comparing(DeveloperEntity::getName)).toArray(),
+            spyDeveloperRepository.findProjectTaskDevelopers(1L)
+                .stream().sorted( Comparator.comparing(DeveloperEntity::getName) )
+                .toArray()
+        );
+        assertArrayEquals(
+            Arrays.stream(new DeveloperEntity[]{
+                spyDeveloperRepository.findAllById(2L),
+                spyDeveloperRepository.findAllById(3L)
+            }).sorted(Comparator.comparing(DeveloperEntity::getName)).toArray(),
+            spyDeveloperRepository.findProjectTaskDevelopers(2L)
+                .stream().sorted( Comparator.comparing(DeveloperEntity::getName) )
+                .toArray()
+        );
+        //sumSpendTimeByDeveloperId
+        assertEquals( 0, spyDeveloperRepository.sumSpendTimeByDeveloperId(1L) );
+        assertEquals( 0, spyDeveloperRepository.sumSpendTimeByDeveloperId(2L) );
+        assertEquals( 0, spyDeveloperRepository.sumSpendTimeByDeveloperId(3L) );
+        assertEquals( 1, spyDeveloperRepository.sumSpendTimeByDeveloperId(4L) );
+    }
+
+    @Test
+    @Transactional
+    @Rollback
     void developerServiceQueriesTest() throws ExecutionException, InterruptedException {
         //getDevelopers() --------------------------
         assertArrayEquals(
@@ -105,10 +140,10 @@ class DeveloperTests {
         assertArrayEquals(
             DEVELOPER_NAMES,
             new String[]{
-                Objects.requireNonNull(spiedDeveloperService.getDeveloperByName("1. fejlesztő")).getName(),
-                Objects.requireNonNull(spiedDeveloperService.getDeveloperByName("2. fejlesztő")).getName(),
-                Objects.requireNonNull(spiedDeveloperService.getDeveloperByName("3. fejlesztő")).getName(),
-                Objects.requireNonNull(spiedDeveloperService.getDeveloperByName("4. fejlesztő")).getName()
+                Objects.requireNonNull(spiedDeveloperService.getDeveloperByName(DEVELOPER_NAMES[0])).getName(),
+                Objects.requireNonNull(spiedDeveloperService.getDeveloperByName(DEVELOPER_NAMES[1])).getName(),
+                Objects.requireNonNull(spiedDeveloperService.getDeveloperByName(DEVELOPER_NAMES[2])).getName(),
+                Objects.requireNonNull(spiedDeveloperService.getDeveloperByName(DEVELOPER_NAMES[3])).getName()
             }
         );
         verify(spyDeveloperRepository, times(4)).findAllByName(anyString());
@@ -140,6 +175,27 @@ class DeveloperTests {
         assertEquals( 0L, spiedDeveloperService.getDeveloperFullTime( actualDevelopers.get(1)));
         assertEquals( 0L, spiedDeveloperService.getDeveloperFullTime( actualDevelopers.get(2)));
         assertEquals( 1L, spiedDeveloperService.getDeveloperFullTime( actualDevelopers.get(3)));
+        // getDevelopersByProjectTask
+        assertArrayEquals(
+            Arrays.stream(new DeveloperEntity[]{
+                spiedDeveloperService.getDeveloperById(1L),
+                spiedDeveloperService.getDeveloperById(2L)
+            }).sorted(Comparator.comparing(DeveloperEntity::getName)).toArray(),
+            spiedDeveloperService
+                .getDevelopersByProjectTask( Objects.requireNonNull(projectTaskRepository.findAllById( 1L ) ) )
+                .stream().sorted( Comparator.comparing(DeveloperEntity::getName) )
+                .toArray()
+        );
+        assertArrayEquals(
+            Arrays.stream(new DeveloperEntity[]{
+                spiedDeveloperService.getDeveloperById(2L),
+                spiedDeveloperService.getDeveloperById(3L)
+            }).sorted(Comparator.comparing(DeveloperEntity::getName)).toArray(),
+            spiedDeveloperService
+                .getDevelopersByProjectTask( Objects.requireNonNull(projectTaskRepository.findAllById( 2L ) ) )
+                .stream().sorted( Comparator.comparing(DeveloperEntity::getName) )
+                .toArray()
+        );
     }
 
     //--------------------------- Repository műveletek tesztje -----------------------------

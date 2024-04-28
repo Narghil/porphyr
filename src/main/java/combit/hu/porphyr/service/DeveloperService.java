@@ -1,6 +1,7 @@
 package combit.hu.porphyr.service;
 
 import combit.hu.porphyr.domain.DeveloperEntity;
+import combit.hu.porphyr.domain.ProjectTaskEntity;
 import combit.hu.porphyr.repository.DeveloperRepository;
 import lombok.NonNull;
 import lombok.Setter;
@@ -161,7 +162,6 @@ public class DeveloperService {
     }
 
     //------------- Lekérdezések -----------------
-
     /**
      * Fejlesztők listájának lekérdezése
      */
@@ -184,6 +184,36 @@ public class DeveloperService {
         }
         return result;
     }
+
+    /**
+     * Egy ProjectTask -hoz tartozó valamennyi fejlesztő lekérdezése
+     */
+    public synchronized @NonNull List<DeveloperEntity> getDevelopersByProjectTask(final @NonNull ProjectTaskEntity projectTaskEntity)
+        throws ExecutionException, InterruptedException {
+        final class CallableCore implements Callable<List<DeveloperEntity>> {
+            private final @NonNull ProjectTaskEntity projectTaskEntity;
+
+            public CallableCore(final @NonNull ProjectTaskEntity projectTaskEntity) {
+                this.projectTaskEntity = projectTaskEntity;
+            }
+
+            @Override
+            public List<DeveloperEntity> call() {
+                if( projectTaskEntity.getId() == null){
+                    throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.NULL_VALUE));
+                }
+                return developerRepository.findProjectTaskDevelopers( projectTaskEntity.getId());
+            }
+        }
+        @NonNull List<DeveloperEntity> result = new ArrayList<>();
+        try {
+            result = forkJoinPool.submit(new CallableCore(projectTaskEntity)).get();
+        } catch (ExecutionException executionException) {
+            PorphyrServiceException.handleExecutionException(executionException);
+        }
+        return result;
+    }
+
 
     /**
      * Egy fejlesztő lekérdezése ID szerint.

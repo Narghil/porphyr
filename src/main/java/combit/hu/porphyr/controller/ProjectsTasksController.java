@@ -28,6 +28,7 @@ public class ProjectsTasksController {
 
     private final @NonNull ProjectTaskService projectTaskService;
     private final @NonNull ProjectTaskDeveloperService projectTaskDeveloperService;
+    public static final @NonNull String PROJECT_NAME = "projectName";
 
     @Autowired
     public ProjectsTasksController(
@@ -47,6 +48,7 @@ public class ProjectsTasksController {
     static final @NonNull String REDIRECT_TO_PROJECTTASKS_DEVELOPERS = "redirect:/project_tasks_developers";
     static final @NonNull String REDIRECT_TO_PROJECTTASKS_MODIFY = "redirect:/project_tasks_modify";
     static final @NonNull String REDIRECT_TO_PROJECTTASKS_NEW = "redirect:/project_tasks_new";
+    static final @NonNull String REDIRECT_TO_PROJECTTASKS_POSTS = "redirect:/project_tasks_posts";
     static final @NonNull String ERROR = "error";
 
     //-------------- Projekt feladatainak listája
@@ -94,6 +96,10 @@ public class ProjectsTasksController {
             case MENU_ITEM_DELETE: {
                 deleteProjectTask();
                 result = REDIRECT_TO_PROJECTTASKS;
+                break;
+            }
+            case MENU_ITEM_POSTS: {
+                result = REDIRECT_TO_PROJECTTASKS_POSTS;
                 break;
             }
             default:
@@ -157,7 +163,7 @@ public class ProjectsTasksController {
     public @NonNull String newProjectTask(final @NonNull Model model)
         throws ExecutionException, InterruptedException {
         model.addAttribute(
-            "projectName",
+            PROJECT_NAME,
             sessionData.getSelectedProject().getName()
         );
         model.addAttribute("newProjectTask", sessionData.getDataToTemplate());
@@ -198,7 +204,7 @@ public class ProjectsTasksController {
     public @NonNull String modifyProjectTask(final @NonNull Model model)
         throws ExecutionException, InterruptedException {
         model.addAttribute(
-            "projectName", sessionData.getSelectedProject().getName()
+            PROJECT_NAME, sessionData.getSelectedProject().getName()
         );
         model.addAttribute(
             "projectTaskName", sessionData.getSelectedProjectTask().getName()
@@ -231,4 +237,5 @@ public class ProjectsTasksController {
         }
         return result;
     }
+
 }

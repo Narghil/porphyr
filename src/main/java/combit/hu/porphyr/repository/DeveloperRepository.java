@@ -27,4 +27,12 @@ public interface DeveloperRepository extends CrudRepository<DeveloperEntity, Lon
     )
     @NonNull Long sumSpendTimeByDeveloperId( final @NonNull Long developerId );
 
+    @Query(
+        "SELECT Developer " +
+        "    FROM DeveloperEntity Developer, " +
+        "        ProjectTaskDeveloperEntity ProjectTaskDeveloper " +
+        "    WHERE Developer.id = ProjectTaskDeveloper.projectDeveloperEntity.developerEntity.id and " +
+        "        ProjectTaskDeveloper.projectTaskEntity.id = :projectTaskId "
+    )
+    @NonNull List<DeveloperEntity> findProjectTaskDevelopers( final @NonNull Long projectTaskId);
 }

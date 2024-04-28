@@ -67,45 +67,51 @@
                              data-th-onclick="'setFields( ' + #{MODIFY} + ',' + ${task.id} + ' )'"
                         >
                     </span>
+                    <span class="btn btn-sm p-1 btn-outline-light"
+                          data-bs-toggle="tooltip" data-bs-placement="top" title="Bejegyzések">
+                        <img data-th-src="@{~/icons/posts.svg}" src="../static/icons/posts.svg" width="20" alt=""
+                             data-th-onclick="'setFields( ' + #{POSTS} + ',' + ${task.id} + ' )'"
+                        >
+                    </span>
                 </div>
                 <!-- Function icons -->
             </div>
         </article>
     </div>
+
+    <!-- Data Form -->
+    <form hidden name="taskSpendTime" data-th-action="@{/modifyDeveloperTask}"
+          data-th-object="${dataFromTemplate}" method="post" class="form">
+        <label for="operation"></label>
+        <input type="text" class="form-control" id="operation" name="operation" data-th-field="*{operation}"
+               placeholder="Operation"/>
+        <label for="id">&nbsp;</label>
+        <input type="text" class="form-control" id="id" name="id"
+               data-th-field="*{id}" placeholder="developerTask ID"/>
+        <label for="longData">&nbsp;</label>
+        <input type="number" class="form-control" id="longData" name="longData" data-th-field="*{longData}"
+               placeholder="0"/>
+        <button type="submit" id="submitButton" class="btn btn-outline-secondary">Idő rögzítése</button>
+    </form>
+
+    <script>
+        function setFields( operation, id ) {
+            var timeFieldName = "spendTime" + id;
+            var timeFieldValue = document.getElementById( timeFieldName ).getAttribute('value');
+
+            document.getElementById("operation").setAttribute('value', operation );
+            document.getElementById("id").setAttribute('value', id );
+            document.getElementById("longData").setAttribute('value', timeFieldValue );
+            document.getElementById("submitButton").click();
+        }
+
+        function setTime( event, id ){
+            var input = event.target;
+            var timeFieldName = "spendTime" + id;
+            document.getElementById(timeFieldName).setAttribute('value', input.value );
+        }
+    </script>
 </div>
-
-<!-- Data Form -->
-<form hidden name="taskSpendTime" data-th-action="@{/modifyDeveloperTask}"
-      data-th-object="${dataFromTemplate}" method="post" class="form">
-    <label for="operation"></label>
-    <input type="text" class="form-control" id="operation" name="operation" data-th-field="*{operation}"
-           placeholder="Operation"/>
-    <label for="id">&nbsp;</label>
-    <input type="text" class="form-control" id="id" name="id"
-           data-th-field="*{id}" placeholder="developerTask ID"/>
-    <label for="longData">&nbsp;</label>
-    <input type="number" class="form-control" id="longData" name="longData" data-th-field="*{longData}"
-           placeholder="0"/>
-    <button type="submit" id="submitButton" class="btn btn-outline-secondary">Idő rögzítése</button>
-</form>
-
-<script>
-    function setFields( operation, id ) {
-        var timeFieldName = "spendTime" + id;
-        var timeFieldValue = document.getElementById( timeFieldName ).getAttribute('value');
-
-        document.getElementById("operation").setAttribute('value', operation );
-        document.getElementById("id").setAttribute('value', id );
-        document.getElementById("longData").setAttribute('value', timeFieldValue );
-        document.getElementById("submitButton").click();
-    }
-
-    function setTime( event, id ){
-        var input = event.target;
-        var timeFieldName = "spendTime" + id;
-        document.getElementById(timeFieldName).setAttribute('value', input.value );
-    }
-</script>
 
 </body>
 </html>
