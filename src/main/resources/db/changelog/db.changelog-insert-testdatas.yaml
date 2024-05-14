@@ -304,7 +304,7 @@ databaseChangeLog:
         columns:
         - column:
             name: email
-            value: none@email.org
+            value: user@email.org
         - column:
             name: LOGIN_NAME
             value: user
@@ -319,7 +319,7 @@ databaseChangeLog:
         columns:
         - column:
             name: email
-            value: none@email.org
+            value: admin@email.org
         - column:
             name: LOGIN_NAME
             value: admin
@@ -657,10 +657,19 @@ databaseChangeLog:
               - column:
                     name: DESCRIPTION
                     value: "Projekt feladatának bejegyzései"
+    - insert:
+          tableName: PERMITS
+          columns:
+              - column:
+                    name: NAME
+                    value: "rights"
+              - column:
+                    name: DESCRIPTION
+                    value: "Jogosultságok kezelése"
     # --------------------
     # Inserts into ROLES_PERMITS
     # --------------------
-    # USER: minden, kivéve 3 (dbconsole)
+    # USER: minden, kivéve 3 (dbconsole) és 25 (permit_all) és 27 (rights)
     - insert:
           tableName: ROLES_PERMITS
           columns:

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import static combit.hu.porphyr.RequestsConstants.*;
+import static combit.hu.porphyr.config.RequestsConstants.*;
 
 /**
  * Példa osztály RestController-re.

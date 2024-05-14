@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="hu" data-layout-decorate="~{layouts/main_decorator}">
-<head><title>Projektek</title></head>
+<head>
+    <title>Projektek</title>
+</head>
 <body>
 <div data-layout-fragment="mainContent">
     <nav class="navbar bg-light navbar-light" style="padding-left:1rem">
@@ -12,82 +14,64 @@
     </nav>
 
     <div class="container p-3">
-        <!-- Header -->
-        <div class="row mb-2">
-            <div class="col col-lg-1 text-center text-decoration-underline">
-                <span>ID</span>
-            </div>
-            <div class="col col-lg-2 text-center text-decoration-underline">
-                <span>Név</span>
-            </div>
-            <div class="col col-lg-6 text-center text-decoration-underline">
-                <span>Leírás</span>
-            </div>
-            <div class="col col-lg-1 text-center text-decoration-underline">
-                <span>Idő (h)</span>
-            </div>
-            <div class="col col-lg-2 text-center text-decoration-underline">
-                <span>Műveletek</span>
-            </div>
-        </div>
-        <article data-th-each="project : ${projectsList}">
-            <!-- Data -->
-            <div class="row">
-                <div style="text-align:right" class="col col-lg-1 border">
-                    <span data-th-text="${project.id}">ID</span>
-                </div>
-                <div class="col col-lg-2 border">
-                    <span data-th-text="${project.name}">Név</span>
-                </div>
-                <div class="col col-lg-6 border">
-                    <span data-th-text="${project.description}">Leírás</span>
-                </div>
-                <div style="text-align:right" class="col col-lg-1 border">
-                    <span data-th-text="${project.spendTime}">Idő</span>
-                </div>
-                <!-- Function icons -->
-                <div class="col col-lg-2 border" style="text-align:center">
-                    <a class="btn btn-sm p-1 btn-outline-light"
-                       data-bs-toggle="tooltip" data-bs-placement="top" title="Fejlesztők">
-                        <img data-th-src="@{~/icons/developers.svg}" src="../static/icons/developers.svg" width="20"
-                             alt=""
-                             data-th-onclick="'setFields( ' + #{DEVELOPERS} + ',' + ${project.id} + ')'"/>
-                    </a>
-                    <a class="btn btn-sm p-1 btn-outline-light"
-                       data-bs-toggle="tooltip" data-bs-placement="top" title="Feladatok">
-                        <img data-th-src="@{~/icons/tasks.svg}" src="../static/icons/tasks.svg" width="20" alt=""
-                             data-th-onclick="'setFields( ' + #{TASKS} + ',' + ${project.id} + ')'"/>
-                    </a>
-                    <a class="btn btn-sm p-1 btn-outline-light"
-                       data-bs-toggle="tooltip" data-bs-placement="top" title="Módosítás, törlés">
-                        <img data-th-src="@{~/icons/modify.svg}" src="../static/icons/modify.svg" width="20" alt=""
-                             data-th-onclick="'setFields( ' + #{MODIFY} + ',' + ${project.id} + ')'"/>
-                    </a>
-                </div>
-            </div>
-        </article>
-
-        <script>
-            function setFields( operation, id) {
-                document.getElementById("operation").setAttribute('value', operation );
-                document.getElementById("id").setAttribute('value', id );
-                document.getElementById("submit_button").click();
-            }
-        </script>
-
-        <form hidden data-th-action="@{/selectProjectOperation}" data-th-object="${dataFromTemplate}">
-            <label for="operation"></label>
-            <input type="number" class="form-control" id="operation" name="operation">
-            <label for="id">&nbsp;</label>
-            <input type="number" class="form-control" id="id" name="id">
-            <button id="submit_button"></button>
-        </form>
-
+        <a class="btn btn-outline-secondary" data-th-href="@{'/project_new_start'}">
+            <img data-th-src="@{icons/new.svg}" src="../static/icons/new.svg" width="20" alt="" class="mb-1"/>
+            <span>Új projekt</span>
+        </a>
     </div>
-    <a class="btn btn-outline-secondary" data-th-href="@{'/project_new_start'}">
-        <img data-th-src="@{icons/new.svg}" src="../static/icons/new.svg" width="20" alt="" class="mb-1"/>
-        <span>Új projekt</span>
-    </a>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col" class="col col-md-2">Név</th>
+            <th scope="col" class="col col-md-7">Leírás</th>
+            <th scope="col" class="col col-md-1" style="text-align:right">Idő (h)</th>
+            <th scope="col" class="col col-md-2" style="text-align:center">Műveletek</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr data-th-each="project : ${projectsList}">
+            <td class="col col-lg-2" data-th-text="${project.name}">Név</td>
+            <td class="col col-lg-7" data-th-text="${project.description}">Leírás</td>
+            <td class="col col-lg-1" style="text-align:right" data-th-text="${project.spendTime}">Idő</td>
+            <td class="col col-lg-2" style="text-align:center">
+                <a class="noDecor" href="#"
+                   data-bs-toggle="tooltip" data-bs-placement="top" title="Fejlesztők">
+                   <img data-th-src="@{~/icons/developers.svg}" src="../static/icons/developers.svg" width="20" alt=""
+                        data-th-onclick="'setFields( ' + #{DEVELOPERS} + ',' + ${project.id} + ')'"/>
+                </a>
+                <a class="noDecor" href="#"
+                   data-bs-toggle="tooltip" data-bs-placement="top" title="Feladatok">
+                   <img data-th-src="@{~/icons/tasks.svg}" src="../static/icons/tasks.svg" width="20" alt=""
+                        data-th-onclick="'setFields( ' + #{TASKS} + ',' + ${project.id} + ')'"/>
+                </a>
+                <a class="noDecor" href="#"
+                   data-bs-toggle="tooltip" data-bs-placement="top" title="Módosítás, törlés">
+                   <img data-th-src="@{~/icons/modify.svg}" src="../static/icons/modify.svg" width="20" alt=""
+                        data-th-onclick="'setFields( ' + #{MODIFY} + ',' + ${project.id} + ')'"/>
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <script>
+        function setFields( operation, id) {
+            document.getElementById("operation").setAttribute('value', operation );
+            document.getElementById("id").setAttribute('value', id );
+            document.getElementById("submit_button").click();
+        }
+    </script>
+
+    <form hidden data-th-action="@{/selectProjectOperation}" data-th-object="${dataFromTemplate}">
+        <label for="operation"></label>
+        <input type="number" class="form-control" id="operation" name="operation">
+        <label for="id">&nbsp;</label>
+        <input type="number" class="form-control" id="id" name="id">
+        <button id="submit_button"></button>
+    </form>
+
 </div>
+
 </body>
 </html>

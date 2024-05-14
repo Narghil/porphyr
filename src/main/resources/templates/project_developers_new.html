@@ -18,12 +18,13 @@
               data-th-object="${dataFromTemplate}" method="post" class="form"
         >
             <div class="input-group mb-3">
-                <label for="id" class="form-label"></label>
-                <select style="width:100%" data-th-field="*{id}" name="id" id="id">
+                <span class="input-group-text" style="width:8em">Új fejlesztő:</span>
+                <label hidden for="id" class="form-label"></label>
+                <select class="form-control form-control-sm" style="appearance:listbox;" data-th-field="*{id}" name="id" id="id">
+                    <option value="" selected disabled>Kiválasztható fejlesztők</option>
                     <option data-th-each="developer : ${freeDevelopers}"
                             data-th-value="${developer.id}"
                             data-th-text="${developer.name}">
-                        Kiválasztható fejlesztő
                     </option>
                 </select>
             </div>

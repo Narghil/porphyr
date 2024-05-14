@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="hu" data-layout-decorate="~{layouts/rights_decorator}">
+<head><title>Feladat bejegyzései</title></head>
+<body>
+<div data-layout-fragment="mainContent">
+    <nav class="navbar bg-light navbar-light" style="padding-left:1rem">
+        <a class="navbar-brand">
+            <span>Szerepkörök kezelése</span>
+        </a>
+        <a class="btn btn-outline-secondary" data-th-href="@{/rights}">
+            <img data-th-src="@{~/icons/back.svg}" src="../../static/icons/back.svg" width="20" alt="" class="mb-1"/>
+            <span>Jogosultságok</span>
+        </a>
+    </nav>
+    <br/>
+
+    <div>
+        <a class="btn btn-outline-secondary" data-th-href="@{/startNewRole}">
+            <img data-th-src="@{~/icons/new.svg}" src="../../static/icons/new.svg" width="20" alt="" class="mb-1"/>
+            <span>Új Szerepkör</span>
+        </a>
+    </div>
+    <br/>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col" class="col col-md-4">Szerepkör megnevezése</th>
+            <th scope="col" class="col col-md-1" style="text-align:center">Műveletek</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr data-th-each="role : ${roles}">
+            <td class="col col-lg-4" data-th-text="${role.role}">role.role</td>
+            <td class="col col-lg-1" style="text-align:center">
+                <a class="noDecor"
+                   data-th-href="@{|/startModifyRole/${role.id}|}"
+                   data-bs-toggle="tooltip" data-bs-placement="top" title="Módosítás">
+                   <img data-th-src="@{~/icons/modify.svg}" src="../../static/icons/modify.svg" width="20" alt=""/>
+                </a>
+                <a class="noDecor"
+                   data-th-href="@{|/startRolePermits/${role.id}|}"
+                   data-bs-toggle="tooltip" data-bs-placement="top" title="Szerepkör engedélyei">
+                    <img data-th-src="@{~/icons/permit.svg}" src="../../static/icons/permit.svg" width="20" alt=""/>
+                </a>
+                <a class="noDecor"
+                   data-th-href="@{|/startDeleteRole/${role.id}|}"
+                   data-bs-toggle="tooltip" data-bs-placement="top" title="Törlés">
+                   <img data-th-src="@{~/icons/delete.svg}" src="../../static/icons/delete.svg" width="20" alt=""/>
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

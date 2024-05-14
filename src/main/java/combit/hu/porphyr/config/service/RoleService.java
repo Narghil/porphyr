@@ -1,7 +1,8 @@
-package combit.hu.porphyr.service;
+package combit.hu.porphyr.config.service;
 
-import combit.hu.porphyr.domain.RoleEntity;
-import combit.hu.porphyr.repository.RoleRepository;
+import combit.hu.porphyr.config.domain.RoleEntity;
+import combit.hu.porphyr.config.repository.RoleRepository;
+import combit.hu.porphyr.service.PorphyrServiceException;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -64,6 +65,32 @@ public class RoleService {
         @Nullable RoleEntity result = null;
         try {
             result = forkJoinPool.submit(new CallableCore(roleName)).get();
+        } catch (ExecutionException executionException) {
+            PorphyrServiceException.handleExecutionException(executionException);
+        }
+        return result;
+    }
+
+    /**
+     * Egy jogkör lekérdezése ID szerint ---- TESZT ÍRÁSA SZÜKSÉGES! ---
+     */
+    public synchronized @Nullable RoleEntity getRoleById(final @NonNull Long id)
+        throws ExecutionException, InterruptedException {
+        final class CallableCore implements Callable<RoleEntity> {
+            private final @NonNull Long id;
+
+            public CallableCore(final @NonNull Long id) {
+                this.id = id;
+            }
+
+            @Override
+            public RoleEntity call() {
+                return roleRepository.findAllById(id);
+            }
+        }
+        @Nullable RoleEntity result = null;
+        try {
+            result = forkJoinPool.submit(new CallableCore(id)).get();
         } catch (ExecutionException executionException) {
             PorphyrServiceException.handleExecutionException(executionException);
         }

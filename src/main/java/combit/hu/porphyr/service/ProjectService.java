@@ -1,6 +1,6 @@
 package combit.hu.porphyr.service;
 
-import combit.hu.porphyr.RequestsConstants;
+import combit.hu.porphyr.config.RequestsConstants;
 import combit.hu.porphyr.controller.helpers.SessionData;
 import combit.hu.porphyr.domain.ProjectEntity;
 import combit.hu.porphyr.repository.ProjectRepository;

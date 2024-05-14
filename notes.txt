@@ -1,0 +1,21 @@
+TODO:
+- Adminisztrátori feladatkör implementálása:
+    - USER-ek karbantartása
+    - ROLE-ok karbantartása
+    - USER-ROLE (N:N) összerendelések karbantartása
+    - PERMIT-ek karbantartása
+    - ROLE-PERMIT (N:N) összerendelések karbantartása
+    - USER-DEVELOPER (N:N) összerendelések karbantartása
+
+    - Menüszerkezet:
+        - Jogosultsági rendszer
+            - Felhasználók
+                - Felvitel, módosítás, törlés
+                - Felhasználó szerepkörei
+                - Felhasználóhoz tartozó fejlesztők
+            - Szerepkörök
+                - Felvitel, módosítás, törlés
+                - Szerepkör engedélyei
+            - Engedélyek
+                - Felvitel, módosítás, törlés
+

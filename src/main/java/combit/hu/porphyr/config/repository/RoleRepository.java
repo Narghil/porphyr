@@ -1,6 +1,6 @@
-package combit.hu.porphyr.repository;
+package combit.hu.porphyr.config.repository;
 
-import combit.hu.porphyr.domain.RoleEntity;
+import combit.hu.porphyr.config.domain.RoleEntity;
 import lombok.NonNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.data.repository.CrudRepository;

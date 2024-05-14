@@ -1,12 +1,12 @@
 package combit.hu.porphyr;
 
 import combit.hu.porphyr.domain.DeveloperEntity;
-import combit.hu.porphyr.domain.RoleEntity;
-import combit.hu.porphyr.domain.UserEntity;
+import combit.hu.porphyr.config.domain.RoleEntity;
+import combit.hu.porphyr.config.domain.UserEntity;
 import combit.hu.porphyr.repository.DeveloperRepository;
-import combit.hu.porphyr.repository.UserRepository;
+import combit.hu.porphyr.config.repository.UserRepository;
 import combit.hu.porphyr.service.DeveloperService;
-import combit.hu.porphyr.service.UserService;
+import combit.hu.porphyr.config.service.UserService;
 import combit.hu.porphyr.service.PorphyrServiceException;
 import static combit.hu.porphyr.TestConstants.*;
 import lombok.NonNull;

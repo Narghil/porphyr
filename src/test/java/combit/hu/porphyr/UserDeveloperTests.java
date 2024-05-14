@@ -1,12 +1,12 @@
 package combit.hu.porphyr;
 
 import combit.hu.porphyr.domain.DeveloperEntity;
-import combit.hu.porphyr.domain.UserEntity;
+import combit.hu.porphyr.config.domain.UserEntity;
 import combit.hu.porphyr.repository.DeveloperRepository;
-import combit.hu.porphyr.repository.UserRepository;
+import combit.hu.porphyr.config.repository.UserRepository;
 import combit.hu.porphyr.service.DeveloperService;
 import combit.hu.porphyr.service.PorphyrServiceException;
-import combit.hu.porphyr.service.UserService;
+import combit.hu.porphyr.config.service.UserService;
 import lombok.NonNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

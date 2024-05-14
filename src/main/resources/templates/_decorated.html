@@ -1,0 +1,120 @@
+<!-- Ez a template csak az IDE-n belüli megjelenítési tesztek céljára készült -->
+
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <title data-th-text="#{MainPageTitle}">MainPageTitle</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
+    <link href='https://fonts.googleapis.com/css?family=Calibri' rel='stylesheet' type='text/css'/>
+    <link href='https://fonts.googleapis.com/css?family=Exo' rel='stylesheet' type='text/css'/>
+    <link rel="stylesheet" type="text/css"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" data-th-href="@{/css/main.css}" href="/static/css/main.css">
+    <script data-th-if="${error != null}">function showModal(){ $('#messageModal').modal('show');}</script>
+    <script data-th-if="${error == null}">function showModal(){}</script>
+</head>
+
+<body onload="showModal()">
+
+<div class="container">
+    <!-- Content Header -->
+    <header>
+        <div class="row">
+            <div class="col-10">
+                <span data-th-text="#{MainPageTitle}">headerText</span>
+            </div>
+            <div class="col-2" style="text-align:right">
+                <form data-th-if="${#authentication.isAuthenticated()}" id="frm_logout"
+                      data-th-action="@{/confirm_logout}"
+                      method="get" class="form-inline">
+                    <button class="btn btn-light btn-sm"
+                            onclick="document.getElementById('frm_logout').submit(); return false;">Kijelentkezés
+                    </button>
+                </form>
+            </div>
+        </div>
+    </header>
+
+    <div data-layout-fragment="mainContent">
+        <nav class="navbar bg-light navbar-light" style="padding-left:1rem">
+            <a class="navbar-brand">
+                <span>Felhasználók kezelése</span>
+            </a>
+        </nav>
+        <br/>
+
+        <div>
+            <a class="btn btn-outline-secondary" data-th-href="@{/startNewUser}">
+                <img data-th-src="@{~/icons/new.svg}" src="../../static/icons/new.svg" width="20" alt="" class="mb-1"/>
+                <span>Új felhasználó</span>
+            </a>
+        </div>
+        <br/>
+
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col" class="col col-md-4">Teljes név</th>
+                <th scope="col" class="col col-md-3">Belépési név</th>
+                <th scope="col" class="col col-md-4">E-mail</th>
+                <th scope="col" class="col col-md-1" style="text-align:center">Műveletek</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr data-th-each="user : ${users}">
+                <td class="col col-lg-4" data-th-text="${user.fullName}">user.fullName</td>
+                <td class="col col-lg-3" data-th-text="${user.loginName}">user.loginName</td>
+                <td class="col col-lg-4" data-th-text="${user.email}">user.email</td>
+                <td class="col col-lg-1" style="text-align:center">
+                    <a class="noDecor"
+                       data-th-href="@{|/startUserPermits/${user.id}|}"
+                       data-bs-toggle="tooltip" data-bs-placement="top" title="Szerepkörök">
+                        <img data-th-src="@{~/icons/permits.svg}" src="../../static/icons/permits.svg" width="20" alt=""/>
+                    </a>
+                    <a class="noDecor"
+                       data-th-href="@{|/startModifyUser/${user.id}|}"
+                       data-bs-toggle="tooltip" data-bs-placement="top" title="Módosítás">
+                        <img data-th-src="@{~/icons/modify.svg}" src="../../static/icons/modify.svg" width="20" alt=""/>
+                    </a>
+                    <a class="noDecor"
+                       data-th-href="@{|/startDeleteUser/${user.id}|}"
+                       data-bs-toggle="tooltip" data-bs-placement="top" title="Törlés">
+                        <img data-th-src="@{~/icons/delete.svg}" src="../../static/icons/delete.svg" width="20" alt=""/>
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+    <!-- Content Footer -->
+    <footer>
+        <p data-th-text="#{footerText}">footerText</p>
+    </footer>
+
+    <div data-th-if="${error != null}">
+        <div data-th-if="${error.onOff == 'ON'}">
+            <div class="modal show" id="messageModal" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <div class="modal-title" data-th-text="${error.title}">Fejléc</div>
+                        </div>
+                        <div class="modal-body" data-th-text="${error.message}">Üzenet</div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Ok</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

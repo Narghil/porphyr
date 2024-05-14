@@ -32,27 +32,14 @@
     <!-- Content Header -->
     <header>
         <div class="row">
-            <div class="col-5">
+            <div class="col-10">
                 <span data-th-text="#{MainPageTitle}">headerText</span>
-            </div>
-            <div class="col-3" style="text-align:center">
-                <span data-th-if="${userPermitNames != null and #arrays.contains(userPermitNames, 'dbConsole')}">
-                     <a class="btn btn-light btn-sm" data-th-href="@{/porphyr}" target="_new">DB Konzol</a>
-                 </span>
-                <span data-th-if="${userPermitNames != null and #arrays.contains(userPermitNames, 'rights')}">
-                     <a class="btn btn-light btn-sm" data-th-href="@{/rights}" target="_new">Jogosultságok</a>
-                 </span>
-            </div>
-            <div class="col-2" style="text-align:right">
-                Felhasználó: <span data-th-text="${#authentication.name}">Anonymous</span>
             </div>
             <div class="col-2" style="text-align:right">
                 <form data-th-if="${#authentication.isAuthenticated()}" id="frm_logout"
                       data-th-action="@{/confirm_logout}"
                       method="get" class="form-inline">
-                    <button class="btn btn-light btn-sm"
-                            onclick="document.getElementById('frm_logout').submit(); return false;">Kijelentkezés
-                    </button>
+                      <button class="btn btn-light btn-sm" onclick="document.getElementById('frm_logout').submit(); return false;">Kijelentkezés</button>
                 </form>
             </div>
         </div>
@@ -69,21 +56,21 @@
 </div>
 
 <div data-th-if="${error != null}">
-    <div data-th-if="${error.onOff == 'ON'}">
-        <div class="modal show" id="messageModal" tabindex="-1" role="dialog">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <div class="modal-title" data-th-text="${error.title}">Fejléc</div>
-                    </div>
-                    <div class="modal-body" data-th-text="${error.message}">Üzenet</div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Ok</button>
+        <div data-th-if="${error.onOff == 'ON'}">
+            <div class="modal show" id="messageModal" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <div class="modal-title" data-th-text="${error.title}">Fejléc</div>
+                        </div>
+                        <div class="modal-body" data-th-text="${error.message}">Üzenet</div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Ok</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 </div>
 
 </body>

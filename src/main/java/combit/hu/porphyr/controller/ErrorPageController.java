@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import combit.hu.porphyr.config.NotPermittedException;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
@@ -43,7 +44,7 @@ public class ErrorPageController implements ErrorController {
         model.addAttribute("path", error.get("path"));
         model.addAttribute("status", error.get("status") );
 
-        if( errorAttributes.getError(webRequest) instanceof PorphyrNotPermittedException ) {
+        if( errorAttributes.getError(webRequest) instanceof NotPermittedException) {
             errorPage = "authError";
         }
 

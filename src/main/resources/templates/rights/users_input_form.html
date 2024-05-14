@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="hu" data-layout-decorate="~{layouts/rights_decorator}">
+<head><title>Feladat bejegyzései</title></head>
+<body>
+<div data-layout-fragment="mainContent">
+    <nav class="navbar bg-light navbar-light" style="padding-left:1rem">
+        <a class="navbar-brand">
+            <span data-th-if="${user.id == null}">Új felhasználó felvitele</span>
+            <span data-th-if="${user.id != null}">Felhasználó módosítása</span>
+        </a>
+        <a class="btn btn-outline-secondary" data-th-href="@{/rights/users}">
+            <img data-th-src="@{~/icons/back.svg}" src="../../static/icons/back.svg" width="20" alt="" class="mb-1"/>
+            <span>Felhasználók</span>
+        </a>
+    </nav>
+    <br/>
+    <form class="form center-block" name="userInputData" method="post"
+          style="width:50em; margin-left: auto; margin-right: auto;"
+          data-th-action="@{/userInputDataProcessing}" data-th-object="${user}"
+    >
+        <label hidden for="id"></label>
+        <input hidden type="number" class="form-control" id="id" name="id" data-th-field="*{id}">
+
+        <div class="input-group mb-3" style="width:50em">
+            <label hidden for="fullName"></label>
+            <span class="input-group-text" style="width:10em">Teljes név:</span>
+            <input type="text" class="form-control" data-th-field="*{fullName}" id="fullName" required autofocus/>
+        </div>
+        <div class="input-group mb-3" style="width:20em">
+            <label hidden for="loginName"></label>
+            <span class="input-group-text" style="width:10em">Belépési név:</span>
+            <input type="text" class="form-control" data-th-field="*{loginName}" id="loginName" required/>
+        </div>
+        <div class="input-group mb-3" style="width:30em">
+            <label hidden for="email"></label>
+            <span class="input-group-text" style="width:10em">E-mail:</span>
+            <input type="text" class="form-control" data-th-field="*{email}" id="email" required/>
+        </div>
+        <div class="input-group mb-3" style="width:20em">
+            <label for="newPassword"></label>
+            <span class="input-group-text" style="width:10em">Jelszó:</span>
+            <input type="password" class="form-control" data-th-field="*{newPassword}" id="newPassword"
+                   data-th-attr="required=${user.id == null} ? 'required' "
+            />
+        </div>
+        <div class="input-group mb-3" style="width:20em">
+            <label for="retypedPassword"></label>
+            <span class="input-group-text" style="width:10em">Jelszó, még egyszer:</span>
+            <input type="password" class="form-control" data-th-field="*{retypedPassword}" id="retypedPassword"
+                   data-th-attr="required=${user.id == null} ? 'required' "
+            />
+        </div>
+        <br/>
+        <div style="width:50em; text-align:center">
+            <button type="submit" class="btn btn-outline-secondary">Rögzítés</button>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

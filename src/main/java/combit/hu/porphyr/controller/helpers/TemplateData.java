@@ -22,6 +22,8 @@ public class TemplateData {
     private @Nullable String name;
     private @Nullable String description;
     private @Nullable Long longData;
+    private @Nullable String stringData1;
+    private @Nullable String stringData2;
 
     public void setTemplateData(final @NonNull TemplateData fromTemplate) {
         this.operation = fromTemplate.operation;
@@ -29,5 +31,7 @@ public class TemplateData {
         this.name = fromTemplate.name;
         this.description = fromTemplate.description;
         this.longData = fromTemplate.longData;
+        this.stringData1 = fromTemplate.stringData1;
+        this.stringData2 = fromTemplate.stringData2;
     }
 }

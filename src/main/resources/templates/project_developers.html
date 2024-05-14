@@ -11,54 +11,7 @@
         </a>
     </nav>
 
-    <div class="container p-3">
-        <!-- Header -->
-        <div class="row mb-2">
-            <div class="col col-lg-1 text-center" style="text-decoration:underline">
-                <span>ID</span>
-            </div>
-            <div class="col col-lg-8 text-center" style="text-decoration:underline">
-                <span>Név</span>
-            </div>
-            <div class="col col-lg-1 text-center" style="text-decoration:underline">
-                <span>Idő</span>
-            </div>
-            <div class="col col-lg-2 text-center" style="text-decoration:underline">
-                <span>Műveletek</span>
-            </div>
-        </div>
-        <article data-th-each="projectDeveloper: ${projectDevelopers}">
-            <!-- Data -->
-            <div class="row">
-                <div class="col col-lg-1 border" style="text-align:right">
-                    <span data-th-text="${projectDeveloper.developerEntity.id}">ID</span>
-                </div>
-                <div class="col col-lg-8 border">
-                    <span data-th-text="${projectDeveloper.developerEntity.name}">Fejlesztő neve</span>
-                </div>
-                <div class="col col-lg-1 border" style="text-align:right">
-                    <span data-th-text="${projectDeveloper.spendTime}">ID</span>
-                </div>
-                <!-- Function icons -->
-                <div class="col col-lg-2 border" style="text-align:center">
-                    <a class="btn btn-sm p-1 btn-outline-light"
-                       data-bs-toggle="tooltip" data-bs-placement="top" title="A fejlesztő feladatai a projektben">
-                        <img data-th-src="@{~/icons/tasks.svg}" src="../static/icons/tasks.svg" width="20" alt=""
-                             data-th-onclick="'setFields( ' + #{TASKS} + ','  + ${projectDeveloper.developerEntity.id} + ')'"
-                        />
-                    </a>
-                    <a class="btn btn-sm p-1 btn-outline-light"
-                       data-bs-toggle="tooltip" data-bs-placement="top" title="A fejlesztő eltávolítása a projektből">
-                        <img data-th-src="@{~/icons/delete.svg}" src="../static/icons/delete.svg" width="20" alt=""
-                             data-th-onclick="'setFields( ' + #{DELETE} + ',' + ${projectDeveloper.developerEntity.id} + ')'"
-                        />
-                    </a>
-                </div>
-            </div>
-        </article>
-    </div>
-
-    <div data-th-switch="${assignAbleDevelopers}">
+    <div data-th-switch="${assignAbleDevelopers}" class="container p-3">
         <div data-th-case="'0'">
             A projekthez minden lehetséges fejlesztő hozzá van rendelve.
         </div>
@@ -69,6 +22,35 @@
             </a>
         </div>
     </div>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col" class="col col-md-9">Név</th>
+            <th scope="col" class="col col-md-1" style="text-align:right">Idő (h)</th>
+            <th scope="col" class="col col-md-2" style="text-align:center">Műveletek</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr data-th-each="projectDeveloper : ${projectDevelopers}">
+            <td class="col col-lg-9" data-th-text="${projectDeveloper.developerEntity.name}">Név</td>
+            <td class="col col-lg-1" style="text-align:right" data-th-text="${projectDeveloper.spendTime}">Idő</td>
+            <td class="col col-lg-2" style="text-align:center">
+                <a class="noDecor" href="#"
+                   data-bs-toggle="tooltip" data-bs-placement="top" title="A fejlesztő feladatai a projektben">
+                    <img data-th-src="@{~/icons/tasks.svg}" src="../static/icons/tasks.svg" width="20" alt=""
+                         data-th-onclick="'setFields( ' + #{TASKS} + ','  + ${projectDeveloper.developerEntity.id} + ')'"
+                    />
+                </a>
+                <a class="noDecor" href="#"
+                   data-bs-toggle="tooltip" data-bs-placement="top" title="A fejlesztő eltávolítása a projektből">
+                    <img data-th-src="@{~/icons/delete.svg}" src="../static/icons/delete.svg" width="20" alt=""
+                         data-th-onclick="'setFields( ' + #{DELETE} + ',' + ${projectDeveloper.developerEntity.id} + ')'"
+                    />
+                </a>
+            </td>
+        </tbody>
+    </table>
 
     <!-- jS: setFields() -->
     <script>

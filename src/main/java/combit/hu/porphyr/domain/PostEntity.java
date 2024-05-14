@@ -1,6 +1,7 @@
 package combit.hu.porphyr.domain;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import combit.hu.porphyr.config.domain.RoleEntity;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;

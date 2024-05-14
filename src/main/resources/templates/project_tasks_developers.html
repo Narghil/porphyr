@@ -3,6 +3,7 @@
 <head><title>Feladathoz tartozó fejlesztők</title></head>
 <body>
 <div data-layout-fragment="mainContent">
+
     <nav class="navbar bg-light navbar-light" style="padding-left:1rem">
         <a class="navbar-brand"><span
             data-th-text="${projectTask.projectEntity.name}+ ' projekt ' + ${projectTask.name} + ' feladatának fejlesztői:'">Projekt feladatának fejlesztői</span></a>
@@ -12,58 +13,7 @@
         </a>
     </nav>
 
-    <div class="container p-3">
-        <!-- Header -->
-        <div class="row mb-1">
-            <div class="col col-lg-9 text-center" style="text-decoration:underline">
-                <span>Név</span>
-            </div>
-            <div class="col col-lg-2 text-center" style="text-decoration:underline">
-                <span>M. idő</span>
-            </div>
-            <div class="col col-lg-1 text-center" style="text-decoration:underline">
-                <span>Műveletek</span>
-            </div>
-        </div>
-        <!-- Data -->
-        <article data-th-each="projectTaskDeveloper : ${projectTask.projectTaskDevelopers}">
-            <div class="row">
-                <div class="col col-lg-9 border" style="text-align:left">
-                    <span class="form-control" style="border-style:none;"
-                          data-th-text="${projectTaskDeveloper.projectDeveloperEntity.developerEntity.name}">Fejlesztő&nbsp;neve</span>
-                </div>
-                <div class="col col-lg-2 border" style="text-align:right">
-                    <label hidden for="none"></label>
-                    <input type="number" class="form-control"
-                           data-th-value="${projectTaskDeveloper.spendTime}"
-                           min="0" id='none'
-                           data-th-id="'spendTime' + ${projectTaskDeveloper.id}"
-                           data-th-name="'spendTime' + ${projectTaskDeveloper.id}"
-                           style="text-align:right; border:none" placeholder="0"
-                           data-th-onchange="'setTime(event,' + ${projectTaskDeveloper.id} + ')'"
-                           data-th-onkeydown="'setTime(event,' + ${projectTaskDeveloper.id} + ')'"
-                    />
-                </div>
-                <!-- Function icons -->
-                <div class="col col-lg-1 border" style="text-align:center">
-                    <span class="btn btn-sm p-1 btn-outline-light"
-                          data-bs-toggle="tooltip" data-bs-placement="top" title="Az idő rögzítése">
-                        <img data-th-src="@{~/icons/accept.svg}" src="../static/icons/accept.svg" width="20" alt=""
-                             data-th-onclick="'setFields( ' + #{MODIFY} + ',' + ${projectTaskDeveloper.id} + ' )'"
-                        >
-                    </span>
-                    <span class="btn btn-sm p-1 btn-outline-light"
-                          data-bs-toggle="tooltip" data-bs-placement="top"
-                          title="A fejlesztő eltávolítása a feladatból">
-                        <img data-th-src="@{~/icons/delete.svg}" src="../static/icons/delete.svg" width="20" alt=""
-                             data-th-onclick="'setFields( ' + #{DELETE} + ',' + ${projectTaskDeveloper.id} + ')'">
-                    </span>
-                </div>
-            </div>
-        </article>
-    </div>
-
-    <div class="footer">
+    <div class="container-p3">
         <div data-th-switch="${possibleNewDevelopers}">
             <div data-th-case="'0'">
                 <p>A feladathoz a projekt minden fejlesztője hozzá van rendelve.</p>
@@ -76,6 +26,51 @@
             </div>
         </div>
     </div>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col" class="col col-md-9">Név</th>
+            <th scope="col" class="col col-md-2" style="text-align:right">Idő (h)</th>
+            <th scope="col" class="col col-md-1" style="text-align:center">Műveletek</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr data-th-each="projectTaskDeveloper : ${projectTask.projectTaskDevelopers}">
+            <td class="col col-lg-9 border" style="text-align:left"
+                data-th-text="${projectTaskDeveloper.projectDeveloperEntity.developerEntity.name}">Fejlesztő neve
+            </td>
+            <td class="col col-lg-2 border" style="text-align:right">
+                <label hidden for="none"></label>
+                <input type="number" class="form-control"
+                       data-th-value="${projectTaskDeveloper.spendTime}"
+                       min="0" id='none'
+                       data-th-id="'spendTime' + ${projectTaskDeveloper.id}"
+                       data-th-name="'spendTime' + ${projectTaskDeveloper.id}"
+                       style="text-align:right; border:none" placeholder="0"
+                       data-th-onchange="'setTime(event,' + ${projectTaskDeveloper.id} + ')'"
+                       data-th-onkeydown="'setTime(event,' + ${projectTaskDeveloper.id} + ')'"
+                />
+            </td>
+            <!-- Function icons -->
+            <td class="col col-lg-1 border" style="text-align:center">
+                <a class="btn-icon btn-outline-light"
+                   data-bs-toggle="tooltip" data-bs-placement="top" title="Az idő rögzítése">
+                   <img data-th-src="@{~/icons/accept.svg}" src="../static/icons/accept.svg" width="20" alt=""
+                        data-th-onclick="'setFields( ' + #{MODIFY} + ',' + ${projectTaskDeveloper.id} + ' )'"
+                   >
+                </a>
+                <a class="btn-icon btn-outline-light"
+                   data-bs-toggle="tooltip" data-bs-placement="top"
+                   title="A fejlesztő eltávolítása a feladatból">
+                   <img data-th-src="@{~/icons/delete.svg}" src="../static/icons/delete.svg" width="20" alt=""
+                        data-th-onclick="'setFields( ' + #{DELETE} + ',' + ${projectTaskDeveloper.id} + ')'">
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
     <!-- Data Form -->
     <form hidden name="taskDeleteDeveloper" data-th-action="@{/selectProjectTasksDeveloperOperation}"
           data-th-object="${dataFromTemplate}" method="post" class="form">

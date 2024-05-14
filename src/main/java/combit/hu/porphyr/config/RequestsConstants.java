@@ -1,4 +1,4 @@
-package combit.hu.porphyr;
+package combit.hu.porphyr.config;
 
 import lombok.NonNull;
 import lombok.Value;
@@ -39,6 +39,7 @@ public class RequestsConstants {
     public static final @NonNull String PERMIT_DBCONSOLE = "dbConsole";
     public static final @NonNull String PERMIT_DEVELOPER_RAW_LIST = "rawDeveloperList";
     public static final @NonNull String PERMIT_LOGOUT = "logout";
+    public static final @NonNull String PERMIT_RIGHTS = "rights";
 
     public static final @NonNull String CALL_RAW_DEVELOPER_LIST = "/devs";
     public static final @NonNull String CALL_SELECT_DEVELOPER_OPERATION = "/selectDeveloperOperation";
@@ -86,37 +87,116 @@ public class RequestsConstants {
     public static final @NonNull String CALL_PROJECT_TASK_POSTS = "/project_tasks_posts";
     public static final @NonNull String CALL_SELECT_PROJECT_TASK_POSTS_OPERATION = "/selectProjectTaskPostOperation";
     public static final @NonNull String CALL_LOGOUT_CONFIRM = "/confirm_logout";
+    public static final @NonNull String CALL_RIGHTS = "/rights";
+    public static final @NonNull String CALL_RIGHTS_USERS = "/rights/users";
+    public static final @NonNull String CALL_START_NEW_USER = "/startNewUser";
+    public static final @NonNull String CALL_START_MODIFY_USER = "/startModifyUser/\\d*";
+    public static final @NonNull String CALL_START_DELETE_USER = "/startDeleteUser/\\d*";
+    public static final @NonNull String CALL_USER_INPUT_DATA_PROCESSING = "/userInputDataProcessing";
+    public static final @NonNull String CALL_RIGHTS_ROLES = "/rights/roles";
+    public static final @NonNull String CALL_START_NEW_ROLE = "/startNewRole";
+    public static final @NonNull String CALL_START_MODIFY_ROLE = "/startModifyRole/\\d*";
+    public static final @NonNull String CALL_START_DELETE_ROLE = "/startDeleteRole/\\d*";
+    public static final @NonNull String CALL_ROLE_INPUT_DATA_PROCESSING = "/roleInputDataProcessing";
 
     //A PERMITS táblába a kulcsok kerülnek bele. Így egy funkcióhoz (engedélyhez) több request is tartozhat.
     public static final @NonNull Map<String, List<String>> PROTECTED_REQUEST_CALLS;
+
     static {
         final Map<String, List<String>> tmpMap = new HashMap<>();
-        tmpMap.put(PERMIT_ALL, new ArrayList<>(Collections.singletonList("It will changed to all calls")) );
-        tmpMap.put(PERMIT_ROOT, new ArrayList<>(Collections.singletonList(CALL_ROOT)) );
-        tmpMap.put(PERMIT_PROJECTS, new ArrayList<>(Arrays.asList(CALL_PROJECTS, CALL_SELECT_PROJECT_OPERATION)) );
-        tmpMap.put(PERMIT_PROJECT_NEW, new ArrayList<>(Arrays.asList(  CALL_START_NEW_PROJECT, CALL_NEW_PROJECT, CALL_INSERT_NEW_PROJECT )) );
-        tmpMap.put(PERMIT_PROJECT_DELETE, new ArrayList<>(Collections.singletonList(CALL_DELETE_PROJECT)) );
-        tmpMap.put(PERMIT_PROJECT_MODIFY, new ArrayList<>(Arrays.asList(  CALL_START_MODIFY_PROJECT, CALL_MODIFY_PROJECT )) );
-        tmpMap.put(PERMIT_PROJECT_DEVELOPERS, new ArrayList<>(Arrays.asList( CALL_PROJECT_DEVELOPERS, CALL_SELECT_PROJECT_DEVELOPER_OPERATION)) );
-        tmpMap.put(PERMIT_PROJECT_DEVELOPER_NEW, new ArrayList<>(Arrays.asList(  CALL_START_NEW_PROJECT_DEVELOPER, CALL_INSERT_NEW_PROJECT_DEVELOPER )) );
-        tmpMap.put(PERMIT_PROJECT_DEVELOPER_TASKS, new ArrayList<>(Arrays.asList( CALL_PROJECT_DEVELOPER_TASKS, CALL_SELECT_PROJECT_DEVELOPER_TASK_OPERATION)) );
-        tmpMap.put(PERMIT_PROJECT_DEVELOPER_TASK_NEW, new ArrayList<>(Arrays.asList( CALL_START_NEW_PROJECT_DEVELOPER_TASK, CALL_INSERT_NEW_PROJECT_TASK_DEVELOPER )) );
-        tmpMap.put(PERMIT_PROJECT_TASKS, new ArrayList<>(Arrays.asList(CALL_PROJECT_TASKS, CALL_SELECT_PROJECT_TASK_OPERATION)) );
-        tmpMap.put(PERMIT_PROJECT_TASK_NEW, new ArrayList<>(Arrays.asList(  CALL_START_NEW_PROJECT_TASK, CALL_NEW_PROJECT_TASK, CALL_INSERT_NEW_PROJECT_TASK )) );
-        tmpMap.put(PERMIT_PROJECT_TASK_MODIFY, new ArrayList<>(Arrays.asList(  CALL_START_MODIFY_PROJECT_TASK, CALL_MODIFY_PROJECT_TASK )) );
-        tmpMap.put(PERMIT_PROJECT_TASK_DEVELOPERS, new ArrayList<>(Arrays.asList(CALL_PROJECT_TASK_DEVELOPERS, CALL_SELECT_PROJECT_TASKS_DEVELOPER_OPERATION)) );
-        tmpMap.put(PERMIT_PROJECT_TASK_DEVELOPER_NEW, new ArrayList<>(Arrays.asList(  CALL_START_NEW_PROJECT_TASK_DEVELOPER, CALL_NEW_PROJECT_TASK_DEVELOPER )) );
-        tmpMap.put(PERMIT_PROJECT_TASK_DEVELOPER_DELETE, new ArrayList<>(Collections.singletonList(CALL_DELETE_PROJECT_TASK_DEVELOPER)) );
-        tmpMap.put(PERMIT_PROJECT_TASK_POSTS, new ArrayList<>(Arrays.asList(CALL_PROJECT_TASK_POSTS, CALL_SELECT_PROJECT_TASK_POSTS_OPERATION)) );
-        tmpMap.put(PERMIT_DEVELOPERS, new ArrayList<>(Arrays.asList(CALL_DEVELOPERS, CALL_SELECT_DEVELOPER_OPERATION)) );
-        tmpMap.put(PERMIT_DEVELOPER_NEW, new ArrayList<>(Arrays.asList(  CALL_START_NEW_DEVELOPER, CALL_NEW_DEVELOPER, CALL_INSERT_NEW_DEVELOPER)) );
-        tmpMap.put(PERMIT_DEVELOPER_MODIFY, new ArrayList<>(Arrays.asList(  CALL_START_MODIFY_DEVELOPER, CALL_MODIFY_DEVELOPER)) );
-        tmpMap.put(PERMIT_DEVELOPER_TASKS, new ArrayList<>(Collections.singletonList(CALL_DEVELOPER_TASKS)) );
-        tmpMap.put(PERMIT_DEVELOPER_TASK_MODIFY, new ArrayList<>(Collections.singletonList(CALL_MODIFY_DEVELOPER_TASK)) );
-        tmpMap.put(PERMIT_DEVELOPER_RAW_LIST, new ArrayList<>(Collections.singletonList(CALL_RAW_DEVELOPER_LIST)) );
-        tmpMap.put(PERMIT_ERROR, new ArrayList<>(Collections.singletonList(CALL_ERROR)) );
-        tmpMap.put(PERMIT_DBCONSOLE, new ArrayList<>(Arrays.asList(CALL_DBCONSOLE_ALIAS, CALL_DBCONSOLE_ALIAS, CALL_DBCONSOLE_ROOT)) );
-        tmpMap.put(PERMIT_LOGOUT, new ArrayList<>(Collections.singletonList( CALL_LOGOUT_CONFIRM )) );
+        tmpMap.put(PERMIT_ALL, new ArrayList<>(Collections.singletonList("It will changed to all calls")));
+        tmpMap.put(PERMIT_ROOT, new ArrayList<>(Collections.singletonList(CALL_ROOT)));
+        tmpMap.put(PERMIT_PROJECTS, new ArrayList<>(Arrays.asList(CALL_PROJECTS, CALL_SELECT_PROJECT_OPERATION)));
+        tmpMap.put(
+            PERMIT_PROJECT_NEW,
+            new ArrayList<>(Arrays.asList(CALL_START_NEW_PROJECT, CALL_NEW_PROJECT, CALL_INSERT_NEW_PROJECT))
+        );
+        tmpMap.put(PERMIT_PROJECT_DELETE, new ArrayList<>(Collections.singletonList(CALL_DELETE_PROJECT)));
+        tmpMap.put(
+            PERMIT_PROJECT_MODIFY,
+            new ArrayList<>(Arrays.asList(CALL_START_MODIFY_PROJECT, CALL_MODIFY_PROJECT))
+        );
+        tmpMap.put(
+            PERMIT_PROJECT_DEVELOPERS,
+            new ArrayList<>(Arrays.asList(CALL_PROJECT_DEVELOPERS, CALL_SELECT_PROJECT_DEVELOPER_OPERATION))
+        );
+        tmpMap.put(
+            PERMIT_PROJECT_DEVELOPER_NEW,
+            new ArrayList<>(Arrays.asList(CALL_START_NEW_PROJECT_DEVELOPER, CALL_INSERT_NEW_PROJECT_DEVELOPER))
+        );
+        tmpMap.put(
+            PERMIT_PROJECT_DEVELOPER_TASKS,
+            new ArrayList<>(Arrays.asList(CALL_PROJECT_DEVELOPER_TASKS, CALL_SELECT_PROJECT_DEVELOPER_TASK_OPERATION))
+        );
+        tmpMap.put(
+            PERMIT_PROJECT_DEVELOPER_TASK_NEW,
+            new ArrayList<>(Arrays.asList(
+                CALL_START_NEW_PROJECT_DEVELOPER_TASK,
+                CALL_INSERT_NEW_PROJECT_TASK_DEVELOPER
+            ))
+        );
+        tmpMap.put(
+            PERMIT_PROJECT_TASKS,
+            new ArrayList<>(Arrays.asList(CALL_PROJECT_TASKS, CALL_SELECT_PROJECT_TASK_OPERATION))
+        );
+        tmpMap.put(
+            PERMIT_PROJECT_TASK_NEW,
+            new ArrayList<>(Arrays.asList(
+                CALL_START_NEW_PROJECT_TASK,
+                CALL_NEW_PROJECT_TASK,
+                CALL_INSERT_NEW_PROJECT_TASK
+            ))
+        );
+        tmpMap.put(
+            PERMIT_PROJECT_TASK_MODIFY,
+            new ArrayList<>(Arrays.asList(CALL_START_MODIFY_PROJECT_TASK, CALL_MODIFY_PROJECT_TASK))
+        );
+        tmpMap.put(
+            PERMIT_PROJECT_TASK_DEVELOPERS,
+            new ArrayList<>(Arrays.asList(CALL_PROJECT_TASK_DEVELOPERS, CALL_SELECT_PROJECT_TASKS_DEVELOPER_OPERATION))
+        );
+        tmpMap.put(
+            PERMIT_PROJECT_TASK_DEVELOPER_NEW,
+            new ArrayList<>(Arrays.asList(CALL_START_NEW_PROJECT_TASK_DEVELOPER, CALL_NEW_PROJECT_TASK_DEVELOPER))
+        );
+        tmpMap.put(
+            PERMIT_PROJECT_TASK_DEVELOPER_DELETE,
+            new ArrayList<>(Collections.singletonList(CALL_DELETE_PROJECT_TASK_DEVELOPER))
+        );
+        tmpMap.put(
+            PERMIT_PROJECT_TASK_POSTS,
+            new ArrayList<>(Arrays.asList(CALL_PROJECT_TASK_POSTS, CALL_SELECT_PROJECT_TASK_POSTS_OPERATION))
+        );
+        tmpMap.put(PERMIT_DEVELOPERS, new ArrayList<>(Arrays.asList(CALL_DEVELOPERS, CALL_SELECT_DEVELOPER_OPERATION)));
+        tmpMap.put(
+            PERMIT_DEVELOPER_NEW,
+            new ArrayList<>(Arrays.asList(CALL_START_NEW_DEVELOPER, CALL_NEW_DEVELOPER, CALL_INSERT_NEW_DEVELOPER))
+        );
+        tmpMap.put(
+            PERMIT_DEVELOPER_MODIFY,
+            new ArrayList<>(Arrays.asList(CALL_START_MODIFY_DEVELOPER, CALL_MODIFY_DEVELOPER))
+        );
+        tmpMap.put(PERMIT_DEVELOPER_TASKS, new ArrayList<>(Collections.singletonList(CALL_DEVELOPER_TASKS)));
+        tmpMap.put(
+            PERMIT_DEVELOPER_TASK_MODIFY,
+            new ArrayList<>(Collections.singletonList(CALL_MODIFY_DEVELOPER_TASK))
+        );
+        tmpMap.put(PERMIT_DEVELOPER_RAW_LIST, new ArrayList<>(Collections.singletonList(CALL_RAW_DEVELOPER_LIST)));
+        tmpMap.put(PERMIT_ERROR, new ArrayList<>(Collections.singletonList(CALL_ERROR)));
+        tmpMap.put(
+            PERMIT_DBCONSOLE,
+            new ArrayList<>(Arrays.asList(CALL_DBCONSOLE_ALIAS, CALL_DBCONSOLE_ALIAS, CALL_DBCONSOLE_ROOT))
+        );
+        tmpMap.put(PERMIT_LOGOUT, new ArrayList<>(Collections.singletonList(CALL_LOGOUT_CONFIRM)));
+        tmpMap.put(
+            PERMIT_RIGHTS,
+            new ArrayList<>(Arrays.asList(CALL_RIGHTS,
+                CALL_RIGHTS_USERS, CALL_START_NEW_USER, CALL_START_MODIFY_USER, CALL_START_DELETE_USER,
+                CALL_USER_INPUT_DATA_PROCESSING,
+                CALL_RIGHTS_ROLES, CALL_START_NEW_ROLE, CALL_START_MODIFY_ROLE, CALL_START_DELETE_ROLE,
+                CALL_ROLE_INPUT_DATA_PROCESSING
+            ))
+        );
         PROTECTED_REQUEST_CALLS = Collections.unmodifiableMap(tmpMap);
     }
 

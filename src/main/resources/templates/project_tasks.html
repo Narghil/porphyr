@@ -12,81 +12,63 @@
     </nav>
 
     <div class="container p-3">
-        <!-- Header -->
-        <div class="row mb-2">
-            <div class="col col-lg-1 text-center" style="text-decoration:underline">
-                <span>ID</span>
-            </div>
-            <div class="col col-lg-3 text-center" style="text-decoration:underline">
-                <span>Név</span>
-            </div>
-            <div class="col col-lg-5 text-center" style="text-decoration:underline">
-                <span>Leírás</span>
-            </div>
-            <div class="col col-lg-1 text-center" style="text-decoration:underline">
-                <span>Idő</span>
-            </div>
-            <div class="col col-lg-2 text-center" style="text-decoration:underline">
-                <span>Műveletek</span>
-            </div>
-        </div>
-        <article data-th-each="projectTask: ${project.projectTasks}">
-            <!-- Data -->
-            <div class="row">
-                <div class="col col-lg-1 border" style="text-align:right">
-                    <span class="form-control" style="border-style:none;"
-                          data-th-text="${projectTask.id}">ID</span>
-                </div>
-                <div class="col col-lg-3 border" style="text-align:left">
-                    <span class="form-control" style="border-style:none;"
-                          data-th-text="${projectTask.name}">Feladat&nbsp;neve</span>
-                </div>
-                <div class="col col-lg-5 border">
-                    <label hidden for="description"></label>
-                    <textarea disabled class="form-control" id="description"
-                              data-th-text="${projectTask.description}"
-                              style="background-color:white; height:40px; border-style:none;"
-                    >Feladat leírása</textarea>
-                </div>
-                <div class="col col-lg-1 border" style="text-align:right">
-                    <span class="form-control" style="border-style:none;"
-                          data-th-text="${projectTask.spendTime}">ID</span>
-                </div>
-                <!-- Function icons -->
-                <div class="col col-lg-2 border" style="text-align:center">
-                    <a class="btn btn-sm p-1 btn-outline-light"
-                       data-bs-toggle="tooltip" data-bs-placement="top" title="A feladaton dolgozó fejlesztők">
-                        <img data-th-src="@{~/icons/developers.svg}" src="../static/icons/developers.svg" width="20"
-                             alt=""
-                             data-th-onclick="'setFields( ' + #{DEVELOPERS} + ',' + ${projectTask.id} + ')'"
-                        />
-                    </a>
-                    <span class="btn btn-sm p-1 btn-outline-light"
-                          data-bs-toggle="tooltip" data-bs-placement="top" title="A feladat módosítása">
-                        <img data-th-src="@{~/icons/modify.svg}" src="../static/icons/modify.svg" width="20" alt=""
-                             data-th-onclick="'setFields( ' + #{MODIFY} + ',' + ${projectTask.id} + ' )'"
-                        >
-                    </span>
-                    <a class="btn btn-sm p-1 btn-outline-light"
-                       data-bs-toggle="tooltip" data-bs-placement="top" title="Postok">
-                        <img data-th-src="@{~/icons/posts.svg}" src="../static/icons/posts.svg" width="20" alt=""
-                             data-th-onclick="'setFields( ' + #{POSTS} + ',' + ${projectTask.id} + ')'"
-                        />
-                    </a>
-                    <a class="btn btn-sm p-1 btn-outline-light"
-                       data-bs-toggle="tooltip" data-bs-placement="top" title="A feladat törlése">
-                        <img data-th-src="@{~/icons/delete.svg}" src="../static/icons/delete.svg" width="20" alt=""
-                             data-th-onclick="'setFields( ' + #{DELETE} + ',' + ${projectTask.id} + ')'"
-                        />
-                    </a>
-                </div>
-            </div>
-        </article>
+        <a class="btn btn-outline-secondary" data-th-href="@{'/projecttask_new_start'}">
+            <img data-th-src="@{icons/new.svg}" src="../static/icons/new.svg" width="20" alt="" class="mb-1"/>
+            <span>Új feladat</span>
+        </a>
     </div>
-    <a class="btn btn-outline-secondary" data-th-href="@{'/projecttask_new_start'}">
-        <img data-th-src="@{icons/new.svg}" src="../static/icons/new.svg" width="20" alt="" class="mb-1"/>
-        <span>Új feladat</span>
-    </a>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col" class="col col-md-3">Név</th>
+            <th scope="col" class="col col-md-6">Leírás</th>
+            <th scope="col" class="col col-md-1" style="text-align:right">Idő (h)</th>
+            <th scope="col" class="col col-md-2" style="text-align:center">Műveletek</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr data-th-each="projectTask: ${project.projectTasks}">
+            <td class="col col-lg-3 border" style="text-align:left" data-th-text="${projectTask.name}">Feladat neve</td>
+            <td class="col col-lg-6 border">
+                <label hidden for="description"></label>
+                <textarea disabled class="form-control" id="description"
+                          data-th-text="${projectTask.description}"
+                          style="background-color:white; height:40px; border-style:none;"
+                >Feladat leírása</textarea>
+            </td>
+            <td class="col col-lg-1 border" style="text-align:right" data-th-text="${projectTask.spendTime}">ID</td>
+            <!-- Function icons -->
+            <td class="col col-lg-2 border" style="text-align:center">
+                <a class="btn-icon btn-outline-light"
+                   data-bs-toggle="tooltip" data-bs-placement="top" title="A feladaton dolgozó fejlesztők">
+                   <img data-th-src="@{~/icons/developers.svg}" src="../static/icons/developers.svg" width="20" alt=""
+                        data-th-onclick="'setFields( ' + #{DEVELOPERS} + ',' + ${projectTask.id} + ')'"
+                   />
+                </a>
+                <a class="btn-icon btn-outline-light"
+                      data-bs-toggle="tooltip" data-bs-placement="top" title="A feladat módosítása">
+                      <img data-th-src="@{~/icons/modify.svg}" src="../static/icons/modify.svg" width="20" alt=""
+                           data-th-onclick="'setFields( ' + #{MODIFY} + ',' + ${projectTask.id} + ' )'"
+                      />
+                </a>
+                <a class="btn-con btn-outline-light"
+                   data-bs-toggle="tooltip" data-bs-placement="top" title="Post-ok">
+                    <img data-th-src="@{~/icons/posts.svg}" src="../static/icons/posts.svg" width="20" alt=""
+                         data-th-onclick="'setFields( ' + #{POSTS} + ',' + ${projectTask.id} + ')'"
+                    />
+                </a>
+                <a class="btn-icon btn-outline-light"
+                   data-bs-toggle="tooltip" data-bs-placement="top" title="A feladat törlése">
+                   <img data-th-src="@{~/icons/delete.svg}" src="../static/icons/delete.svg" width="20" alt=""
+                        data-th-onclick="'setFields( ' + #{DELETE} + ',' + ${projectTask.id} + ')'"
+                   />
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
     <!-- jS: setFields() -->
     <script>
         function setFields( operation, projectTaskId ) {

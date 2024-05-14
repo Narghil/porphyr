@@ -1,6 +1,5 @@
 package combit.hu.porphyr.config;
 
-import combit.hu.porphyr.controller.PorphyrNotPermittedException;
 import combit.hu.porphyr.controller.helpers.SessionData;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -21,7 +20,7 @@ import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.Map;
 
-import static combit.hu.porphyr.RequestsConstants.PROTECTED_REQUEST_CALLS;
+import static combit.hu.porphyr.config.RequestsConstants.PROTECTED_REQUEST_CALLS;
 
 @Component //Ellenkező esetben a sessionData mindig null lesz.
 public class AuthLogAfterFilter implements Filter {
@@ -32,7 +31,10 @@ public class AuthLogAfterFilter implements Filter {
     final @NonNull HttpSecurity httpSecurity;
 
     @Autowired
-    public AuthLogAfterFilter( @NonNull HttpSecurity httpSecurity){
+    public AuthLogAfterFilter(
+        @NonNull
+        HttpSecurity httpSecurity
+    ) {
         this.httpSecurity = httpSecurity;
     }
 
@@ -44,7 +46,7 @@ public class AuthLogAfterFilter implements Filter {
         String requestURI = ((HttpServletRequest) request).getRequestURI();
         if (sessionData != null && contextAuth != null && !requestURI.contains(".")
             && !sessionData.getUserLoginName().equals("anonymus")
-            && !sessionData.getUserPermittedRequestCalls().contains(requestURI)
+            && !authorizedURI(requestURI)
         ) {
             for (Map.Entry<String, List<String>> entry : PROTECTED_REQUEST_CALLS.entrySet()) {
                 if (entry.getValue().contains(requestURI)) {
@@ -53,8 +55,19 @@ public class AuthLogAfterFilter implements Filter {
             }
             String qm = "\"";
             String reason = "User " + qm + sessionData.getUserLoginName() + qm + " is not authorized to access the " + qm + requestURI + qm + " function!";
-            throw new PorphyrNotPermittedException(reason, new AccessDeniedException(requestURI, "", reason));
+            throw new NotPermittedException(reason, new AccessDeniedException(requestURI, "", reason));
         }
         chain.doFilter(request, response);
+    }
+
+    private boolean authorizedURI(final @NonNull String requestURI) {
+        boolean result = sessionData.getUserPermittedRequestCalls().contains(requestURI);
+        if (!result) {
+            for (String entryValue : sessionData.getUserPermittedRequestCalls()) {
+                result = requestURI.matches(entryValue);
+                if ( result ) break;
+            }
+        }
+        return result;
     }
 }

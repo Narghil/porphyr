@@ -5,7 +5,7 @@ import combit.hu.porphyr.controller.helpers.WebErrorBean;
 import combit.hu.porphyr.domain.DeveloperEntity;
 import combit.hu.porphyr.service.DeveloperService;
 import combit.hu.porphyr.service.ProjectService;
-import combit.hu.porphyr.service.UserService;
+import combit.hu.porphyr.config.service.UserService;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;

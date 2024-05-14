@@ -12,13 +12,11 @@
         </a>
     </nav>
 
-    <br/>
-    <div>
+    <div class="container p-3">
         <button type="button" class="btn btn-outline-secondary"
                 id="newPostButton"
                 data-th-onclick="|startNewPost( #{INSERT} )|"
-        >
-            Új bejegyzés
+        >Új bejegyzés
         </button>
     </div>
 
@@ -71,27 +69,37 @@
         </div>
     </form>
 
-    <article data-th-each="post : ${posts}">
-        <br/>
-        <div class="row">
-            <div class="col col-lg-2 border">
-                <span data-th-text="${#dates.format(post.created, 'yyyy-MM-dd HH:mm:ss')}">Létrehozás dátuma</span>
-            </div>
-            <div class="col col-lg-1"><span>&nbsp;</span></div>
-            <div class="col col-lg-4 border">
-                <span data-th-text="${post.developerEntity.name}">Létrehozta</span>
-            </div>
-            <div class="col col-lg-3"><span>&nbsp;</span></div>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col" class="col col-md-2">Dátum</th>
+            <th scope="col" class="col col-md-3">Fejlesztő</th>
+            <th scope="col" class="col col-md-6">Bejegyzés</th>
+            <th scope="col" class="col col-md-1" style="text-align:center">Műveletek</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr data-th-each="post : ${posts}">
+            <td class="col col-lg-2" data-th-text="${#dates.format(post.created, 'yyyy-MM-dd HH:mm:ss')}">dátum</td>
+            <td class="col col-lg-3" data-th-text="${post.developerEntity.name}">Létrehozta</td>
+            <td class="col col-lg-6">
+                <textarea disabled class="form-control"
+                          data-th-id="'description' + ${post.id}" name="description"
+                          data-th-text="${post.description}"
+                          style="background-color:white; height:40px; border-style:none;">
+                          Bejegyzés
+                </textarea>
+            </td>
             <!-- Function icons -->
-            <div class="col col-lg-2 border" style="text-align:center">
-                <a class="btn btn-sm p-1 btn-outline-light"
+            <td class="col col-lg-1 border" style="text-align:center">
+                <a class="btn-icon btn-outline-light"
                    data-th-id="'modifyIcon' + ${post.id}"
                    data-bs-toggle="tooltip" data-bs-placement="top" title="Módosítás">
                     <img data-th-src="@{~/icons/modify.svg}" src="../static/icons/modify.svg" width="20" alt=""
                          data-th-name="'allModifyIcons'"
                          data-th-onclick="|startModifyPost( #{INSERT}, #{MODIFY}, #{DELETE} , ${post.id} )|"/>
                 </a>
-                <a class="btn btn-sm p-1 btn-outline-light"
+                <a class="btn-icon btn-outline-light"
                    data-th-id="'acceptIcon' + ${post.id}"
                    hidden
                    data-bs-toggle="tooltip" data-bs-placement="top" title="Mentés">
@@ -99,7 +107,7 @@
                          data-th-onclick="|acceptModifyPost( #{MODIFY}, ${post.id} )|"
                     />
                 </a>
-                <a class="btn btn-sm p-1 btn-outline-light"
+                <a class="btn-icon btn-outline-light"
                    data-th-id="'cancelIcon' + ${post.id}"
                    hidden
                    data-bs-toggle="tooltip" data-bs-placement="top" title="Mégsem">
@@ -107,7 +115,7 @@
                          data-th-onclick="|cancelModifyPost( #{MODIFY} , ${post.id} )|"
                     />
                 </a>
-                <a class="btn btn-sm p-1 btn-outline-light"
+                <a class="btn-icon btn-outline-light"
                    data-th-id="'deleteIcon' + ${post.id}"
                    data-bs-toggle="tooltip" data-bs-placement="top" title="Törlés">
                     <img data-th-src="@{~/icons/delete.svg}" src="../static/icons/delete.svg" width="20" alt=""
@@ -115,20 +123,10 @@
                          data-th-onclick="|startDeletePost( #{INSERT}, #{MODIFY}, #{DELETE} , ${post.id} )|"
                     />
                 </a>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col col-lg-12 border">
-                <!-- label hidden for="description"></label -->
-                <textarea disabled class="form-control"
-                          data-th-id="'description' + ${post.id}" name="description"
-                          data-th-text="${post.description}"
-                          style="background-color:white; height:40px; border-style:none;">
-                    Bejegyzés
-                </textarea>
-            </div>
-        </div>
-    </article>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 
     <form hidden id="templateForm" method="post" data-th-action="@{/selectProjectTaskPostOperation}" data-th-object="${dataFromTemplate}">
         <label for="operation"></label>

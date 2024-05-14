@@ -1,11 +1,12 @@
-package combit.hu.porphyr.service;
+package combit.hu.porphyr.config.service;
 
 import combit.hu.porphyr.domain.DeveloperEntity;
-import combit.hu.porphyr.domain.PermitEntity;
-import combit.hu.porphyr.domain.RoleEntity;
-import combit.hu.porphyr.domain.UserEntity;
-import combit.hu.porphyr.repository.UserRepository;
-import combit.hu.porphyr.RequestsConstants;
+import combit.hu.porphyr.config.domain.PermitEntity;
+import combit.hu.porphyr.config.domain.RoleEntity;
+import combit.hu.porphyr.config.domain.UserEntity;
+import combit.hu.porphyr.config.repository.UserRepository;
+import combit.hu.porphyr.config.RequestsConstants;
+import combit.hu.porphyr.service.PorphyrServiceException;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -25,11 +26,12 @@ import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
 
-import static combit.hu.porphyr.RequestsConstants.PROTECTED_REQUEST_CALLS;
+import static combit.hu.porphyr.config.RequestsConstants.PROTECTED_REQUEST_CALLS;
 
 @Service
 @Transactional
@@ -98,6 +100,32 @@ public class UserService implements UserDetailsService {
     }
 
     /**
+     * Egy felhasználó lekérdezése ID    ----   TESZT ÍRÁSA!!! ----
+     */
+    public synchronized @Nullable UserEntity getUserById(final @NonNull Long id)
+        throws ExecutionException, InterruptedException {
+        final class CallableCore implements Callable<UserEntity> {
+            private final @NonNull Long id;
+
+            public CallableCore(final @NonNull Long id) {
+                this.id = id;
+            }
+
+            @Override
+            public UserEntity call() {
+                return userRepository.findAllById(id);
+            }
+        }
+        @Nullable UserEntity result = null;
+        try {
+            result = forkJoinPool.submit(new CallableCore(id)).get();
+        } catch (ExecutionException executionException) {
+            PorphyrServiceException.handleExecutionException(executionException);
+        }
+        return result;
+    }
+
+    /**
      * Felhasználók listájának lekérdezése
      */
     public synchronized @NonNull List<UserEntity> getUsers()
@@ -151,6 +179,7 @@ public class UserService implements UserDetailsService {
     /**
      * Új user felvétele<br/>
      * Hibalehetőségek: <br/>
+     * - A megadott jelszavak nem azonosak
      * - Már van ilyen login nevű user <br/>
      */
     public synchronized void insertNewUser(final @NonNull UserEntity newUserEntity)
@@ -164,7 +193,9 @@ public class UserService implements UserDetailsService {
 
             @Override
             public void run() {
-                if (userRepository.findByLoginName(newUserEntity.getLoginName()) != null) {
+                if(!Objects.equals(newUserEntity.getNewPassword(), newUserEntity.getRetypedPassword())){
+                    throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.USER_INSERT_DIFFERENT_PASSWORDS));
+                } else if (userRepository.findByLoginName(newUserEntity.getLoginName()) != null) {
                     throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.USER_INSERT_SAME_LOGIN_NAME));
                 } else {
                     userRepository.saveAndFlush(newUserEntity);
@@ -181,6 +212,7 @@ public class UserService implements UserDetailsService {
     /**
      * user módosítása.<br/>
      * Hibalehetőségek: <br/>
+     * - A megadott jelszavak nem egyeznek meg
      * - A user még nem volt elmentve
      * - Van másik ilyen login nevű user <br/>
      */
@@ -196,7 +228,9 @@ public class UserService implements UserDetailsService {
             @SneakyThrows
             @Override
             public void run() {
-                if (modifiedUserEntity.getId() == null) {
+                if(!Objects.equals(modifiedUserEntity.getNewPassword(), modifiedUserEntity.getRetypedPassword())){
+                    throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.USER_INSERT_DIFFERENT_PASSWORDS));
+                } else                 if (modifiedUserEntity.getId() == null) {
                     throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.USER_MODIFY_NOT_SAVED));
                 } else {
                     entityManager.clear();

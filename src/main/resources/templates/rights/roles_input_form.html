@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="hu" data-layout-decorate="~{layouts/rights_decorator}">
+<head><title>Feladat bejegyzései</title></head>
+<body>
+<div data-layout-fragment="mainContent">
+    <nav class="navbar bg-light navbar-light" style="padding-left:1rem">
+        <a class="navbar-brand">
+            <span data-th-if="${role.id == null}">Új szerepkör felvitele</span>
+            <span data-th-if="${role.id != null}">Szerepkör módosítása</span>
+        </a>
+        <a class="btn btn-outline-secondary" data-th-href="@{/rights/roles}">
+            <img data-th-src="@{~/icons/back.svg}" src="../../static/icons/back.svg" width="20" alt="" class="mb-1"/>
+            <span>Szerepkörök</span>
+        </a>
+    </nav>
+    <br/>
+    <form class="form center-block" name="roleInputData" method="post"
+          style="margin-left: auto; margin-right: auto;"
+          data-th-action="@{/roleInputDataProcessing}" data-th-object="${role}"
+    >
+        <label hidden for="id"></label>
+        <input hidden type="number" class="form-control" id="id" name="id" data-th-field="*{id}">
+
+        <div class="input-group mb-3">
+            <label hidden for="role"></label>
+            <span class="input-group-text">Szerepkör megnevezése:</span>
+            <input type="text" class="form-control" data-th-field="*{role}" id="role" required autofocus/>
+        </div>
+        <br/>
+        <div style="text-align:center">
+            <button type="submit" class="btn btn-outline-secondary">Rögzítés</button>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

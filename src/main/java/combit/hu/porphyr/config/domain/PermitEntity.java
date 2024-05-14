@@ -1,4 +1,4 @@
-package combit.hu.porphyr.domain;
+package combit.hu.porphyr.config.domain;
 
 import lombok.AccessLevel;
 import lombok.Data;

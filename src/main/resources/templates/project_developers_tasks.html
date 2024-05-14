@@ -4,87 +4,76 @@
 <body>
 <div data-layout-fragment="mainContent">
     <nav class="navbar bg-light navbar-light" style="padding-left:1rem">
-        <a class="navbar-brand"><span data-th-text="${project.name}+ ', ' + ${developer.name} + ' feladatai:'">Project fejlesztői</span></a>
+        <a class="navbar-brand"><span data-th-text="${project.name}+ ', ' + ${developer.name} + ' feladatai:'">Project-fejlesztő feladatai</span></a>
         <a class="btn btn-outline-secondary" data-th-href="@{/project_developers}">
             <img data-th-src="@{icons/back.svg}" src="../static/icons/back.svg" width="20" alt="" class="mb-1"/>
             <span>Vissza a projekt fejlesztőihez</span>
         </a>
     </nav>
 
-    <div class="container p-3">
-        <!-- Header -->
-        <div class="row mb-2">
-            <div class="col col-lg-3 text-center" style="text-decoration:underline">
-                <span>Név</span>
-            </div>
-            <div class="col col-lg-5 text-center" style="text-decoration:underline">
-                <span>Leírás</span>
-            </div>
-            <div class="col col-lg-2 text-center" style="text-decoration:underline">
-                <span>M. idő</span>
-            </div>
-            <div class="col col-lg-2 text-center" style="text-decoration:underline">
-                <span>Műveletek</span>
-            </div>
+    <div data-th-switch="${assignAbleProjectTasks}" class="container-p3">
+        <div data-th-case="'0'">
+            <p>A fejlesztőhöz a projektből minden lehetséges feladat hozzá van rendelve.</p>
         </div>
-        <!-- Data -->
-        <article data-th-each="projectTaskDeveloper : ${projectTaskDevelopers}">
-            <div class="row">
-                <div class="col col-lg-3 border" style="text-align:left">
-                    <span class="form-control" style="border-style:none;"
-                          data-th-text="${projectTaskDeveloper.projectTaskEntity.name}">Feladat&nbsp;neve</span>
-                </div>
-                <div class="col col-lg-5 border">
-                    <label hidden for="description"></label>
-                    <textarea disabled class="form-control" id="description"
-                              data-th-text="${projectTaskDeveloper.projectTaskEntity.description}"
-                              style="background-color:white; height:40px; border-style:none;"
-                    >Feladat leírása</textarea>
-                </div>
-                <div class="col col-lg-2 border" style="text-align:right">
-                    <label hidden for="none">&nbsp;</label>
-                    <input type="number" class="form-control"
-                           data-th-value="${projectTaskDeveloper.spendTime}"
-                           min="0" id='none'
-                           data-th-id="'spendTime' + ${projectTaskDeveloper.id}"
-                           data-th-name="'spendTime' + ${projectTaskDeveloper.id}"
-                           style="text-align:right; border:none" placeholder="0"
-                           data-th-onchange="'setTime(event,' + ${projectTaskDeveloper.id} + ')'"
-                           data-th-onkeydown="'setTime(event,' + ${projectTaskDeveloper.id} + ')'"
-                    />
-                </div>
-                <div class="col col-lg-2 border" style="text-align:center">
-                    <span class="btn btn-sm p-1 btn-outline-light"
-                          data-bs-toggle="tooltip" data-bs-placement="top" title="Az idő rögzítése">
-                        <img data-th-src="@{~/icons/accept.svg}" src="../static/icons/accept.svg" width="20" alt=""
-                             data-th-onclick="'setFields( ' + #{MODIFY} + ',' + ${projectTaskDeveloper.id} + ' )'"
-                        >
-                    </span>
-                    <span class="btn btn-sm p-1 btn-outline-light"
-                          data-bs-toggle="tooltip" data-bs-placement="top"
-                          title="A feladat eltávolítása a fejlesztőtől">
-                    <img data-th-src="@{~/icons/delete.svg}" src="../static/icons/delete.svg" width="20" alt=""
-                         data-th-onclick="'setFields( ' + #{DELETE} + ',' + ${projectTaskDeveloper.id} + ')'">
-                    </span>
-                </div>
-                <!-- Function icons -->
-            </div>
-        </article>
+        <div data-th-case="*">
+            <p><a class="btn btn-outline-secondary" data-th-href="@{'/project_developers_tasks_new'}">
+                <img data-th-src="@{icons/new.svg}" src="../static/icons/new.svg" width="20" alt="" class="mb-1"/>
+                Új feladat hozzárendelése a fejlesztőhöz
+            </a></p>
+        </div>
     </div>
 
-    <div class="footer">
-        <div data-th-switch="${assignAbleProjectTasks}">
-            <div data-th-case="'0'">
-                <p>A fejlesztőhöz a projektből minden lehetséges feladat hozzá van rendelve.</p>
-            </div>
-            <div data-th-case="*">
-                <p><a class="btn btn-outline-secondary" data-th-href="@{'/project_developers_tasks_new'}">
-                    <img data-th-src="@{icons/new.svg}" src="../static/icons/new.svg" width="20" alt="" class="mb-1"/>
-                    Új feladat hozzárendelése a fejlesztőhöz
-                </a></p>
-            </div>
-        </div>
-    </div>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col" class="col col-md-3">Név</th>
+            <th scope="col" class="col col-md-5">Leírás</th>
+            <th scope="col" class="col col-md-2">M. idő</th>
+            <th scope="col" class="col col-md-2">Műveletek</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr data-th-each="projectTaskDeveloper : ${projectTaskDevelopers}">
+            <td class="col col-lg-3" style="text-align:left"
+                data-th-text="${projectTaskDeveloper.projectTaskEntity.name}">Feladat neve
+            </td>
+            <td class="col col-lg-5">
+                <label hidden for="description"></label>
+                <textarea disabled class="form-control" id="description"
+                          data-th-text="${projectTaskDeveloper.projectTaskEntity.description}"
+                          style="background-color:white; height:40px; border-style:none;"
+                >Feladat leírása</textarea>
+            </td>
+            <td class="col col-lg-2" style="text-align:right">
+                <label hidden for="none">&nbsp;</label>
+                <input type="number" class="form-control"
+                       data-th-value="${projectTaskDeveloper.spendTime}"
+                       min="0" id='none'
+                       data-th-id="'spendTime' + ${projectTaskDeveloper.id}"
+                       data-th-name="'spendTime' + ${projectTaskDeveloper.id}"
+                       style="text-align:right; border:none" placeholder="0"
+                       data-th-onchange="'setTime(event,' + ${projectTaskDeveloper.id} + ')'"
+                       data-th-onkeydown="'setTime(event,' + ${projectTaskDeveloper.id} + ')'"
+                />
+            </td>
+            <td class="col col-lg-2 border" style="text-align:center">
+                <a class="btn-icon btn-outline-light"
+                   data-bs-toggle="tooltip" data-bs-placement="top" title="Az idő rögzítése">
+                   <img data-th-src="@{~/icons/accept.svg}" src="../static/icons/accept.svg" width="20" alt=""
+                        data-th-onclick="'setFields( ' + #{MODIFY} + ',' + ${projectTaskDeveloper.id} + ' )'"
+                   >
+                </a>
+                <a class="btn-icon btn-outline-light"
+                   data-bs-toggle="tooltip" data-bs-placement="top"
+                   title="A feladat eltávolítása a fejlesztőtől">
+                    <img data-th-src="@{~/icons/delete.svg}" src="../static/icons/delete.svg" width="20" alt=""
+                         data-th-onclick="'setFields( ' + #{DELETE} + ',' + ${projectTaskDeveloper.id} + ')'"
+                    >
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 
     <!-- Data Form -->
     <form hidden name="taskSpendTime" data-th-action="@{/selectProjectDeveloperTaskOperation}"

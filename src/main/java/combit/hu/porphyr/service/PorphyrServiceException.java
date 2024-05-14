@@ -306,8 +306,10 @@ public class PorphyrServiceException extends IllegalArgumentException {
         ),
 
         USER_INSERT_SAME_LOGIN_NAME(ExceptionGroups.USERS_INSERT, "Már van felhasználó ezzel a belépési névvel!", 0),
+        USER_INSERT_DIFFERENT_PASSWORDS(ExceptionGroups.USERS_INSERT, "A két megadott jelszó nem egyezik meg!", 0),
         USER_MODIFY_NOT_SAVED(ExceptionGroups.USERS_MODIFY, "A felhasználó még nincs elmentve, nem módosítható!", 0),
         USER_MODIFY_SAME_LOGIN_NAME(ExceptionGroups.USERS_MODIFY, "Már van felhasználó ezzel a belépési névvel!", 0),
+        USER_MODIFY_DIFFERENT_PASSWORDS(ExceptionGroups.USERS_MODIFY, "A két megadott jelszó nem egyezik meg!", 0),
         USER_DELETE_NOT_SAVED(ExceptionGroups.USERS_DELETE, "A felhasználó még nincs elmentve, nem törölhető!", 0),
 
         ROLES_INSERT_SAME_NAME(ExceptionGroups.ROLES_INSERT, "Már van ilyen nevű jogkör!", 0),

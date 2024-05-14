@@ -12,64 +12,48 @@
     </nav>
 
     <div class="container p-3">
-        <!-- Header -->
-        <div class="row mb-2">
-            <div class="col col-lg-1 text-center" style="text-decoration:underline">
-                <span>ID</span>
-            </div>
-            <div class="col col-lg-8 text-center" style="text-decoration:underline">
-                <span>Név</span>
-            </div>
-            <div class="col col-lg-1 text-center" style="text-decoration:underline">
-                <span>Munkaidő</span>
-            </div>
-            <div class="col col-lg-2 text-center" style="text-decoration:underline">
-                <span>Műveletek</span>
-            </div>
-        </div>
-        <article data-th-each="developer : ${developers}">
-            <!-- Data -->
-            <div class="row">
-                <div class="col col-lg-1 border" style="text-align:right">
-                    <span data-th-text="${developer.id}">ID</span>
-                </div>
-                <div class="col col-lg-8 border">
-                    <span data-th-text="${developer.name}">Fejlesztő neve</span>
-                </div>
-                <div class="col col-lg-1 border" style="text-align:right">
-                    <span data-th-text="${developer.spendTime}">ID</span>
-                </div>
-                <!-- Function icons -->
-                <div class="col col-lg-2 border" style="text-align:center">
-                    <a class="btn btn-sm p-1 btn-outline-light"
-                       data-bs-toggle="tooltip" data-bs-placement="top" title="A fejlesztő feladatai">
-                        <img data-th-src="@{~/icons/tasks.svg}" src="../static/icons/tasks.svg" width="20" alt=""
-                             data-th-onclick="'setFields( ' + #{TASKS} + ','  + ${developer.id} + ')'"
-                        />
-                    </a>
-                    <a class="btn btn-sm p-1 btn-outline-light"
-                       data-bs-toggle="tooltip" data-bs-placement="top" title="A fejlesztő adatainak szerkesztése">
-                        <img data-th-src="@{~/icons/modify.svg}" src="../static/icons/modify.svg" width="20" alt=""
-                             data-th-onclick="'setFields( ' + #{MODIFY} + ',' + ${developer.id} + ')'"
-                        />
-                    </a>
-                    <a class="btn btn-sm p-1 btn-outline-light"
-                       data-bs-toggle="tooltip" data-bs-placement="top" title="A fejlesztő törlése">
-                        <img data-th-src="@{~/icons/delete.svg}" src="../static/icons/delete.svg" width="20" alt=""
-                             data-th-onclick="'setFields( ' + #{DELETE} + ',' + ${developer.id} + ')'"
-                        />
-                    </a>
-                </div>
-            </div>
-        </article>
-    </div>
-
-    <div>
         <a class="btn btn-outline-secondary" data-th-href="@{'/developers_new_start'}">
             <img data-th-src="@{icons/new.svg}" src="../static/icons/new.svg" width="20" alt="" class="mb-1"/>
             <span>Új fejlesztő felvétele</span>
         </a>
     </div>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col" class="col col-md-9">Név</th>
+            <th scope="col" class="col col-md-1" style="text-align:right">Munkaidő</th>
+            <th scope="col" class="col col-md-2" style="text-align:center">Műveletek</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr data-th-each="developer : ${developers}">
+            <td class="col col-lg-9" data-th-text="${developer.name}">Fejlesztő neve</td>
+            <td class="col col-lg-1" style="text-align:right" data-th-text="${developer.spendTime}">ID</td>
+            <!-- Function icons -->
+            <td class="col col-lg-2" style="text-align:center">
+                <a class="btn-icon btn-outline-light"
+                   data-bs-toggle="tooltip" data-bs-placement="top" title="A fejlesztő feladatai">
+                    <img data-th-src="@{~/icons/tasks.svg}" src="../static/icons/tasks.svg" width="20" alt=""
+                         data-th-onclick="'setFields( ' + #{TASKS} + ','  + ${developer.id} + ')'"
+                    />
+                </a>
+                <a class="btn-icon btn-outline-light"
+                   data-bs-toggle="tooltip" data-bs-placement="top" title="A fejlesztő adatainak szerkesztése">
+                    <img data-th-src="@{~/icons/modify.svg}" src="../static/icons/modify.svg" width="20" alt=""
+                         data-th-onclick="'setFields( ' + #{MODIFY} + ',' + ${developer.id} + ')'"
+                    />
+                </a>
+                <a class="btn-icon btn-outline-light"
+                   data-bs-toggle="tooltip" data-bs-placement="top" title="A fejlesztő törlése">
+                    <img data-th-src="@{~/icons/delete.svg}" src="../static/icons/delete.svg" width="20" alt=""
+                         data-th-onclick="'setFields( ' + #{DELETE} + ',' + ${developer.id} + ')'"
+                    />
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 
     <!-- jS: setFields() -->
     <script>

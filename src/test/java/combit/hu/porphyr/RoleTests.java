@@ -1,10 +1,10 @@
 package combit.hu.porphyr;
 
-import combit.hu.porphyr.domain.RoleEntity;
-import combit.hu.porphyr.domain.UserEntity;
-import combit.hu.porphyr.repository.RoleRepository;
+import combit.hu.porphyr.config.domain.RoleEntity;
+import combit.hu.porphyr.config.domain.UserEntity;
+import combit.hu.porphyr.config.repository.RoleRepository;
 import combit.hu.porphyr.service.PorphyrServiceException;
-import combit.hu.porphyr.service.RoleService;
+import combit.hu.porphyr.config.service.RoleService;
 import lombok.NonNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

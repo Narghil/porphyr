@@ -1,7 +1,7 @@
-package combit.hu.porphyr.service;
+package combit.hu.porphyr.config.service;
 
-import combit.hu.porphyr.domain.RoleEntity;
-import combit.hu.porphyr.domain.UserEntity;
+import combit.hu.porphyr.config.domain.RoleEntity;
+import combit.hu.porphyr.config.domain.UserEntity;
 import lombok.NonNull;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

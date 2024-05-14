@@ -1,15 +1,18 @@
-package combit.hu.porphyr.domain;
+package combit.hu.porphyr.config.domain;
 
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
+import org.jetbrains.annotations.Nullable;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -65,4 +68,22 @@ public class RoleEntity {
     public RoleEntity(final @NonNull String roleName) {
         this.role = roleName;
     }
+
+    @Setter
+    @Getter
+    public static class Pojo{
+        private @Nullable Long id;
+        private @Nullable String role;
+    }
+
+    public RoleEntity(final @NonNull RoleEntity.Pojo pojo) {
+        this.id = pojo.id;
+        this.role = Objects.requireNonNull( pojo.role );
+    }
+
+    public void readPojo(final @NonNull RoleEntity.Pojo pojo) {
+        this.id = pojo.id;
+        this.role = Objects.requireNonNull( pojo.role );
+    }
+
 }

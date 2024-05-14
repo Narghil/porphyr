@@ -11,73 +11,61 @@
             <span>Vissza a fejlesztőkhöz</span>
         </a>
     </nav>
-    <div class="container p-3">
-        <!-- Header -->
-        <div class="row mb-2">
-            <div class="col col-lg-2 text-center" style="text-decoration:underline">
-                <span>Projekt</span>
-            </div>
-            <div class="col col-lg-3 text-center" style="text-decoration:underline">
-                <span>Feladat</span>
-            </div>
-            <div class="col col-lg-5 text-center" style="text-decoration:underline">
-                <span>Feladat leírása</span>
-            </div>
-            <div class="col col-lg-1 text-center" style="text-decoration:underline">
-                <span>M. idő</span>
-            </div>
-            <div class="col col-lg-1 text-center" style="text-decoration:underline">
-                <span>Műveletek</span>
-            </div>
-        </div>
-        <!-- Data -->
-        <article data-th-each="task : ${allProjectTasksDeveloper}">
-            <div class="row">
-                <div class="col col-lg-2 border" style="text-align:left">
-                    <span class="form-control" style="border-style:none;"
-                          data-th-text="${task.projectTaskEntity.projectEntity.name}">Projekt&nbsp;neve</span>
-                </div>
-                <div class="col col-lg-3 border" style="text-align:left">
-                    <span class="form-control" style="border-style:none;"
-                          data-th-text="${task.projectTaskEntity.name}">Feladat&nbsp;neve</span>
-                </div>
-                <div class="col col-lg-5 border">
-                    <label hidden for="description"></label>
-                    <textarea disabled class="form-control" id="description"
-                              data-th-text="${task.projectTaskEntity.description}"
-                              style="background-color:white; height:40px; border-style:none;"
-                    >Feladat leírása</textarea>
-                </div>
-                <div class="col col-lg-1 border" style="text-align:right">
-                    <label hidden for="none">&nbsp;</label>
-                    <input type="number" class="form-control"
-                           data-th-value="${task.spendTime}"
-                           min="0" id='none'
-                           data-th-id="'spendTime' + ${task.id}"
-                           data-th-name="'spendTime' + ${task.id}"
-                           style="text-align:right; border:none" placeholder="0"
-                           data-th-onchange="'setTime(event,' + ${task.id} + ')'"
-                           data-th-onkeydown="'setTime(event,' + ${task.id} + ')'"
-                    />
-                </div>
-                <div class="col col-lg-1 border" style="text-align:center">
-                    <span class="btn btn-sm p-1 btn-outline-light"
-                          data-bs-toggle="tooltip" data-bs-placement="top" title="Az idő rögzítése">
-                        <img data-th-src="@{~/icons/accept.svg}" src="../static/icons/accept.svg" width="20" alt=""
-                             data-th-onclick="'setFields( ' + #{MODIFY} + ',' + ${task.id} + ' )'"
-                        >
-                    </span>
-                    <span class="btn btn-sm p-1 btn-outline-light"
-                          data-bs-toggle="tooltip" data-bs-placement="top" title="Bejegyzések">
-                        <img data-th-src="@{~/icons/posts.svg}" src="../static/icons/posts.svg" width="20" alt=""
-                             data-th-onclick="'setFields( ' + #{POSTS} + ',' + ${task.id} + ' )'"
-                        >
-                    </span>
-                </div>
-                <!-- Function icons -->
-            </div>
-        </article>
-    </div>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col" class="col col-md-2">Projekt</th>
+            <th scope="col" class="col col-md-3">Feladat</th>
+            <th scope="col" class="col col-md-5">Feladat leírása</th>
+            <th scope="col" class="col col-md-1" style="text-align:right">M. Idő</th>
+            <th scope="col" class="col col-md-1" style="text-align:center">Műveletek</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr data-th-each="task : ${allProjectTasksDeveloper}">
+            <td class="col col-lg-2" style="text-align:left"
+                data-th-text="${task.projectTaskEntity.projectEntity.name}">Projekt neve
+            </td>
+            <td class="col col-lg-3" style="text-align:left"
+                data-th-text="${task.projectTaskEntity.name}">Feladat neve
+            </td>
+            <td class="col col-lg-5">
+                <label hidden for="description"></label>
+                <textarea disabled class="form-control" id="description"
+                          data-th-text="${task.projectTaskEntity.description}"
+                          style="background-color:white; height:40px; border-style:none;"
+                >Feladat leírása</textarea>
+            </td>
+            <td class="col col-lg-1" style="text-align:right">
+                <label hidden for="none"> </label>
+                <input type="number" class="form-control"
+                       data-th-value="${task.spendTime}"
+                       min="0" id='none'
+                       data-th-id="'spendTime' + ${task.id}"
+                       data-th-name="'spendTime' + ${task.id}"
+                       style="text-align:right; border:none" placeholder="0"
+                       data-th-onchange="'setTime(event,' + ${task.id} + ')'"
+                       data-th-onkeydown="'setTime(event,' + ${task.id} + ')'"
+                />
+            </td>
+            <td class="col col-lg-1" style="text-align:center">
+                <a class="btn-icon btn-outline-light"
+                   data-bs-toggle="tooltip" data-bs-placement="top" title="Az idő rögzítése">
+                   <img data-th-src="@{~/icons/accept.svg}" src="../static/icons/accept.svg" width="20" alt=""
+                        data-th-onclick="'setFields( ' + #{MODIFY} + ',' + ${task.id} + ' )'"
+                   >
+                </a>
+                <a class="btn-icon btn-outline-light"
+                   data-bs-toggle="tooltip" data-bs-placement="top" title="Bejegyzések">
+                   <img data-th-src="@{~/icons/posts.svg}" src="../static/icons/posts.svg" width="20" alt=""
+                        data-th-onclick="'setFields( ' + #{POSTS} + ',' + ${task.id} + ' )'"
+                   >
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 
     <!-- Data Form -->
     <form hidden name="taskSpendTime" data-th-action="@{/modifyDeveloperTask}"
