@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="hu" data-layout-decorate="~{layouts/rights_decorator}">
+<head><title>Felhasználóhoz tartozó fejlesztő</title></head>
+<body>
+<div data-layout-fragment="mainContent">
+    <nav class="navbar bg-light navbar-light" style="padding-left:1rem">
+        <a class="navbar-brand">
+            <span data-th-text="${user.fullName}">felhasználó_neve</span>
+            <span>felhasználóhoz tartozó fejlesztők kezelése</span>
+        </a>
+        <a class="btn btn-outline-secondary" data-th-href="@{/rights/users}">
+            <img data-th-src="@{~/icons/back.svg}" src="../../static/icons/back.svg" width="20" alt="" class="mb-1"/>
+            <span>Felhasználók</span>
+        </a>
+    </nav>
+    <br/>
+
+    <div>
+        <a class="btn btn-outline-secondary" data-th-href="@{|/startNewUserDeveloper/${user.id}|}">
+            <img data-th-src="@{~/icons/new.svg}" src="../../static/icons/new.svg" width="20" alt="" class="mb-1"/>
+            <span>Új fejlesztő hozzáadása a felhasználóhoz</span>
+        </a>
+    </div>
+    <br/>
+
+    <table class="table table-striped" data-th-if="${not #lists.isEmpty(user.developers)}">
+        <thead>
+        <tr>
+            <th scope="col" class="col col-md-11">Fejlesztő neve</th>
+            <th scope="col" class="col col-md-1" style="text-align:center">Műveletek</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr data-th-each="developer : ${user.developers}">
+            <td class="col col-lg-11" data-th-text="${developer.name}">developer.name</td>
+            <td class="col col-lg-1" style="text-align:center">
+                <a class="noDecor"
+                   data-th-href="@{|/startDeleteUserDeveloper/${user.id}/${developer.id}|}"
+                   data-bs-toggle="tooltip" data-bs-placement="top" title="Szerepkör elvétele a felhasználótól">
+                    <img data-th-src="@{~/icons/delete.svg}" src="../../static/icons/delete.svg" width="20" alt=""/>
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div data-th-if="${#lists.isEmpty(user.developers)}" style="text-align:center">
+        A felhasználóhoz nem tartozik fejlesztő!
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="hu" data-layout-decorate="~{layouts/rights_decorator}">
+<head><title>Porphyr</title></head>
+<body>
+<div data-layout-fragment="mainContent">
+    <nav class="navbar bg-light navbar-light" style="padding-left:1rem">
+        <a class="navbar-brand">
+            Új fejlesztő választása&nbsp;
+            <span data-th-text="${userName}">felhasználó neve</span>
+            &nbsp;felhasználóhoz
+        </a>
+        <a class="btn btn-outline-secondary" data-th-href="@{|/startUserDevelopers/${dataFromTemplate.id}|}">
+            <img data-th-src="@{~/icons/back.svg}" src="../../static/icons/back.svg" width="20" alt="" class="mb-1"/>
+            <span>Felhasználóhoz tartozó fejlesztők</span>
+        </a>
+    </nav>
+    <br/>
+    <form data-th-if="${not #lists.isEmpty(developers)}"
+          class="form center-block" name="userInputData" method="post"
+          style="width:50em; margin-left: auto; margin-right: auto;"
+          data-th-action="@{/newUserDeveloperDataProcessing}" data-th-object="${dataFromTemplate}"
+    >
+        <label hidden for="id"></label>
+        <input hidden type="number" class="form-control" id="id" name="id" data-th-field="*{id}">
+
+        <label hidden for="longData"></label>
+        <select class="form-control form-control-sm" style="appearance:listbox;" data-th-field="*{longData}" name="longData" id="longData">
+            <option value="" selected disabled>Kiválasztható fejlesztők</option>
+            <option data-th-each="developer : ${developers}"
+                    data-th-value="${developer.id}"
+                    data-th-text="${developer.name}">
+            </option>
+        </select>
+
+        <br/>
+        <div style="width:50em; text-align:center">
+            <button type="submit" class="btn btn-outline-secondary">Rögzítés</button>
+        </div>
+    </form>
+    <div data-th-if="${#lists.isEmpty(developers)}" style="text-align:center">
+        A felhasználóhoz nincs kiválasztható fejlesztő!
+    </div>
+</div>
+
+</body>
+</html>

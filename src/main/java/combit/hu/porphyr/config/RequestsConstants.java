@@ -104,6 +104,12 @@ public class RequestsConstants {
     public static final @NonNull String CALL_START_NEW_USER_ROLE = "/startNewUserRole/\\d*";
     public static final @NonNull String CALL_USER_ROLE_NEW = "/rights/user_role_new";
     public static final @NonNull String CALL_USER_ROLE_NEW_DATA_PROCESSING = "/newUserRoleDataProcessing";
+    public static final @NonNull String CALL_START_USER_DEVELOPERS = "/startUserDevelopers/\\d*";
+    public static final @NonNull String CALL_RIGHTS_USER_DEVELOPERS = "/rights/user_developers";
+    public static final @NonNull String CALL_START_DELETE_USER_DEVELOPER = "/startDeleteUserDeveloper/\\d*/\\d*";
+    public static final @NonNull String CALL_START_NEW_USER_DEVELOPER = "/startNewUserDeveloper/\\d*";
+    public static final @NonNull String CALL_USER_DEVELOPER_NEW = "/rights/user_developer_new";
+    public static final @NonNull String CALL_USER_DEVELOPER_NEW_DATA_PROCESSING = "/newUserDeveloperDataProcessing";
 
     //A PERMITS táblába a kulcsok kerülnek bele. Így egy funkcióhoz (engedélyhez) több request is tartozhat.
     public static final @NonNull Map<String, List<String>> PROTECTED_REQUEST_CALLS;
@@ -202,7 +208,9 @@ public class RequestsConstants {
                 CALL_RIGHTS_ROLES, CALL_START_NEW_ROLE, CALL_START_MODIFY_ROLE, CALL_START_DELETE_ROLE,
                 CALL_ROLE_INPUT_DATA_PROCESSING,
                 CALL_START_USER_ROLES, CALL_RIGHTS_USER_ROLES, CALL_START_DELETE_USER_ROLE,
-                CALL_START_NEW_USER_ROLE, CALL_USER_ROLE_NEW, CALL_USER_ROLE_NEW_DATA_PROCESSING
+                CALL_START_NEW_USER_ROLE, CALL_USER_ROLE_NEW, CALL_USER_ROLE_NEW_DATA_PROCESSING,
+                CALL_START_USER_DEVELOPERS, CALL_RIGHTS_USER_DEVELOPERS, CALL_START_DELETE_USER_DEVELOPER,
+                CALL_START_NEW_USER_DEVELOPER, CALL_USER_DEVELOPER_NEW, CALL_USER_DEVELOPER_NEW_DATA_PROCESSING
             ))
         );
         PROTECTED_REQUEST_CALLS = Collections.unmodifiableMap(tmpMap);

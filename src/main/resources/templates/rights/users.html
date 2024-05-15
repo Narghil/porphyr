@@ -27,20 +27,25 @@
         <tr>
             <th scope="col" class="col col-md-4">Teljes név</th>
             <th scope="col" class="col col-md-3">Belépési név</th>
-            <th scope="col" class="col col-md-4">E-mail</th>
-            <th scope="col" class="col col-md-1" style="text-align:center">Műveletek</th>
+            <th scope="col" class="col col-md-3">E-mail</th>
+            <th scope="col" class="col col-md-2" style="text-align:center">Műveletek</th>
         </tr>
         </thead>
         <tbody>
         <tr data-th-each="user : ${users}">
             <td class="col col-lg-4" data-th-text="${user.fullName}">user.fullName</td>
             <td class="col col-lg-3" data-th-text="${user.loginName}">user.loginName</td>
-            <td class="col col-lg-4" data-th-text="${user.email}">user.email</td>
-            <td class="col col-lg-1" style="text-align:center">
+            <td class="col col-lg-3" data-th-text="${user.email}">user.email</td>
+            <td class="col col-lg-2" style="text-align:center">
                 <a class="noDecor"
                    data-th-href="@{|/startUserRoles/${user.id}|}"
                    data-bs-toggle="tooltip" data-bs-placement="top" title="Felhasználó szerepkörei">
                     <img data-th-src="@{~/icons/roles.svg}" src="../../static/icons/roles.svg" width="20" alt=""/>
+                </a>
+                <a class="noDecor"
+                   data-th-href="@{|/startUserDevelopers/${user.id}|}"
+                   data-bs-toggle="tooltip" data-bs-placement="top" title="Felhasználó által kezelt fejlesztők">
+                    <img data-th-src="@{~/icons/developers.svg}" src="../../static/icons/developers.svg" width="20" alt=""/>
                 </a>
                 <a class="noDecor"
                    data-th-href="@{|/startModifyUser/${user.id}|}"
