@@ -72,7 +72,7 @@ public class RoleService {
     }
 
     /**
-     * Egy jogkör lekérdezése ID szerint ---- TESZT ÍRÁSA SZÜKSÉGES! ---
+     * Egy jogkör lekérdezése ID szerint
      */
     public synchronized @Nullable RoleEntity getRoleById(final @NonNull Long id)
         throws ExecutionException, InterruptedException {

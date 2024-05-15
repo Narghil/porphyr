@@ -60,7 +60,7 @@ public class UserEntity {
         joinColumns = {@JoinColumn(name = "user_id")},
         inverseJoinColumns = {@JoinColumn(name = "role_id")}
     )
-    private Set<RoleEntity> roles;
+    private @NonNull Set<RoleEntity> roles;
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
@@ -70,7 +70,7 @@ public class UserEntity {
         joinColumns = {@JoinColumn(name = "user_id")},
         inverseJoinColumns = {@JoinColumn(name = "developer_id")}
     )
-    private Set<DeveloperEntity> developers;
+    private @NonNull Set<DeveloperEntity> developers;
 
     @Transient
     private @Nullable String newPassword;
@@ -119,6 +119,8 @@ public class UserEntity {
         this.loginName = Objects.requireNonNull( pojo.loginName );
         this.newPassword = pojo.newPassword;
         this.retypedPassword = pojo.retypedPassword;
+        this.roles = new HashSet<>();
+        this.developers = new HashSet<>();
     }
 
     public void readPojo(final @NonNull Pojo pojo) {

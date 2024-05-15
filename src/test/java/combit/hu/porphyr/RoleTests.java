@@ -19,13 +19,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 import static combit.hu.porphyr.TestConstants.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -88,21 +88,22 @@ class RoleTests {
     void roleServiceQueriesTest() throws ExecutionException, InterruptedException {
         //getRoles() --------------------------
         assertArrayEquals(
-            ROLE_NAMES,
+            Arrays.stream(ROLE_NAMES).sorted().toArray(),
             spiedRoleService.getRoles().stream().map(RoleEntity::getRole)
                 .sorted().toArray(String[]::new)
         );
         verify(spyRoleRepository, times(1)).findAll();
-        //get Roles By Names
-        assertArrayEquals(
-            ROLE_NAMES,
-            new String[]{
-                Objects.requireNonNull(spiedRoleService.getRoleByRole(ROLE_NAMES[0])).getRole(),
-                Objects.requireNonNull(spiedRoleService.getRoleByRole(ROLE_NAMES[1])).getRole(),
-                Objects.requireNonNull(spiedRoleService.getRoleByRole(ROLE_NAMES[2])).getRole()
-            }
-        );
+        //getRoleByRole (name)
+        final @NonNull RoleEntity roleUser = Objects.requireNonNull(spiedRoleService.getRoleByRole(ROLE_NAMES[0]));
+        final @NonNull RoleEntity roleAdmin = Objects.requireNonNull(spiedRoleService.getRoleByRole(ROLE_NAMES[1]));
+        final @NonNull RoleEntity roleGuest = Objects.requireNonNull(spiedRoleService.getRoleByRole(ROLE_NAMES[2]));
+        assertArrayEquals(ROLE_NAMES, new String[]{roleUser.getRole(), roleAdmin.getRole(), roleGuest.getRole()});
         verify(spyRoleRepository, times(3)).findByRole(anyString());
+        //getRoleById
+        assertEquals(ROLE_NAMES[0], Objects.requireNonNull(spiedRoleService.getRoleById(roleUser.getId())).getRole() );
+        assertEquals(ROLE_NAMES[1], Objects.requireNonNull(spiedRoleService.getRoleById(roleAdmin.getId())).getRole() );
+        assertEquals(ROLE_NAMES[2], Objects.requireNonNull(spiedRoleService.getRoleById(roleGuest.getId())).getRole() );
+        verify(spyRoleRepository, times(3)).findAllById(anyLong());
         //findAllByRoleAndIdNot
         assertEquals(0, spyRoleRepository.findAllByRoleAndIdNot(ROLE_NAMES[0], 1L).size());
         assertEquals(1, spyRoleRepository.findAllByRoleAndIdNot(ROLE_NAMES[0], 2L).size());

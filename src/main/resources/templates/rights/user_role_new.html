@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="hu" data-layout-decorate="~{layouts/rights_decorator}">
+<head><title>Porphyr</title></head>
+<body>
+<div data-layout-fragment="mainContent">
+    <nav class="navbar bg-light navbar-light" style="padding-left:1rem">
+        <a class="navbar-brand">
+            Új szerepkör választása &nbsp;
+            <span data-th-text="${userName}">felhasználó neve</span>
+            &nbsp; számára
+        </a>
+        <a class="btn btn-outline-secondary" data-th-href="@{|/startUserRoles/${dataFromTemplate.id}|}">
+            <img data-th-src="@{~/icons/back.svg}" src="../../static/icons/back.svg" width="20" alt="" class="mb-1"/>
+            <span>Felhasználó szerepkörei</span>
+        </a>
+    </nav>
+    <br/>
+    <form data-th-if="${not #lists.isEmpty(roles)}"
+          class="form center-block" name="userInputData" method="post"
+          style="width:50em; margin-left: auto; margin-right: auto;"
+          data-th-action="@{/newUserRoleDataProcessing}" data-th-object="${dataFromTemplate}"
+    >
+        <label hidden for="id"></label>
+        <input hidden type="number" class="form-control" id="id" name="id" data-th-field="*{id}">
+
+        <label hidden for="longData"></label>
+        <select class="form-control form-control-sm" style="appearance:listbox;" data-th-field="*{longData}" name="longData" id="longData">
+            <option value="" selected disabled>Kiválasztható szerepkörök</option>
+            <option data-th-each="role : ${roles}"
+                    data-th-value="${role.id}"
+                    data-th-text="${role.role}">
+            </option>
+        </select>
+
+        <br/>
+        <div style="width:50em; text-align:center">
+            <button type="submit" class="btn btn-outline-secondary">Rögzítés</button>
+        </div>
+    </form>
+    <div data-th-if="${#lists.isEmpty(roles)}" style="text-align:center">
+        A felhasználóhoz nincs kiválasztható szerepkör!
+    </div>
+</div>
+
+</body>
+</html>

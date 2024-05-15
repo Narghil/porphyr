@@ -74,20 +74,25 @@ class UserTests {
     @Rollback
     //OneToMany kapcsolatok lekérdezésének ellenőrzése
     void userEntityQueriesTest() {
+        final @NonNull UserEntity userUser = Objects.requireNonNull( spyUserRepository.findByLoginName(LOGIN_NAMES[0]));
+        final @NonNull UserEntity userAdmin= Objects.requireNonNull( spyUserRepository.findByLoginName(LOGIN_NAMES[1]));
+
         //Roles
         assertArrayEquals(
             new String[]{ROLE_NAMES[1]},
-            Objects.requireNonNull( spyUserRepository.findByLoginName(LOGIN_NAMES[1]))
-                .getRoles()
-                .stream().map(RoleEntity::getRole).toArray(String[]::new)
+                userAdmin.getRoles().stream().map(RoleEntity::getRole).toArray(String[]::new)
         );
         //Developers
-        assertArrayEquals(
-            DEVELOPER_NAMES,
-            Objects.requireNonNull(spyUserRepository.findByLoginName(LOGIN_NAMES[1]))
-                .getDevelopers().stream().map(DeveloperEntity::getName).sorted()
-                .toArray(String[]::new)
+        assertArrayEquals( DEVELOPER_NAMES,
+            userAdmin.getDevelopers().stream().map(DeveloperEntity::getName).sorted().toArray(String[]::new)
         );
+        //findAllById
+        assertEquals( LOGIN_NAMES[0],
+            Objects.requireNonNull(spyUserRepository.findAllById(
+                Objects.requireNonNull(userUser.getId() ) ) ).getLoginName() );
+        assertEquals( LOGIN_NAMES[1],
+            Objects.requireNonNull(spyUserRepository.findAllById(
+                Objects.requireNonNull( userAdmin.getId() ) ) ).getLoginName() );
     }
 
     @Test
@@ -105,26 +110,34 @@ class UserTests {
                 developerService.getDeveloperById(1L), developerService.getDeveloperById(2L),
                 developerService.getDeveloperById(3L), developerService.getDeveloperById(4L)
             );
+
+        //getUserByLoginNames
+        final @NonNull UserEntity userUser = Objects.requireNonNull( spyUserRepository.findByLoginName(LOGIN_NAMES[0]));
+        final @NonNull UserEntity userAdmin= Objects.requireNonNull( spyUserRepository.findByLoginName(LOGIN_NAMES[1]));
+        assertArrayEquals(
+            USER_FULL_NAMES,
+            new String[]{ userUser.getFullName(), userAdmin.getFullName() }
+        );
+
+        //getUserById()
+        assertEquals( LOGIN_NAMES[0],
+            Objects.requireNonNull(spiedUserService.getUserById(
+                Objects.requireNonNull(userUser.getId() ) ) ).getLoginName() );
+        assertEquals( LOGIN_NAMES[1],
+            Objects.requireNonNull(spiedUserService.getUserById(
+                Objects.requireNonNull( userAdmin.getId() ) ) ).getLoginName() );
         //getUsers() --------------------------
         assertArrayEquals(
             LOGIN_NAMES,
             spiedUserService.getUsers().stream().map(UserEntity::getLoginName).toArray(String[]::new)
         );
         verify(spyUserRepository, times(1)).findAll();
-        //getUserByLoginNames
-        assertArrayEquals(
-            USER_FULL_NAMES,
-            new String[]{
-                Objects.requireNonNull(spiedUserService.getUserByLoginName(LOGIN_NAMES[0])).getFullName(),
-                Objects.requireNonNull(spiedUserService.getUserByLoginName(LOGIN_NAMES[1])).getFullName()
-            }
-        );
         verify( spyUserRepository, times(2)).findByLoginName(anyString());
         //getUserPermits() : "user" user
         UserEntity user = spiedUserService.getUserByLoginName( LOGIN_NAMES[0] );
         assertNotNull( user );
         assertTrue( spiedUserService.getUserPermits( user, actualUserPermitNames, actualUserPermittedRequestCalls, actualUserDevelopers ) );
-        assertEquals( 23, actualUserPermitNames.size());
+        assertEquals( 24, actualUserPermitNames.size());
         assertArrayEquals(
             requestedUserDevelopers.stream().map(DeveloperEntity::getName).sorted().toArray(),
             actualUserDevelopers.stream().map(DeveloperEntity::getName).sorted().toArray()
@@ -133,7 +146,7 @@ class UserTests {
         user = spiedUserService.getUserByLoginName( LOGIN_NAMES[1] );
         assertNotNull( user );
         assertTrue( spiedUserService.getUserPermits( user, actualUserPermitNames, actualUserPermittedRequestCalls, actualUserDevelopers ) );
-        assertEquals( 25, actualUserPermitNames.size() );
+        assertEquals( 27, actualUserPermitNames.size() );
         assertArrayEquals(
             requestedAdminDevelopers.stream().map(DeveloperEntity::getName).sorted().toArray(),
             actualUserDevelopers.stream().map(DeveloperEntity::getName).sorted().toArray()

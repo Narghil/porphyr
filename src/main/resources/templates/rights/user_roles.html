@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="hu" data-layout-decorate="~{layouts/rights_decorator}">
+<head><title>Felhasználó szerepkörei</title></head>
+<body>
+<div data-layout-fragment="mainContent">
+    <nav class="navbar bg-light navbar-light" style="padding-left:1rem">
+        <a class="navbar-brand">
+            <span data-th-text="${user.fullName}">felhasználó_neve</span>
+            &nbsp;
+            <span>szerepköreinek kezelése</span>
+        </a>
+        <a class="btn btn-outline-secondary" data-th-href="@{/rights/users}">
+            <img data-th-src="@{~/icons/back.svg}" src="../../static/icons/back.svg" width="20" alt="" class="mb-1"/>
+            <span>Felhasználók</span>
+        </a>
+    </nav>
+    <br/>
+
+    <div>
+        <a class="btn btn-outline-secondary" data-th-href="@{|/startNewUserRole/${user.id}|}">
+            <img data-th-src="@{~/icons/new.svg}" src="../../static/icons/new.svg" width="20" alt="" class="mb-1"/>
+            <span>Új szerepkör hozzáadása a felhasználóhoz</span>
+        </a>
+    </div>
+    <br/>
+
+    <table class="table table-striped" data-th-if="${not #lists.isEmpty(user.roles)}">
+        <thead>
+        <tr>
+            <th scope="col" class="col col-md-11">Szerepkör neve</th>
+            <th scope="col" class="col col-md-1" style="text-align:center">Műveletek</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr data-th-each="role : ${user.roles}">
+            <td class="col col-lg-11" data-th-text="${role.role}">role.role</td>
+            <td class="col col-lg-1" style="text-align:center">
+                <a class="noDecor"
+                   data-th-href="@{|/startDeleteUserRole/${user.id}/${role.id}|}"
+                   data-bs-toggle="tooltip" data-bs-placement="top" title="Szerepkör elvétele a felhasználótól">
+                    <img data-th-src="@{~/icons/delete.svg}" src="../../static/icons/delete.svg" width="20" alt=""/>
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div data-th-if="${#lists.isEmpty(user.roles)}" style="text-align:center">
+        A felhasználónak nincs szerepköre!
+    </div>
+
+</div>
+
+</body>
+</html>

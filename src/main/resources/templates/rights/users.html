@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="hu" data-layout-decorate="~{layouts/rights_decorator}">
-<head><title>Feladat bejegyzései</title></head>
+<head><title>Felhasználók</title></head>
 <body>
 <div data-layout-fragment="mainContent">
     <nav class="navbar bg-light navbar-light" style="padding-left:1rem">
@@ -38,7 +38,7 @@
             <td class="col col-lg-4" data-th-text="${user.email}">user.email</td>
             <td class="col col-lg-1" style="text-align:center">
                 <a class="noDecor"
-                   data-th-href="@{|/startUserPermits/${user.id}|}"
+                   data-th-href="@{|/startUserRoles/${user.id}|}"
                    data-bs-toggle="tooltip" data-bs-placement="top" title="Felhasználó szerepkörei">
                     <img data-th-src="@{~/icons/roles.svg}" src="../../static/icons/roles.svg" width="20" alt=""/>
                 </a>

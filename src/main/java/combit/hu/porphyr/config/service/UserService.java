@@ -100,7 +100,7 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * Egy felhasználó lekérdezése ID    ----   TESZT ÍRÁSA!!! ----
+     * Egy felhasználó lekérdezése ID szerint
      */
     public synchronized @Nullable UserEntity getUserById(final @NonNull Long id)
         throws ExecutionException, InterruptedException {
