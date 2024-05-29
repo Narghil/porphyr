@@ -68,7 +68,8 @@ public class ProjectsDevelopersTasksController {
             throw new PorphyrServiceException(PorphyrServiceException.Exceptions.NULL_VALUE);
         }
         sessionData.setSelectedProjectTaskDeveloperId(projectTaskDeveloperId);
-        @Nullable ProjectTaskDeveloperEntity projectTaskDeveloper =
+        @Nullable
+        ProjectTaskDeveloperEntity projectTaskDeveloper =
             projectTaskDeveloperService.getProjectTaskDeveloperById(projectTaskDeveloperId);
         if (projectTaskDeveloper == null) {
             throw new PorphyrServiceException(PorphyrServiceException.Exceptions.NULL_VALUE);

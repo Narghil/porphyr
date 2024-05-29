@@ -11,7 +11,11 @@ import java.util.List;
 
 @Repository
 public interface PostRepository extends CrudRepository<PostEntity, Long> {
-    @Nullable PostEntity findAllById( final @NonNull Long id );
-    @NonNull List<PostEntity> findAllByProjectTaskEntityOrderByCreatedDesc( final @NonNull ProjectTaskEntity projectTaskEntity );
-    void saveAndFlush( final @NonNull PostEntity postEntity);
+    @Nullable
+    PostEntity findAllById(final @NonNull Long id);
+
+    @NonNull
+    List<PostEntity> findAllByProjectTaskEntityOrderByCreatedDesc(final @NonNull ProjectTaskEntity projectTaskEntity);
+
+    void saveAndFlush(final @NonNull PostEntity postEntity);
 }

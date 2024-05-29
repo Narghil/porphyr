@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="hu" data-layout-decorate="~{layouts/rights_decorator}">
+<head><title>Szerepkör engedélyei</title></head>
+<body>
+<div data-layout-fragment="mainContent">
+    <nav class="navbar bg-light navbar-light" style="padding-left:1rem">
+        <a class="navbar-brand">
+            <span data-th-text="${roleName}">szerepkör_neve</span>
+            &nbsp;
+            <span>engedélyeinek kezelése</span>
+        </a>
+        <a class="btn btn-outline-secondary" data-th-href="@{/rights/roles}">
+            <img data-th-src="@{~/icons/back.svg}" src="../../static/icons/back.svg" width="20" alt="" class="mb-1"/>
+            <span>Szerepkörök</span>
+        </a>
+    </nav>
+    <br/>
+
+    <div>
+        <a class="btn btn-outline-secondary" data-th-href="@{|/startNewRolePermit/${roleId}|}">
+            <img data-th-src="@{~/icons/new.svg}" src="../../static/icons/new.svg" width="20" alt="" class="mb-1"/>
+            <span>Új engedély hozzáadása a szerepkörhöz</span>
+        </a>
+    </div>
+    <br/>
+
+    <table class="table table-striped" data-th-if="${not #lists.isEmpty(permits)}">
+        <thead>
+        <tr>
+            <th scope="col" class="col col-md-4">Engedély neve</th>
+            <th scope="col" class="col col-md-7">Engedély leírása</th>
+            <th scope="col" class="col col-md-1" style="text-align:center">Műveletek</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr data-th-each="permit : ${permits}">
+            <td class="col col-lg-4" data-th-text="${permit.name}">permit.name</td>
+            <td class="col col-lg-7">
+                <label hidden for="description"></label>
+                <textarea disabled class="form-control" id="description"
+                          data-th-text="${permit.description}"
+                          style="background-color:white; height:40px; border-style:none;"
+                >permit.description</textarea>
+            </td>
+            <td class="col col-lg-1" style="text-align:center">
+                <a class="noDecor"
+                   data-th-href="@{|/startDeleteRolePermit/${roleId}/${permit.id}|}"
+                   data-bs-toggle="tooltip" data-bs-placement="top" title="Engedély elvétele a szerepkörtől">
+                    <img data-th-src="@{~/icons/delete.svg}" src="../../static/icons/delete.svg" width="20" alt=""/>
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div data-th-if="${#lists.isEmpty(permits)}" style="text-align:center">
+        A szerepkörhöz nem tartoznak engedélyek!
+    </div>
+
+</div>
+
+</body>
+</html>

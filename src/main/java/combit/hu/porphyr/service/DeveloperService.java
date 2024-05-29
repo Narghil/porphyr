@@ -162,6 +162,7 @@ public class DeveloperService {
     }
 
     //------------- Lekérdezések -----------------
+
     /**
      * Fejlesztők listájának lekérdezése
      */
@@ -173,11 +174,12 @@ public class DeveloperService {
                 return developerRepository.findAll();
             }
         }
-        @NonNull List<DeveloperEntity> result = new ArrayList<>();
+        @NonNull
+        List<DeveloperEntity> result = new ArrayList<>();
         try {
             result = forkJoinPool.submit(new CallableCore()).get();
-            for( DeveloperEntity developer : result){
-                getDeveloperFullTime( developer );
+            for (DeveloperEntity developer : result) {
+                getDeveloperFullTime(developer);
             }
         } catch (ExecutionException executionException) {
             PorphyrServiceException.handleExecutionException(executionException);
@@ -199,13 +201,14 @@ public class DeveloperService {
 
             @Override
             public List<DeveloperEntity> call() {
-                if( projectTaskEntity.getId() == null){
+                if (projectTaskEntity.getId() == null) {
                     throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.NULL_VALUE));
                 }
-                return developerRepository.findProjectTaskDevelopers( projectTaskEntity.getId());
+                return developerRepository.findProjectTaskDevelopers(projectTaskEntity.getId());
             }
         }
-        @NonNull List<DeveloperEntity> result = new ArrayList<>();
+        @NonNull
+        List<DeveloperEntity> result = new ArrayList<>();
         try {
             result = forkJoinPool.submit(new CallableCore(projectTaskEntity)).get();
         } catch (ExecutionException executionException) {
@@ -213,7 +216,6 @@ public class DeveloperService {
         }
         return result;
     }
-
 
     /**
      * Egy fejlesztő lekérdezése ID szerint.
@@ -232,10 +234,13 @@ public class DeveloperService {
                 return developerRepository.findAllById(id);
             }
         }
-        @Nullable DeveloperEntity result = null;
+        @Nullable
+        DeveloperEntity result = null;
         try {
             result = forkJoinPool.submit(new CallableCore(id)).get();
-            if( result != null) getDeveloperFullTime( result );
+            if (result != null) {
+                getDeveloperFullTime(result);
+            }
         } catch (ExecutionException executionException) {
             PorphyrServiceException.handleExecutionException(executionException);
         }
@@ -264,10 +269,13 @@ public class DeveloperService {
                 }
             }
         }
-        @Nullable DeveloperEntity result = null;
+        @Nullable
+        DeveloperEntity result = null;
         try {
             result = forkJoinPool.submit(new CallableCore(name)).get();
-            if( result != null) getDeveloperFullTime( result );
+            if (result != null) {
+                getDeveloperFullTime(result);
+            }
         } catch (ExecutionException executionException) {
             PorphyrServiceException.handleExecutionException(executionException);
         }
@@ -293,7 +301,8 @@ public class DeveloperService {
                 return !developerRepository.findAllByNameAndIdNot(name, id).isEmpty();
             }
         }
-        @NonNull Boolean result = false;
+        @NonNull
+        Boolean result = false;
         try {
             result = forkJoinPool.submit(new CallableCore(name, id)).get();
         } catch (ExecutionException executionException) {
@@ -318,15 +327,17 @@ public class DeveloperService {
 
             @Override
             public @NonNull Long call() {
-                @Nullable Long developerId = developer.getId();
+                @Nullable
+                Long developerId = developer.getId();
                 return (developerId == null)
                        ? 0L : developerRepository.sumSpendTimeByDeveloperId(developerId);
             }
         }
-        @NonNull Long result = 0L;
+        @NonNull
+        Long result = 0L;
         try {
             result = forkJoinPool.submit(new CallableCore(developer)).get();
-            developer.setSpendTime( result );
+            developer.setSpendTime(result);
         } catch (ExecutionException ee) {
             PorphyrServiceException.handleExecutionException(ee);
         }

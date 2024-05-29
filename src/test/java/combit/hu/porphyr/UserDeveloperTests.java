@@ -47,16 +47,16 @@ class UserDeveloperTests {
         final @NonNull DeveloperRepository developerRepository
     ) {
         this.entityManager = entityManager;
-        this.spiedUserService = new UserService( this.entityManager, userRepository);
+        this.spiedUserService = new UserService(this.entityManager, userRepository);
         this.spyUserRepository = Mockito.mock(
-            UserRepository.class, AdditionalAnswers.delegatesTo( userRepository)
+            UserRepository.class, AdditionalAnswers.delegatesTo(userRepository)
         );
         this.spiedUserService.setUserRepository(this.spyUserRepository);
         this.spiedUserService.setEntityManager(this.entityManager);
 
-        this.spiedDeveloperService = new DeveloperService( this.entityManager, developerRepository);
+        this.spiedDeveloperService = new DeveloperService(this.entityManager, developerRepository);
         this.spyDeveloperRepository = Mockito.mock(
-            DeveloperRepository.class, AdditionalAnswers.delegatesTo( developerRepository)
+            DeveloperRepository.class, AdditionalAnswers.delegatesTo(developerRepository)
         );
         this.spiedDeveloperService.setDeveloperRepository(this.spyDeveloperRepository);
         this.spiedDeveloperService.setEntityManager(this.entityManager);
@@ -77,52 +77,52 @@ class UserDeveloperTests {
         final @NonNull String NEW_DEVELOPER = "5. fejlesztő";
         //Létező developer felvitele a user-hez
         final @NonNull UserEntity expectedUser =
-            Objects.requireNonNull( spiedUserService.getUserByLoginName( LOGIN_NAMES[0] ))
-        ;
-        @NonNull DeveloperEntity newDeveloper = Objects.requireNonNull( spiedDeveloperService.getDeveloperByName( DEVELOPER_NAMES[1]));
-        expectedUser.getDevelopers().add( newDeveloper );
+            Objects.requireNonNull(spiedUserService.getUserByLoginName(LOGIN_NAMES[0]));
+        @NonNull
+        DeveloperEntity newDeveloper = Objects.requireNonNull(spiedDeveloperService.getDeveloperByName(DEVELOPER_NAMES[1]));
+        expectedUser.getDevelopers().add(newDeveloper);
         spyUserRepository.saveAndFlush(expectedUser);
         entityManager.clear();
-        @NonNull UserEntity actualUser =
-            Objects.requireNonNull( spiedUserService.getUserByLoginName( expectedUser.getLoginName() ))
-        ;
-        assertEquals( expectedUser, actualUser);
+        @NonNull
+        UserEntity actualUser =
+            Objects.requireNonNull(spiedUserService.getUserByLoginName(expectedUser.getLoginName()));
+        assertEquals(expectedUser, actualUser);
         assertArrayEquals(
-            expectedUser.getDevelopers().stream().map( DeveloperEntity::getName ).sorted().toArray(),
-            actualUser.getDevelopers().stream().map( DeveloperEntity::getName ).sorted().toArray()
+            expectedUser.getDevelopers().stream().map(DeveloperEntity::getName).sorted().toArray(),
+            actualUser.getDevelopers().stream().map(DeveloperEntity::getName).sorted().toArray()
         );
         //új developer felvitele a user-hez
         entityManager.clear();
         newDeveloper = new DeveloperEntity(NEW_DEVELOPER);
-        expectedUser.getDevelopers().add( newDeveloper );
-        spyDeveloperRepository.saveAndFlush( newDeveloper );
+        expectedUser.getDevelopers().add(newDeveloper);
+        spyDeveloperRepository.saveAndFlush(newDeveloper);
         spyUserRepository.saveAndFlush(expectedUser);
         entityManager.clear();
-        actualUser = Objects.requireNonNull( spiedUserService.getUserByLoginName( expectedUser.getLoginName() ));
-        assertEquals( expectedUser, actualUser);
+        actualUser = Objects.requireNonNull(spiedUserService.getUserByLoginName(expectedUser.getLoginName()));
+        assertEquals(expectedUser, actualUser);
         assertArrayEquals(
-            expectedUser.getDevelopers().stream().map( DeveloperEntity::getName ).sorted().toArray(),
-            actualUser.getDevelopers().stream().map( DeveloperEntity::getName ).sorted().toArray()
+            expectedUser.getDevelopers().stream().map(DeveloperEntity::getName).sorted().toArray(),
+            actualUser.getDevelopers().stream().map(DeveloperEntity::getName).sorted().toArray()
         );
         //Létező developer felvitele a user-hez, ami már van nála: Nem jön létre duplikáció
         entityManager.clear();
-        newDeveloper = Objects.requireNonNull( spiedDeveloperService.getDeveloperByName( DEVELOPER_NAMES[0]));
-        expectedUser.getDevelopers().add( newDeveloper );
+        newDeveloper = Objects.requireNonNull(spiedDeveloperService.getDeveloperByName(DEVELOPER_NAMES[0]));
+        expectedUser.getDevelopers().add(newDeveloper);
         spyUserRepository.saveAndFlush(expectedUser);
-        actualUser = Objects.requireNonNull( spiedUserService.getUserByLoginName( expectedUser.getLoginName() ));
+        actualUser = Objects.requireNonNull(spiedUserService.getUserByLoginName(expectedUser.getLoginName()));
         assertArrayEquals(
-            actualUser.getDevelopers().stream().map( DeveloperEntity::getName ).sorted().toArray(),
-            new String[]{ DEVELOPER_NAMES[0], DEVELOPER_NAMES[1], NEW_DEVELOPER }
+            actualUser.getDevelopers().stream().map(DeveloperEntity::getName).sorted().toArray(),
+            new String[]{DEVELOPER_NAMES[0], DEVELOPER_NAMES[1], NEW_DEVELOPER}
         );
         //
         //developer-ok elvétele a user-től.
         entityManager.clear();
-        expectedUser.setDevelopers( new HashSet<>() );
+        expectedUser.setDevelopers(new HashSet<>());
         spyUserRepository.saveAndFlush(expectedUser);
         entityManager.clear();
-        actualUser = Objects.requireNonNull( spiedUserService.getUserByLoginName( expectedUser.getLoginName() ));
-        assertEquals( 0, actualUser.getDevelopers().size() );
+        actualUser = Objects.requireNonNull(spiedUserService.getUserByLoginName(expectedUser.getLoginName()));
+        assertEquals(0, actualUser.getDevelopers().size());
         //De eze nem befolyásolja a meglévő developer-ok számát.
-        assertEquals( spiedDeveloperService.getDevelopers().size(), DEVELOPER_NAMES.length +1 );
+        assertEquals(spiedDeveloperService.getDevelopers().size(), DEVELOPER_NAMES.length + 1);
     }
 }

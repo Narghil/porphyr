@@ -26,6 +26,13 @@ databaseChangeLog:
               unique: false
             name: DESCRIPTION
             type: CHARACTER LARGE OBJECT
+        - column:
+            constraints:
+              nullable: false
+              unique: false
+            name: USABLE
+            type: BOOLEAN
+            defaultValueBoolean: true
         tableName: PERMITS
 - changeSet:
     id: 19

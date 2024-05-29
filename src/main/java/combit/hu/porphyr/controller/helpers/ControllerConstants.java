@@ -14,7 +14,6 @@ public class ControllerConstants {
     public static final int MENU_ITEM_INSERT = 7;
     public static final @NonNull String ERROR_TITLE = "Hiba!";
 
-
     private ControllerConstants() {
     }
 }

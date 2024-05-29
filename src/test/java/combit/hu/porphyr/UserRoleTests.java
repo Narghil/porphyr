@@ -77,11 +77,13 @@ class UserRoleTests {
         //Létező role felvitele a user-hez
         final @NonNull UserEntity expectedUser =
             Objects.requireNonNull(spiedUserService.getUserByLoginName(LOGIN_NAMES[0]));
-        @NonNull RoleEntity newRole = Objects.requireNonNull(spiedRoleService.getRoleByRole(ROLE_NAMES[1]));
+        @NonNull
+        RoleEntity newRole = Objects.requireNonNull(spiedRoleService.getRoleByRole(ROLE_NAMES[1]));
         expectedUser.getRoles().add(newRole);
         spyUserRepository.saveAndFlush(expectedUser);
         entityManager.clear();
-        @NonNull UserEntity actualUser =
+        @NonNull
+        UserEntity actualUser =
             Objects.requireNonNull(spiedUserService.getUserByLoginName(expectedUser.getLoginName()));
         assertEquals(expectedUser, actualUser);
         assertArrayEquals(

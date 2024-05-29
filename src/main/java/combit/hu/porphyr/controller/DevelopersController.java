@@ -52,13 +52,15 @@ public class DevelopersController {
         @NonNull
         final TemplateData dataFromTemplate
     ) throws ExecutionException, InterruptedException {
-        @NonNull String result;
+        @NonNull
+        String result;
         @Nullable
         final Long developerId = dataFromTemplate.getId();
         if (developerId == null) {
             throw new PorphyrServiceException(PorphyrServiceException.Exceptions.NULL_VALUE);
         }
-        @Nullable DeveloperEntity developer = developerService.getDeveloperById(dataFromTemplate.getId());
+        @Nullable
+        DeveloperEntity developer = developerService.getDeveloperById(dataFromTemplate.getId());
         if (developer == null) {
             throw new PorphyrServiceException(PorphyrServiceException.Exceptions.NULL_VALUE);
         }
@@ -105,8 +107,10 @@ public class DevelopersController {
         @NonNull
         final TemplateData dataFromTemplate
     ) throws InterruptedException, ExecutionException {
-        @NonNull String result = REDIRECT_TO_DEVELOPERS;
-        @Nullable String developerName = dataFromTemplate.getName();
+        @NonNull
+        String result = REDIRECT_TO_DEVELOPERS;
+        @Nullable
+        String developerName = dataFromTemplate.getName();
         sessionData.setDataFromTemplate(dataFromTemplate);
         if (developerName == null) {
             webErrorBean.setError(
@@ -129,8 +133,7 @@ public class DevelopersController {
 
     //------------------------ Fejlesztő módosítása
     public @NonNull String startModifyDeveloper()
-        throws InterruptedException, ExecutionException
-    {
+        throws InterruptedException, ExecutionException {
         final @NonNull DeveloperEntity developer = sessionData.getSelectedDeveloper();
         sessionData.getDataFromTemplate().setId(developer.getId());
         sessionData.getDataFromTemplate().setName(developer.getName());
@@ -152,9 +155,11 @@ public class DevelopersController {
     @PostMapping("/modifyDeveloper")
     public @NonNull String modifyDeveloper(
         @ModelAttribute
-        @NonNull TemplateData dataFromTemplate
+        @NonNull
+        TemplateData dataFromTemplate
     ) throws InterruptedException, ExecutionException {
-        @NonNull String result = REDIRECT_TO_DEVELOPERS;
+        @NonNull
+        String result = REDIRECT_TO_DEVELOPERS;
         sessionData.setDataFromTemplate(dataFromTemplate);
 
         final @Nullable DeveloperEntity modifiedDeveloper = sessionData.getSelectedDeveloper();

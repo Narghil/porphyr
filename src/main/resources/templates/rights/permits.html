@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="hu" data-layout-decorate="~{layouts/rights_decorator}">
+<head><title>Engedélyek</title></head>
+<body>
+<div data-layout-fragment="mainContent">
+    <nav class="navbar bg-light navbar-light" style="padding-left:1rem">
+        <a class="navbar-brand">
+            <span>Engedélyek listája</span>
+        </a>
+        <a class="btn btn-outline-secondary" data-th-href="@{/rights}">
+            <img data-th-src="@{~/icons/back.svg}" src="../../static/icons/back.svg" width="20" alt="" class="mb-1"/>
+            <span>Jogosultságok</span>
+        </a>
+    </nav>
+    <br/>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col" class="col col-md-12">Engedély leírása</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr data-th-each="permit : ${permits}">
+            <td class="col col-lg-12" data-th-text="${permit.description}">permit.description</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

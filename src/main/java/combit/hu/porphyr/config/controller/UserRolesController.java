@@ -28,6 +28,7 @@ public class UserRolesController {
 
     private static final @NonNull String SUB_DIR = "rights/";
     private static final String ERROR = "error";
+    private static final String USERS = "users";
     private static final String USER_ROLES = SUB_DIR + "user_roles";
     private static final String USER_ROLE_NEW = SUB_DIR + "user_role_new";
 
@@ -95,7 +96,7 @@ public class UserRolesController {
             TemplateData dataToTemplate = new TemplateData();
             dataToTemplate.setId(userId);
             List<RoleEntity> roles = roleService.getRoles();
-            roles.removeAll( user.getRoles() );
+            roles.removeAll(user.getRoles());
 
             model.addAttribute(ERROR, webErrorBean.getWebErrorData());
             model.addAttribute("userName", user.getFullName());
@@ -103,8 +104,7 @@ public class UserRolesController {
             model.addAttribute("roles", roles);
         } else {
             webErrorBean.setError(ON, ERROR_TITLE, PorphyrServiceException.Exceptions.NULL_VALUE.getDescription());
-            model.addAttribute("user", user);
-            result = USER_ROLES;
+            result = USERS;
         }
 
         return result;
@@ -117,11 +117,11 @@ public class UserRolesController {
         final TemplateData dataFromTemplate,
         final @NonNull Model model
     ) throws ExecutionException, InterruptedException {
-        final @NonNull Long userId = Objects.requireNonNull( dataFromTemplate.getId() );
-        final @NonNull Long roleId = Objects.requireNonNull( dataFromTemplate.getLongData());
+        final @NonNull Long userId = Objects.requireNonNull(dataFromTemplate.getId());
+        final @NonNull Long roleId = Objects.requireNonNull(dataFromTemplate.getLongData());
         UserEntity user = userService.getUserById(userId);
         RoleEntity role = roleService.getRoleById(roleId);
-        if( user != null && role != null ) {
+        if (user != null && role != null) {
             user.getRoles().add(role);
             try {
                 userService.modifyUser(user);

@@ -51,9 +51,15 @@ public class RolesController {
         Long id,
         final @NonNull Model model
     ) throws ExecutionException, InterruptedException {
-        model.addAttribute("role", roleService.getRoleById( id ) );
-        model.addAttribute(ERROR, webErrorBean.getWebErrorData());
-        return ROLES_INPUT ;
+        RoleEntity role = roleService.getRoleById(id);
+        if (role != null) {
+            model.addAttribute("role", role);
+            model.addAttribute(ERROR, webErrorBean.getWebErrorData());
+        } else {
+            webErrorBean.setError(ON, ERROR_TITLE, PorphyrServiceException.Exceptions.NULL_VALUE.getDescription());
+            return REDIRECT_TO + ROLES;
+        }
+        return ROLES_INPUT;
     }
 
     @RequestMapping("/startDeleteRole/{id}")
@@ -63,10 +69,15 @@ public class RolesController {
         final @NonNull Model model
     ) throws ExecutionException, InterruptedException {
         RoleEntity role = roleService.getRoleById(id);
-        try {
-            if( role != null) roleService.deleteRole( role );
-        } catch (PorphyrServiceException porphyrServiceException) {
-            webErrorBean.setError(ON, ERROR_TITLE, porphyrServiceException.getMessage());
+        if (role != null) {
+            try {
+                roleService.deleteRole(role);
+            } catch (PorphyrServiceException porphyrServiceException) {
+                webErrorBean.setError(ON, ERROR_TITLE, porphyrServiceException.getMessage());
+            }
+        } else {
+            webErrorBean.setError(ON, ERROR_TITLE, PorphyrServiceException.Exceptions.NULL_VALUE.getDescription());
+            return REDIRECT_TO + ROLES;
         }
         return REDIRECT_TO + ROLES;
     }
@@ -77,13 +88,14 @@ public class RolesController {
         final @NonNull RoleEntity.Pojo roleData,
         final @NonNull Model model
     ) throws ExecutionException, InterruptedException {
-        @NonNull String result = REDIRECT_TO + ROLES;
+        @NonNull
+        String result = REDIRECT_TO + ROLES;
         try {
             if (roleData.getId() == null) {
                 roleService.insertNewRole(new RoleEntity(roleData));
             } else {
-                final RoleEntity roleEntity = roleService.getRoleById( Objects.requireNonNull( roleData.getId() ) );
-                if( roleEntity != null) {
+                final RoleEntity roleEntity = roleService.getRoleById(Objects.requireNonNull(roleData.getId()));
+                if (roleEntity != null) {
                     roleEntity.readPojo(roleData);
                     roleService.modifyRole(roleEntity);
                 }

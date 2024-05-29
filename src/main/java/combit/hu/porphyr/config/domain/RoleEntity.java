@@ -47,7 +47,7 @@ public class RoleEntity {
         joinColumns = {@JoinColumn(name = "role_id")},
         inverseJoinColumns = {@JoinColumn(name = "user_id")}
     )
-    private Set<UserEntity> users = new HashSet<>();
+    private @NonNull Set<UserEntity> users = new HashSet<>();
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
@@ -57,8 +57,7 @@ public class RoleEntity {
         joinColumns = {@JoinColumn(name = "role_id")},
         inverseJoinColumns = {@JoinColumn(name = "permit_id")}
     )
-    private Set<PermitEntity> permits = new HashSet<>();
-
+    private @NonNull Set<PermitEntity> permits = new HashSet<>();
 
     @Override
     public String toString() {
@@ -71,19 +70,18 @@ public class RoleEntity {
 
     @Setter
     @Getter
-    public static class Pojo{
+    public static class Pojo {
         private @Nullable Long id;
         private @Nullable String role;
     }
 
     public RoleEntity(final @NonNull RoleEntity.Pojo pojo) {
         this.id = pojo.id;
-        this.role = Objects.requireNonNull( pojo.role );
+        this.role = Objects.requireNonNull(pojo.role);
     }
 
     public void readPojo(final @NonNull RoleEntity.Pojo pojo) {
         this.id = pojo.id;
-        this.role = Objects.requireNonNull( pojo.role );
+        this.role = Objects.requireNonNull(pojo.role);
     }
-
 }

@@ -63,7 +63,7 @@ class ProjectTests {
     @Test
     @Transactional
     @Rollback
-    // OneToMany kapcsolatok lekérdezésének ellenőrzése
+        // OneToMany kapcsolatok lekérdezésének ellenőrzése
     void projectEntityQueriesTest() {
         ProjectEntity actualProject;
         //getProjectDevelopers
@@ -151,10 +151,10 @@ class ProjectTests {
         );
         verify(spyProjectRepository, times(8)).findAllByNameAndIdNot(anyString(), anyLong());
         //getProjectFullTime
-        assertEquals( 0L, spiedProjectService.getProjectFullTime(actualProjects.get(0) ) );
-        assertEquals( 1L, spiedProjectService.getProjectFullTime(actualProjects.get(1) ) );
-        assertEquals( 0L, spiedProjectService.getProjectFullTime(actualProjects.get(2) ) );
-        assertEquals( 0L, spiedProjectService.getProjectFullTime(actualProjects.get(3) ) );
+        assertEquals(0L, spiedProjectService.getProjectFullTime(actualProjects.get(0)));
+        assertEquals(1L, spiedProjectService.getProjectFullTime(actualProjects.get(1)));
+        assertEquals(0L, spiedProjectService.getProjectFullTime(actualProjects.get(2)));
+        assertEquals(0L, spiedProjectService.getProjectFullTime(actualProjects.get(3)));
     }
 
     @Test

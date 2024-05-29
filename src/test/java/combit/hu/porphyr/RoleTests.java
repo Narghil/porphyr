@@ -100,9 +100,9 @@ class RoleTests {
         assertArrayEquals(ROLE_NAMES, new String[]{roleUser.getRole(), roleAdmin.getRole(), roleGuest.getRole()});
         verify(spyRoleRepository, times(3)).findByRole(anyString());
         //getRoleById
-        assertEquals(ROLE_NAMES[0], Objects.requireNonNull(spiedRoleService.getRoleById(roleUser.getId())).getRole() );
-        assertEquals(ROLE_NAMES[1], Objects.requireNonNull(spiedRoleService.getRoleById(roleAdmin.getId())).getRole() );
-        assertEquals(ROLE_NAMES[2], Objects.requireNonNull(spiedRoleService.getRoleById(roleGuest.getId())).getRole() );
+        assertEquals(ROLE_NAMES[0], Objects.requireNonNull(spiedRoleService.getRoleById(roleUser.getId())).getRole());
+        assertEquals(ROLE_NAMES[1], Objects.requireNonNull(spiedRoleService.getRoleById(roleAdmin.getId())).getRole());
+        assertEquals(ROLE_NAMES[2], Objects.requireNonNull(spiedRoleService.getRoleById(roleGuest.getId())).getRole());
         verify(spyRoleRepository, times(3)).findAllById(anyLong());
         //findAllByRoleAndIdNot
         assertEquals(0, spyRoleRepository.findAllByRoleAndIdNot(ROLE_NAMES[0], 1L).size());

@@ -71,7 +71,10 @@ public class PostEntity {
             ;
     }
 
-    public void setProjectTaskAndDeveloper( final @NonNull ProjectTaskEntity projectTaskEntity, final @NonNull DeveloperEntity developerEntity){
+    public void setProjectTaskAndDeveloper(
+        final @NonNull ProjectTaskEntity projectTaskEntity,
+        final @NonNull DeveloperEntity developerEntity
+    ) {
         setProjectTaskEntity(projectTaskEntity);
         setDeveloperEntity(developerEntity);
     }

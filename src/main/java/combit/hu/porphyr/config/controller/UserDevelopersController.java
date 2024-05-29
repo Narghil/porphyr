@@ -28,6 +28,7 @@ public class UserDevelopersController {
 
     private static final @NonNull String SUB_DIR = "rights/";
     private static final String ERROR = "error";
+    private static final String USERS = "users";
     private static final String USER_ROLES = SUB_DIR + "user_developers";
     private static final String USER_ROLE_NEW = SUB_DIR + "user_developer_new";
 
@@ -95,7 +96,7 @@ public class UserDevelopersController {
             TemplateData dataToTemplate = new TemplateData();
             dataToTemplate.setId(userId);
             List<DeveloperEntity> developers = developerService.getDevelopers();
-            developers.removeAll( user.getDevelopers() );
+            developers.removeAll(user.getDevelopers());
 
             model.addAttribute(ERROR, webErrorBean.getWebErrorData());
             model.addAttribute("userName", user.getFullName());
@@ -103,8 +104,7 @@ public class UserDevelopersController {
             model.addAttribute("developers", developers);
         } else {
             webErrorBean.setError(ON, ERROR_TITLE, PorphyrServiceException.Exceptions.NULL_VALUE.getDescription());
-            model.addAttribute("user", user);
-            result = USER_ROLES;
+            result = USERS;
         }
 
         return result;
@@ -117,11 +117,11 @@ public class UserDevelopersController {
         final TemplateData dataFromTemplate,
         final @NonNull Model model
     ) throws ExecutionException, InterruptedException {
-        final @NonNull Long userId = Objects.requireNonNull( dataFromTemplate.getId() );
-        final @NonNull Long developerId = Objects.requireNonNull( dataFromTemplate.getLongData());
+        final @NonNull Long userId = Objects.requireNonNull(dataFromTemplate.getId());
+        final @NonNull Long developerId = Objects.requireNonNull(dataFromTemplate.getLongData());
         UserEntity user = userService.getUserById(userId);
         DeveloperEntity developer = developerService.getDeveloperById(developerId);
-        if( user != null && developer != null ) {
+        if (user != null && developer != null) {
             user.getDevelopers().add(developer);
             try {
                 userService.modifyUser(user);

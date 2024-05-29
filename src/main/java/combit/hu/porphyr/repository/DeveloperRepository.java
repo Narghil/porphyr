@@ -12,11 +12,19 @@ import java.util.List;
 @Repository
 public interface DeveloperRepository extends CrudRepository<DeveloperEntity, Long> {
 
-    @NonNull List<DeveloperEntity> findAll();
-    @Nullable DeveloperEntity findAllById(final @NonNull Long id);
-    @NonNull List<DeveloperEntity> findAllByName(final @NonNull String name);
-    @NonNull List<DeveloperEntity> findAllByNameAndIdNot(final @NonNull String name, final @NonNull Long id);
-    void saveAndFlush( final @NonNull DeveloperEntity developerEntity);
+    @NonNull
+    List<DeveloperEntity> findAll();
+
+    @Nullable
+    DeveloperEntity findAllById(final @NonNull Long id);
+
+    @NonNull
+    List<DeveloperEntity> findAllByName(final @NonNull String name);
+
+    @NonNull
+    List<DeveloperEntity> findAllByNameAndIdNot(final @NonNull String name, final @NonNull Long id);
+
+    void saveAndFlush(final @NonNull DeveloperEntity developerEntity);
 
     @Query(
         "SELECT COALESCE(SUM( ProjectTaskDeveloper.spendTime ),0) " +
@@ -25,14 +33,16 @@ public interface DeveloperRepository extends CrudRepository<DeveloperEntity, Lon
             "ProjectDeveloper.developerEntity.id = :developerId and " +
             "ProjectTaskDeveloper.projectDeveloperEntity.id = ProjectDeveloper.id "
     )
-    @NonNull Long sumSpendTimeByDeveloperId( final @NonNull Long developerId );
+    @NonNull
+    Long sumSpendTimeByDeveloperId(final @NonNull Long developerId);
 
     @Query(
         "SELECT Developer " +
-        "    FROM DeveloperEntity Developer, " +
-        "        ProjectTaskDeveloperEntity ProjectTaskDeveloper " +
-        "    WHERE Developer.id = ProjectTaskDeveloper.projectDeveloperEntity.developerEntity.id and " +
-        "        ProjectTaskDeveloper.projectTaskEntity.id = :projectTaskId "
+            "    FROM DeveloperEntity Developer, " +
+            "        ProjectTaskDeveloperEntity ProjectTaskDeveloper " +
+            "    WHERE Developer.id = ProjectTaskDeveloper.projectDeveloperEntity.developerEntity.id and " +
+            "        ProjectTaskDeveloper.projectTaskEntity.id = :projectTaskId "
     )
-    @NonNull List<DeveloperEntity> findProjectTaskDevelopers( final @NonNull Long projectTaskId);
+    @NonNull
+    List<DeveloperEntity> findProjectTaskDevelopers(final @NonNull Long projectTaskId);
 }

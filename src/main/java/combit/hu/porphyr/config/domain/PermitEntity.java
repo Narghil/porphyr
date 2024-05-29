@@ -48,6 +48,9 @@ public class PermitEntity {
     @Column
     private @NonNull String description;
 
+    @Column
+    private @NonNull Boolean usable;
+
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @ManyToMany()
@@ -63,8 +66,9 @@ public class PermitEntity {
         return "Permit [id=" + id + ", name=" + name + ", description=" + description + "]";
     }
 
-    public PermitEntity(final @NonNull String permitName, final @NonNull String description ) {
+    public PermitEntity(final @NonNull String permitName, final @NonNull String description) {
         this.name = permitName;
         this.description = description;
+        this.usable = true;
     }
 }

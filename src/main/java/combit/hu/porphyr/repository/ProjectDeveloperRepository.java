@@ -12,13 +12,26 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ProjectDeveloperRepository extends CrudRepository<ProjectDeveloperEntity, Long>  {
-    @Nullable ProjectDeveloperEntity findAllById( final @NonNull Long id);
-    @Nullable ProjectDeveloperEntity findAllByProjectEntityAndDeveloperEntity( final @NonNull ProjectEntity projectEntity, final @NonNull DeveloperEntity developerEntity);
-    @NonNull List<ProjectDeveloperEntity> findAll();
-    @NonNull List<ProjectDeveloperEntity> findAllByProjectEntity(final @NonNull ProjectEntity projectEntity);
-    @NonNull List<ProjectDeveloperEntity> findAllByDeveloperEntity(final @NonNull DeveloperEntity developerEntity);
-    void saveAndFlush( final @NonNull ProjectDeveloperEntity projectDeveloperEntity);
+public interface ProjectDeveloperRepository extends CrudRepository<ProjectDeveloperEntity, Long> {
+    @Nullable
+    ProjectDeveloperEntity findAllById(final @NonNull Long id);
+
+    @Nullable
+    ProjectDeveloperEntity findAllByProjectEntityAndDeveloperEntity(
+        final @NonNull ProjectEntity projectEntity,
+        final @NonNull DeveloperEntity developerEntity
+    );
+
+    @NonNull
+    List<ProjectDeveloperEntity> findAll();
+
+    @NonNull
+    List<ProjectDeveloperEntity> findAllByProjectEntity(final @NonNull ProjectEntity projectEntity);
+
+    @NonNull
+    List<ProjectDeveloperEntity> findAllByDeveloperEntity(final @NonNull DeveloperEntity developerEntity);
+
+    void saveAndFlush(final @NonNull ProjectDeveloperEntity projectDeveloperEntity);
 
     @Query(
         "SELECT COALESCE(SUM( ProjectTaskDeveloper.spendTime ),0) " +
@@ -28,6 +41,6 @@ public interface ProjectDeveloperRepository extends CrudRepository<ProjectDevelo
             "ProjectDeveloper.developerEntity.id = :developerId and " +
             "ProjectTaskDeveloper.projectDeveloperEntity.id = ProjectDeveloper.id "
     )
-    @NonNull Long sumSpendTimeByDeveloperIdAndProjectId( final @NonNull Long developerId, final @NonNull Long projectId );
-
+    @NonNull
+    Long sumSpendTimeByDeveloperIdAndProjectId(final @NonNull Long developerId, final @NonNull Long projectId);
 }

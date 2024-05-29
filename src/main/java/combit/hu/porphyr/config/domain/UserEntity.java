@@ -101,7 +101,7 @@ public class UserEntity {
 
     @Setter
     @Getter
-    public static class Pojo{
+    public static class Pojo {
         private @Nullable Long id;
         private @Nullable String email;
         private @Nullable String password;
@@ -113,10 +113,10 @@ public class UserEntity {
 
     public UserEntity(final @NonNull Pojo pojo) {
         this.id = pojo.id;
-        this.email = Objects.requireNonNull( pojo.email );
-        this.password = Objects.requireNonNull( pojo.password );
-        this.fullName = Objects.requireNonNull( pojo.fullName );
-        this.loginName = Objects.requireNonNull( pojo.loginName );
+        this.email = Objects.requireNonNull(pojo.email);
+        this.password = Objects.requireNonNull(pojo.password);
+        this.fullName = Objects.requireNonNull(pojo.fullName);
+        this.loginName = Objects.requireNonNull(pojo.loginName);
         this.newPassword = pojo.newPassword;
         this.retypedPassword = pojo.retypedPassword;
         this.roles = new HashSet<>();
@@ -125,12 +125,11 @@ public class UserEntity {
 
     public void readPojo(final @NonNull Pojo pojo) {
         this.id = pojo.id;
-        this.email = Objects.requireNonNull( pojo.email );
-        this.password = Objects.requireNonNull( pojo.password );
-        this.fullName = Objects.requireNonNull( pojo.fullName );
-        this.loginName = Objects.requireNonNull( pojo.loginName );
+        this.email = Objects.requireNonNull(pojo.email);
+        this.password = Objects.requireNonNull(pojo.password);
+        this.fullName = Objects.requireNonNull(pojo.fullName);
+        this.loginName = Objects.requireNonNull(pojo.loginName);
         this.newPassword = pojo.newPassword;
         this.retypedPassword = pojo.retypedPassword;
     }
-
 }

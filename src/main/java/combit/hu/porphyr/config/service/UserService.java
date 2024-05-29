@@ -59,7 +59,8 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        @Nullable UserEntity user = null;
+        @Nullable
+        UserEntity user = null;
         try {
             user = getUserByLoginName(userName);
         } catch (ExecutionException executionException) {
@@ -90,7 +91,8 @@ public class UserService implements UserDetailsService {
                 return userRepository.findByLoginName(loginName);
             }
         }
-        @Nullable UserEntity result = null;
+        @Nullable
+        UserEntity result = null;
         try {
             result = forkJoinPool.submit(new CallableCore(loginName)).get();
         } catch (ExecutionException executionException) {
@@ -116,7 +118,8 @@ public class UserService implements UserDetailsService {
                 return userRepository.findAllById(id);
             }
         }
-        @Nullable UserEntity result = null;
+        @Nullable
+        UserEntity result = null;
         try {
             result = forkJoinPool.submit(new CallableCore(id)).get();
         } catch (ExecutionException executionException) {
@@ -136,7 +139,8 @@ public class UserService implements UserDetailsService {
                 return userRepository.findAll();
             }
         }
-        @NonNull List<UserEntity> result = new ArrayList<>();
+        @NonNull
+        List<UserEntity> result = new ArrayList<>();
         try {
             result = forkJoinPool.submit(new CallableCore()).get();
         } catch (ExecutionException executionException) {
@@ -167,7 +171,8 @@ public class UserService implements UserDetailsService {
                 return (!userRepository.findAllByLoginNameAndIdNot(loginName, id).isEmpty());
             }
         }
-        @NonNull Boolean result = false;
+        @NonNull
+        Boolean result = false;
         try {
             result = forkJoinPool.submit(new CallableCore(loginName, id)).get();
         } catch (ExecutionException executionException) {
@@ -193,7 +198,7 @@ public class UserService implements UserDetailsService {
 
             @Override
             public void run() {
-                if(!Objects.equals(newUserEntity.getNewPassword(), newUserEntity.getRetypedPassword())){
+                if (!Objects.equals(newUserEntity.getNewPassword(), newUserEntity.getRetypedPassword())) {
                     throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.USER_INSERT_DIFFERENT_PASSWORDS));
                 } else if (userRepository.findByLoginName(newUserEntity.getLoginName()) != null) {
                     throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.USER_INSERT_SAME_LOGIN_NAME));
@@ -228,9 +233,9 @@ public class UserService implements UserDetailsService {
             @SneakyThrows
             @Override
             public void run() {
-                if(!Objects.equals(modifiedUserEntity.getNewPassword(), modifiedUserEntity.getRetypedPassword())){
+                if (!Objects.equals(modifiedUserEntity.getNewPassword(), modifiedUserEntity.getRetypedPassword())) {
                     throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.USER_INSERT_DIFFERENT_PASSWORDS));
-                } else                 if (modifiedUserEntity.getId() == null) {
+                } else if (modifiedUserEntity.getId() == null) {
                     throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.USER_MODIFY_NOT_SAVED));
                 } else {
                     entityManager.clear();
@@ -318,23 +323,29 @@ public class UserService implements UserDetailsService {
 
             @Override
             public Boolean call() {
-                userDevelopers.addAll( userEntity.getDevelopers() );
+                userDevelopers.addAll(userEntity.getDevelopers());
                 for (RoleEntity role : userEntity.getRoles()) {
                     for (PermitEntity permit : role.getPermits()) {
                         addPermit(permit.getName(), userPermitNames, userPermittedRequestCalls);
                     }
                 }
-                changeIfPermitAll(userPermitNames,userPermittedRequestCalls);
+                changeIfPermitAll(userPermitNames, userPermittedRequestCalls);
                 return true;
             }
         }
 
-        @NonNull Boolean result = false;
+        @NonNull
+        Boolean result = false;
         try {
             userPermitNames.clear();
             userPermittedRequestCalls.clear();
             userDevelopers.clear();
-            result = forkJoinPool.submit(new CallableCore(userEntity, userPermitNames, userPermittedRequestCalls, userDevelopers)).get();
+            result = forkJoinPool.submit(new CallableCore(
+                userEntity,
+                userPermitNames,
+                userPermittedRequestCalls,
+                userDevelopers
+            )).get();
         } catch (ExecutionException executionException) {
             PorphyrServiceException.handleExecutionException(executionException);
         }
@@ -354,7 +365,12 @@ public class UserService implements UserDetailsService {
         final @Nullable UserEntity userEntity = getUserByLoginName(
             SecurityContextHolder.getContext().getAuthentication().getName()
         );
-        return (userEntity != null) && getUserPermits(userEntity, userPermitNames, userPermittedRequestCalls, userDevelopers);
+        return (userEntity != null) && getUserPermits(
+            userEntity,
+            userPermitNames,
+            userPermittedRequestCalls,
+            userDevelopers
+        );
     }
 
     // --------------------------- Helpers --------------------
@@ -383,15 +399,14 @@ public class UserService implements UserDetailsService {
     private void changeIfPermitAll(
         final @NonNull List<String> userPermitNames,
         final @NonNull List<String> userPermittedRequestCalls
-    ){
-        if( userPermitNames.contains( RequestsConstants.PERMIT_ALL)) {
+    ) {
+        if (userPermitNames.contains(RequestsConstants.PERMIT_ALL)) {
             userPermitNames.clear();
             userPermittedRequestCalls.clear();
-            for (Map.Entry<String, List<String>> entry : PROTECTED_REQUEST_CALLS.entrySet() ) {
+            for (Map.Entry<String, List<String>> entry : PROTECTED_REQUEST_CALLS.entrySet()) {
                 userPermitNames.add(entry.getKey());
                 userPermittedRequestCalls.addAll(entry.getValue());
             }
         }
     }
-
 }

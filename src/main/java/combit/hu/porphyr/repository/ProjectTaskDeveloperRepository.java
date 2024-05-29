@@ -12,17 +12,26 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ProjectTaskDeveloperRepository extends CrudRepository<ProjectTaskDeveloperEntity, Long>  {
-    @NonNull List<ProjectTaskDeveloperEntity> findAll();
-    @Nullable ProjectTaskDeveloperEntity findAllById(Long id);
-    @Nullable ProjectTaskDeveloperEntity findAllByProjectTaskEntityAndProjectDeveloperEntity(
+public interface ProjectTaskDeveloperRepository extends CrudRepository<ProjectTaskDeveloperEntity, Long> {
+    @NonNull
+    List<ProjectTaskDeveloperEntity> findAll();
+
+    @Nullable
+    ProjectTaskDeveloperEntity findAllById(Long id);
+
+    @Nullable
+    ProjectTaskDeveloperEntity findAllByProjectTaskEntityAndProjectDeveloperEntity(
         final @NonNull ProjectTaskEntity projectTaskEntity,
         final @NonNull ProjectDeveloperEntity projectDeveloperEntity
     );
-    @NonNull List<ProjectTaskDeveloperEntity> findAllByProjectTaskEntity( ProjectTaskEntity projectTaskEntity);
-    @NonNull List<ProjectTaskDeveloperEntity> findAllByProjectDeveloperEntity( ProjectDeveloperEntity projectDeveloperEntity);
 
-    void saveAndFlush( final @NonNull ProjectTaskDeveloperEntity projectTaskDeveloperEntity);
+    @NonNull
+    List<ProjectTaskDeveloperEntity> findAllByProjectTaskEntity(ProjectTaskEntity projectTaskEntity);
+
+    @NonNull
+    List<ProjectTaskDeveloperEntity> findAllByProjectDeveloperEntity(ProjectDeveloperEntity projectDeveloperEntity);
+
+    void saveAndFlush(final @NonNull ProjectTaskDeveloperEntity projectTaskDeveloperEntity);
 
     /* Native: */ /*
     @Query( value = "SELECT ProjectTasksDevelopers.* " +
@@ -33,7 +42,7 @@ public interface ProjectTaskDeveloperRepository extends CrudRepository<ProjectTa
         "   ProjectTasks.Project_Id = ProjectDevelopers.Project_Id ",
         nativeQuery = true )
     */ /* JPQL: */
-    @Query( "SELECT ProjectTaskDeveloper " +
+    @Query("SELECT ProjectTaskDeveloper " +
         "FROM ProjectTaskEntity ProjectTask, ProjectDeveloperEntity ProjectDeveloper, ProjectTaskDeveloperEntity ProjectTaskDeveloper " +
         "WHERE ProjectDeveloper.projectEntity.id = :projectId and " +
         "ProjectDeveloper.developerEntity.id = :developerId and " +
@@ -41,9 +50,13 @@ public interface ProjectTaskDeveloperRepository extends CrudRepository<ProjectTa
         "ProjectTaskDeveloper.projectTaskEntity.id = ProjectTask.id and " +
         "ProjectTask.projectEntity.id = ProjectDeveloper.projectEntity.id "
     )
-    @NonNull List<ProjectTaskDeveloperEntity> findProjectTasksDeveloperByProjectIdAndDeveloperId( Long projectId, Long developerId);
+    @NonNull
+    List<ProjectTaskDeveloperEntity> findProjectTasksDeveloperByProjectIdAndDeveloperId(
+        Long projectId,
+        Long developerId
+    );
 
-    @Query( "SELECT ProjectTaskDeveloper " +
+    @Query("SELECT ProjectTaskDeveloper " +
         "FROM ProjectTaskEntity ProjectTask, ProjectDeveloperEntity ProjectDeveloper, ProjectTaskDeveloperEntity ProjectTaskDeveloper " +
         "WHERE " +
         "ProjectDeveloper.developerEntity.id = :developerId and " +
@@ -51,6 +64,6 @@ public interface ProjectTaskDeveloperRepository extends CrudRepository<ProjectTa
         "ProjectTaskDeveloper.projectTaskEntity.id = ProjectTask.id and " +
         "ProjectTask.projectEntity.id = ProjectDeveloper.projectEntity.id "
     )
-    @NonNull List<ProjectTaskDeveloperEntity> findProjectTasksDeveloperByDeveloperId( Long developerId);
-
+    @NonNull
+    List<ProjectTaskDeveloperEntity> findProjectTasksDeveloperByDeveloperId(Long developerId);
 }

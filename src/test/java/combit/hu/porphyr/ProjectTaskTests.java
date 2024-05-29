@@ -134,7 +134,9 @@ class ProjectTaskTests {
         );
         // getProjectTaskPosts
         assertArrayEquals(
-            new String[]{"Az 1. fejlesztő bejegyzése az első feladathoz", "A 2. fejlesztő bejegyzése az első feladathoz"},
+            new String[]{
+                "Az 1. fejlesztő bejegyzése az első feladathoz", "A 2. fejlesztő bejegyzése az első feladathoz"
+            },
             Objects.requireNonNull(projectTaskRepository.findAllById(1L)).getProjectTaskPosts().stream()
                 .map(PostEntity::getDescription).toArray(String[]::new)
         );
@@ -174,7 +176,8 @@ class ProjectTaskTests {
             projectTaskRepository.findAll().stream().map(ProjectTaskEntity::getName).toArray(String[]::new)
         );
         //findAllByProjectEntity
-        @NonNull ProjectEntity projectEntity = Objects.requireNonNull(projectRepository.findAllById(1L));
+        @NonNull
+        ProjectEntity projectEntity = Objects.requireNonNull(projectRepository.findAllById(1L));
         assertArrayEquals(
             new String[]{"1. projekt 1. feladat", "1. projekt 2. feladat"},
             projectTaskRepository.findAllByProjectEntity(projectEntity)
@@ -343,11 +346,11 @@ class ProjectTaskTests {
         assertEquals(1, spiedProjectTaskService.getProjectTasksByProjectEntity(projectEntity).size());
         //getProjectTaskFullTime
         List<ProjectTaskEntity> actualProjectTasks = spiedProjectTaskService.getProjectTasks();
-        assertEquals( 0L, spiedProjectTaskService.getProjectTaskFullTime( actualProjectTasks.get(0) ));
-        assertEquals( 0L, spiedProjectTaskService.getProjectTaskFullTime( actualProjectTasks.get(1) ));
-        assertEquals( 0L, spiedProjectTaskService.getProjectTaskFullTime( actualProjectTasks.get(2) ));
-        assertEquals( 1L, spiedProjectTaskService.getProjectTaskFullTime( actualProjectTasks.get(3) ));
-        assertEquals( 0L, spiedProjectTaskService.getProjectTaskFullTime( actualProjectTasks.get(4) ));
+        assertEquals(0L, spiedProjectTaskService.getProjectTaskFullTime(actualProjectTasks.get(0)));
+        assertEquals(0L, spiedProjectTaskService.getProjectTaskFullTime(actualProjectTasks.get(1)));
+        assertEquals(0L, spiedProjectTaskService.getProjectTaskFullTime(actualProjectTasks.get(2)));
+        assertEquals(1L, spiedProjectTaskService.getProjectTaskFullTime(actualProjectTasks.get(3)));
+        assertEquals(0L, spiedProjectTaskService.getProjectTaskFullTime(actualProjectTasks.get(4)));
     }
 
     @Test

@@ -55,8 +55,8 @@ public class ProjectsTasksPostsController {
         throws ExecutionException, InterruptedException {
         // -- Post felvételekor szerzőnek választhatók a feladathoz tartozó developer-ek közül azok,
         //    akiknek a nevében a bejelentkező user eljárhat.
-        List<DeveloperEntity> developers = developerService.getDevelopersByProjectTask( sessionData.getSelectedProjectTask());
-        developers.retainAll( sessionData.getUserDevelopers() );
+        List<DeveloperEntity> developers = developerService.getDevelopersByProjectTask(sessionData.getSelectedProjectTask());
+        developers.retainAll(sessionData.getUserDevelopers());
         TemplateData templateData = sessionData.getDataFromTemplate();
         templateData.setOperation(0);
 
@@ -77,32 +77,37 @@ public class ProjectsTasksPostsController {
         @NonNull
         final TemplateData dataFromTemplate
     ) throws ExecutionException, InterruptedException {
-        @NonNull final String result = REDIRECT_TO_PROJECTTASKS_POSTS;
+        @NonNull
+        final String result = REDIRECT_TO_PROJECTTASKS_POSTS;
         switch (dataFromTemplate.getOperation()) {
             case MENU_ITEM_INSERT: {
-                @NonNull final PostEntity postEntity = new PostEntity();
-                @NonNull final Timestamp created = Timestamp.from(Instant.now());
-                postEntity.setCreated( created );
+                @NonNull
+                final PostEntity postEntity = new PostEntity();
+                @NonNull
+                final Timestamp created = Timestamp.from(Instant.now());
+                postEntity.setCreated(created);
                 postEntity.setDeveloperEntity(
                     Objects.requireNonNull(developerService.getDeveloperById(
                         Objects.requireNonNull(dataFromTemplate.getLongData()))
                     )
                 );
-                postEntity.setProjectTaskEntity( sessionData.getSelectedProjectTask() );
-                postEntity.setDescription( dataFromTemplate.getDescription() );
-                postService.insertNewPost( postEntity );
+                postEntity.setProjectTaskEntity(sessionData.getSelectedProjectTask());
+                postEntity.setDescription(dataFromTemplate.getDescription());
+                postService.insertNewPost(postEntity);
                 break;
             }
             case MENU_ITEM_MODIFY: {
-                @NonNull final PostEntity postEntity =
-                    Objects.requireNonNull(postService.getPostById( Objects.requireNonNull(dataFromTemplate.getId())));
-                postEntity.setDescription( dataFromTemplate.getDescription());
+                @NonNull
+                final PostEntity postEntity =
+                    Objects.requireNonNull(postService.getPostById(Objects.requireNonNull(dataFromTemplate.getId())));
+                postEntity.setDescription(dataFromTemplate.getDescription());
                 postService.modifyPost(postEntity);
                 break;
             }
             case MENU_ITEM_DELETE: {
-                @NonNull final PostEntity postEntity =
-                    Objects.requireNonNull(postService.getPostById( Objects.requireNonNull(dataFromTemplate.getId())));
+                @NonNull
+                final PostEntity postEntity =
+                    Objects.requireNonNull(postService.getPostById(Objects.requireNonNull(dataFromTemplate.getId())));
                 postService.deletePost(postEntity);
                 break;
             }
@@ -111,5 +116,4 @@ public class ProjectsTasksPostsController {
         }
         return result;
     }
-
 }

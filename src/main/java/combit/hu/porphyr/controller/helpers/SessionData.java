@@ -64,7 +64,8 @@ public class SessionData {
     private @NonNull ArrayList<DeveloperEntity> userDevelopers;
 
     public @NonNull ProjectEntity getSelectedProject() throws InterruptedException, ExecutionException {
-        @Nullable ProjectEntity result;
+        @Nullable
+        ProjectEntity result;
         result = projectService.getProjectById(this.selectedProjectId);
         if (result == null) {
             throw new PorphyrServiceException(PorphyrServiceException.Exceptions.CONTROLLER_SELECTED_PROJECT_NOT_EXISTS);
@@ -73,7 +74,8 @@ public class SessionData {
     }
 
     public @NonNull DeveloperEntity getSelectedDeveloper() throws InterruptedException, ExecutionException {
-        @Nullable DeveloperEntity result;
+        @Nullable
+        DeveloperEntity result;
         result = developerService.getDeveloperById(this.selectedDeveloperId);
         if (result == null) {
             throw new PorphyrServiceException(PorphyrServiceException.Exceptions.CONTROLLER_SELECTED_DEVELOPER_NOT_EXISTS);
@@ -83,7 +85,8 @@ public class SessionData {
 
     public @NonNull ProjectDeveloperEntity getSelectedProjectDeveloper()
         throws InterruptedException, ExecutionException {
-        @Nullable ProjectDeveloperEntity result;
+        @Nullable
+        ProjectDeveloperEntity result;
         result = projectDeveloperService.getProjectDeveloperById(this.selectedProjectDeveloperId);
         if (result == null) {
             throw new PorphyrServiceException(PorphyrServiceException.Exceptions.CONTROLLER_SELECTED_PROJECTDEVELOPER_NOT_EXISTS);
@@ -92,7 +95,8 @@ public class SessionData {
     }
 
     public @NonNull ProjectTaskEntity getSelectedProjectTask() throws InterruptedException, ExecutionException {
-        @Nullable ProjectTaskEntity result;
+        @Nullable
+        ProjectTaskEntity result;
         result = projectTaskService.getProjectTaskById(this.selectedProjectTaskId);
         if (result == null) {
             throw new PorphyrServiceException(PorphyrServiceException.Exceptions.CONTROLLER_SELECTED_PROJECTTASK_NOT_EXISTS);
@@ -102,7 +106,8 @@ public class SessionData {
 
     public @NonNull ProjectTaskDeveloperEntity getSelectedProjectTaskDeveloper()
         throws InterruptedException, ExecutionException {
-        @Nullable ProjectTaskDeveloperEntity result;
+        @Nullable
+        ProjectTaskDeveloperEntity result;
         result = projectTaskDeveloperService.getProjectTaskDeveloperById(this.selectedProjectTaskDeveloperId);
         if (result == null) {
             throw new PorphyrServiceException(PorphyrServiceException.Exceptions.CONTROLLER_SELECTED_PROJECTTASKDEVELOPER_NOT_EXISTS);
@@ -111,7 +116,8 @@ public class SessionData {
     }
 
     @Autowired
-    public SessionData(final @NonNull ProjectService projectService,
+    public SessionData(
+        final @NonNull ProjectService projectService,
         final @NonNull DeveloperService developerService,
         final @NonNull ProjectDeveloperService projectDeveloperService,
         final @NonNull ProjectTaskService projectTaskService,
@@ -131,7 +137,7 @@ public class SessionData {
         selectedProjectTaskId = 0L;
         selectedProjectTaskDeveloperId = 0L;
         userLoginName = "anonymus";
-        userPermitNames = new ArrayList<>() ;
+        userPermitNames = new ArrayList<>();
         userPermittedRequestCalls = new ArrayList<>();
         userDevelopers = new ArrayList<>();
     }
@@ -153,7 +159,7 @@ public class SessionData {
         ProjectDeveloperService projectDeveloperService,
         ProjectTaskService projectTaskService,
         ProjectTaskDeveloperService projectTaskDeveloperService
-    ){
+    ) {
         return new SessionData(
             projectService,
             developerService,

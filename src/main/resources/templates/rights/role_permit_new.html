@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="hu" data-layout-decorate="~{layouts/rights_decorator}">
+<head><title>Porphyr</title></head>
+<body>
+<div data-layout-fragment="mainContent">
+    <nav class="navbar bg-light navbar-light" style="padding-left:1rem">
+        <a class="navbar-brand">
+            Új engedély választása a(z)&nbsp;
+            <span data-th-text="${role.role}">szerepkör neve</span>
+            &nbsp;szerepkörhöz
+        </a>
+        <a class="btn btn-outline-secondary" data-th-href="@{|/startRolePermits/${role.id}|}">
+            <img data-th-src="@{~/icons/back.svg}" src="../../static/icons/back.svg" width="20" alt="" class="mb-1"/>
+            <span>Szerepkör engedélyei</span>
+        </a>
+    </nav>
+    <br/>
+    <form data-th-if="${not #lists.isEmpty(permits)}"
+          class="form center-block" name="roleInputData" method="post"
+          style="width:50em; margin-left: auto; margin-right: auto;"
+          data-th-action="@{/insertNewRolePermit}" data-th-object="${dataFromTemplate}"
+    >
+        <label hidden for="id"></label>
+        <input hidden type="number" class="form-control" id="id" name="id" data-th-field="*{id}">
+
+        <label hidden for="longData"></label>
+        <select class="form-control form-control-sm" style="appearance:listbox;" data-th-field="*{longData}" name="longData" id="longData">
+            <option value="" selected disabled>Kiválasztható engedélyek</option>
+            <option data-th-each="permit : ${permits}"
+                    data-th-value="${permit.id}"
+                    data-th-text="${permit.name} + ':' + ${permit.description}">
+            </option>
+        </select>
+
+        <br/>
+        <div style="width:50em; text-align:center">
+            <button type="submit" class="btn btn-outline-secondary">Rögzítés</button>
+        </div>
+    </form>
+    <div data-th-if="${#lists.isEmpty(permits)}" style="text-align:center">
+        A szerepkörhöz nincs kiválasztható engedély!
+    </div>
+</div>
+
+</body>
+</html>

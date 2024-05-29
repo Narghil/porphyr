@@ -57,7 +57,7 @@ public class ProjectsTasksController {
         final @NonNull Model model
     ) throws ExecutionException, InterruptedException {
         final ProjectEntity project = sessionData.getSelectedProject();
-        for( ProjectTaskEntity projectTask : project.getProjectTasks()){
+        for (ProjectTaskEntity projectTask : project.getProjectTasks()) {
             projectTaskService.getProjectTaskFullTime(projectTask);
         }
         model.addAttribute(ERROR, webErrorBean.getWebErrorData());
@@ -177,7 +177,8 @@ public class ProjectsTasksController {
         @NonNull
         final TemplateData dataFromTemplate
     ) throws InterruptedException, ExecutionException {
-        @NonNull String result = REDIRECT_TO_PROJECTTASKS;
+        @NonNull
+        String result = REDIRECT_TO_PROJECTTASKS;
         @Nullable
         final String name = dataFromTemplate.getName();
         if (name == null) {
@@ -220,7 +221,8 @@ public class ProjectsTasksController {
         @NonNull
         final TemplateData dataFromTemplate
     ) throws InterruptedException, ExecutionException {
-        @NonNull String result = REDIRECT_TO_PROJECTTASKS;
+        @NonNull
+        String result = REDIRECT_TO_PROJECTTASKS;
         @Nullable
         final String name = dataFromTemplate.getName();
         if (name == null) {
@@ -237,5 +239,4 @@ public class ProjectsTasksController {
         }
         return result;
     }
-
 }

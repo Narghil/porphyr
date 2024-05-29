@@ -37,5 +37,4 @@ public class TestConstants {
         {"2. projekt 1. feladat", "2. projekt 2. feladat"},
         {"Projekt feladattal - feladat"}
     };
-
 }

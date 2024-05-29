@@ -40,11 +40,11 @@ public class ErrorPageController implements ErrorController {
 
         model.addAttribute("timestamp", error.get("timestamp"));
         model.addAttribute("errorDescription", "PAGE:" + error.get("error"));
-        model.addAttribute("message", error.get("message") );
+        model.addAttribute("message", error.get("message"));
         model.addAttribute("path", error.get("path"));
-        model.addAttribute("status", error.get("status") );
+        model.addAttribute("status", error.get("status"));
 
-        if( errorAttributes.getError(webRequest) instanceof NotPermittedException) {
+        if (errorAttributes.getError(webRequest) instanceof NotPermittedException) {
             errorPage = "authError";
         }
 

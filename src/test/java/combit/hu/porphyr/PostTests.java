@@ -236,7 +236,6 @@ class PostTests {
         // - Minden hibalehetőség tesztelve volt:
         assertDoesNotThrow(() -> PorphyrServiceException.isAllExceptionsThrown(PorphyrServiceException.ExceptionGroups.POSTS_INSERT));
     }
-    
 
     @Test
     @Transactional
@@ -320,6 +319,6 @@ class PostTests {
         assertNotNull(spiedPostService.getPostById(1L));
         assertNotNull(spiedPostService.getPostById(2L));
         // -  getPostsByProjectTask
-        assertEquals(2, spiedPostService.getPostsByProjectTask(projectTaskEntity).size() );
+        assertEquals(2, spiedPostService.getPostsByProjectTask(projectTaskEntity).size());
     }
 }

@@ -89,7 +89,8 @@ public class ProjectDeveloperService {
 
             @Override
             public void run() {
-                @Nullable PorphyrServiceException porphyrServiceException = null;
+                @Nullable
+                PorphyrServiceException porphyrServiceException = null;
                 entityManager.detach(newProjectDeveloperEntity);
 
                 if (newProjectDeveloperEntity.getProjectEntity().getId() == null) {
@@ -176,10 +177,13 @@ public class ProjectDeveloperService {
                 return projectDeveloperRepository.findAllById(id);
             }
         }
-        @Nullable ProjectDeveloperEntity result = null;
+        @Nullable
+        ProjectDeveloperEntity result = null;
         try {
             result = forkJoinPool.submit(new CallableCore(id)).get();
-            if( result != null) getDeveloperFullTimeInProject(result);
+            if (result != null) {
+                getDeveloperFullTimeInProject(result);
+            }
         } catch (ExecutionException executionException) {
             PorphyrServiceException.handleExecutionException(executionException);
         }
@@ -207,10 +211,13 @@ public class ProjectDeveloperService {
                 return projectDeveloperRepository.findAllByProjectEntityAndDeveloperEntity(project, developer);
             }
         }
-        @Nullable ProjectDeveloperEntity result = null;
+        @Nullable
+        ProjectDeveloperEntity result = null;
         try {
             result = forkJoinPool.submit(new CallableCore(project, developer)).get();
-            if( result != null) getDeveloperFullTimeInProject(result);
+            if (result != null) {
+                getDeveloperFullTimeInProject(result);
+            }
         } catch (ExecutionException executionException) {
             PorphyrServiceException.handleExecutionException(executionException);
         }
@@ -228,7 +235,8 @@ public class ProjectDeveloperService {
                 return projectDeveloperRepository.findAll();
             }
         }
-        @NonNull List<ProjectDeveloperEntity> result = new ArrayList<>();
+        @NonNull
+        List<ProjectDeveloperEntity> result = new ArrayList<>();
         try {
             result = forkJoinPool.submit(new CallableCore()).get();
             for (ProjectDeveloperEntity projectDeveloper : result) {
@@ -257,7 +265,8 @@ public class ProjectDeveloperService {
                 return projectDeveloperRepository.findAllByDeveloperEntity(developer);
             }
         }
-        @NonNull List<ProjectDeveloperEntity> result = new ArrayList<>();
+        @NonNull
+        List<ProjectDeveloperEntity> result = new ArrayList<>();
         try {
             result = forkJoinPool.submit(new CallableCore(developer)).get();
             for (ProjectDeveloperEntity projectDeveloper : result) {
@@ -286,7 +295,8 @@ public class ProjectDeveloperService {
                 return projectDeveloperRepository.findAllByProjectEntity(project);
             }
         }
-        @NonNull List<ProjectDeveloperEntity> result = new ArrayList<>();
+        @NonNull
+        List<ProjectDeveloperEntity> result = new ArrayList<>();
         try {
             result = forkJoinPool.submit(new CallableCore(project)).get();
             for (ProjectDeveloperEntity projectDeveloper : result) {
@@ -314,16 +324,21 @@ public class ProjectDeveloperService {
 
             @Override
             public @NonNull Long call() {
-                @NonNull Long result;
-                @Nullable Long developerId = projectDeveloper.getDeveloperEntity().getId();
-                @Nullable Long projectId = projectDeveloper.getProjectEntity().getId();
+                @NonNull
+                Long result;
+                @Nullable
+                Long developerId = projectDeveloper.getDeveloperEntity().getId();
+                @Nullable
+                Long projectId = projectDeveloper.getProjectEntity().getId();
                 result = (developerId == null || projectId == null)
-                         ? 0L : projectDeveloperRepository.sumSpendTimeByDeveloperIdAndProjectId(developerId, projectId);
+                         ? 0L
+                         : projectDeveloperRepository.sumSpendTimeByDeveloperIdAndProjectId(developerId, projectId);
                 projectDeveloper.setSpendTime(result);
                 return result;
             }
         }
-        @NonNull Long result = 0L;
+        @NonNull
+        Long result = 0L;
         try {
             result = forkJoinPool.submit(new CallableCore(projectDeveloper)).get();
         } catch (ExecutionException ee) {
@@ -331,5 +346,4 @@ public class ProjectDeveloperService {
         }
         return result;
     }
-
 }

@@ -50,7 +50,7 @@ public class SecurityConfigurator {
             .deleteCookies("JSESSIONID")
             .permitAll();
 
-        httpSecurity.addFilterAfter(new AuthLogAfterFilter(httpSecurity), BasicAuthenticationFilter.class) ;
+        httpSecurity.addFilterAfter(new AuthLogAfterFilter(httpSecurity), BasicAuthenticationFilter.class);
 
         return httpSecurity.build();
     }

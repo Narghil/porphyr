@@ -50,7 +50,7 @@ class DeveloperTests {
         final @NonNull DeveloperRepository developerRepository,
         final @NonNull ProjectRepository projectRepository,
         final @NonNull ProjectTaskRepository projectTaskRepository
-    ){
+    ) {
         this.entityManager = entityManager;
         spiedDeveloperService = new DeveloperService(this.entityManager, developerRepository);
         spyDeveloperRepository = Mockito.mock(
@@ -88,7 +88,7 @@ class DeveloperTests {
     @Test
     @Transactional
     @Rollback
-    void developerRepositoryQueriesTest(){
+    void developerRepositoryQueriesTest() {
         //findProjectTaskDevelopers
         assertArrayEquals(
             Arrays.stream(new DeveloperEntity[]{
@@ -96,7 +96,7 @@ class DeveloperTests {
                 spyDeveloperRepository.findAllById(2L)
             }).sorted(Comparator.comparing(DeveloperEntity::getName)).toArray(),
             spyDeveloperRepository.findProjectTaskDevelopers(1L)
-                .stream().sorted( Comparator.comparing(DeveloperEntity::getName) )
+                .stream().sorted(Comparator.comparing(DeveloperEntity::getName))
                 .toArray()
         );
         assertArrayEquals(
@@ -105,14 +105,14 @@ class DeveloperTests {
                 spyDeveloperRepository.findAllById(3L)
             }).sorted(Comparator.comparing(DeveloperEntity::getName)).toArray(),
             spyDeveloperRepository.findProjectTaskDevelopers(2L)
-                .stream().sorted( Comparator.comparing(DeveloperEntity::getName) )
+                .stream().sorted(Comparator.comparing(DeveloperEntity::getName))
                 .toArray()
         );
         //sumSpendTimeByDeveloperId
-        assertEquals( 0, spyDeveloperRepository.sumSpendTimeByDeveloperId(1L) );
-        assertEquals( 0, spyDeveloperRepository.sumSpendTimeByDeveloperId(2L) );
-        assertEquals( 0, spyDeveloperRepository.sumSpendTimeByDeveloperId(3L) );
-        assertEquals( 1, spyDeveloperRepository.sumSpendTimeByDeveloperId(4L) );
+        assertEquals(0, spyDeveloperRepository.sumSpendTimeByDeveloperId(1L));
+        assertEquals(0, spyDeveloperRepository.sumSpendTimeByDeveloperId(2L));
+        assertEquals(0, spyDeveloperRepository.sumSpendTimeByDeveloperId(3L));
+        assertEquals(1, spyDeveloperRepository.sumSpendTimeByDeveloperId(4L));
     }
 
     @Test
@@ -169,12 +169,11 @@ class DeveloperTests {
         verify(spyDeveloperRepository, times(8)).findAllByNameAndIdNot(anyString(), anyLong());
         // getDeveloperFullTime
         List<DeveloperEntity> actualDevelopers = spiedDeveloperService.getDevelopers().stream().sorted(
-            Comparator.comparing(DeveloperEntity::getName)).collect(Collectors.toList())
-            ;
-        assertEquals( 0L, spiedDeveloperService.getDeveloperFullTime( actualDevelopers.get(0)));
-        assertEquals( 0L, spiedDeveloperService.getDeveloperFullTime( actualDevelopers.get(1)));
-        assertEquals( 0L, spiedDeveloperService.getDeveloperFullTime( actualDevelopers.get(2)));
-        assertEquals( 1L, spiedDeveloperService.getDeveloperFullTime( actualDevelopers.get(3)));
+            Comparator.comparing(DeveloperEntity::getName)).collect(Collectors.toList());
+        assertEquals(0L, spiedDeveloperService.getDeveloperFullTime(actualDevelopers.get(0)));
+        assertEquals(0L, spiedDeveloperService.getDeveloperFullTime(actualDevelopers.get(1)));
+        assertEquals(0L, spiedDeveloperService.getDeveloperFullTime(actualDevelopers.get(2)));
+        assertEquals(1L, spiedDeveloperService.getDeveloperFullTime(actualDevelopers.get(3)));
         // getDevelopersByProjectTask
         assertArrayEquals(
             Arrays.stream(new DeveloperEntity[]{
@@ -182,8 +181,8 @@ class DeveloperTests {
                 spiedDeveloperService.getDeveloperById(2L)
             }).sorted(Comparator.comparing(DeveloperEntity::getName)).toArray(),
             spiedDeveloperService
-                .getDevelopersByProjectTask( Objects.requireNonNull(projectTaskRepository.findAllById( 1L ) ) )
-                .stream().sorted( Comparator.comparing(DeveloperEntity::getName) )
+                .getDevelopersByProjectTask(Objects.requireNonNull(projectTaskRepository.findAllById(1L)))
+                .stream().sorted(Comparator.comparing(DeveloperEntity::getName))
                 .toArray()
         );
         assertArrayEquals(
@@ -192,8 +191,8 @@ class DeveloperTests {
                 spiedDeveloperService.getDeveloperById(3L)
             }).sorted(Comparator.comparing(DeveloperEntity::getName)).toArray(),
             spiedDeveloperService
-                .getDevelopersByProjectTask( Objects.requireNonNull(projectTaskRepository.findAllById( 2L ) ) )
-                .stream().sorted( Comparator.comparing(DeveloperEntity::getName) )
+                .getDevelopersByProjectTask(Objects.requireNonNull(projectTaskRepository.findAllById(2L)))
+                .stream().sorted(Comparator.comparing(DeveloperEntity::getName))
                 .toArray()
         );
     }

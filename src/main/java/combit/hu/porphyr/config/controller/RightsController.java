@@ -1,7 +1,9 @@
 package combit.hu.porphyr.config.controller;
 
+import combit.hu.porphyr.config.domain.PermitEntity;
 import combit.hu.porphyr.config.domain.RoleEntity;
 import combit.hu.porphyr.config.domain.UserEntity;
+import combit.hu.porphyr.config.service.PermitService;
 import combit.hu.porphyr.config.service.RoleService;
 import combit.hu.porphyr.config.service.UserService;
 import combit.hu.porphyr.controller.helpers.SessionData;
@@ -22,14 +24,17 @@ public class RightsController {
     private static final @NonNull String SUB_DIR = "rights/";
     private final @NonNull UserService userService;
     private final @NonNull RoleService roleService;
+    private final @NonNull PermitService permitService;
 
     @Autowired
     public RightsController(
         final @NonNull UserService userService,
-        final @NonNull RoleService roleService
-    ){
+        final @NonNull RoleService roleService,
+        final @NonNull PermitService permitService
+    ) {
         this.userService = userService;
         this.roleService = roleService;
+        this.permitService = permitService;
     }
 
     @Resource(name = "getWebErrorBean")
@@ -40,27 +45,35 @@ public class RightsController {
 
     private static final String ERROR = "error";
 
-    @RequestMapping( "/rights" )
+    @RequestMapping("/rights")
     public String rights(final @NonNull Model model) {
         model.addAttribute(ERROR, webErrorBean.getWebErrorData());
-        model.addAttribute("userPermitNames", sessionData.getUserPermitNames() );
+        model.addAttribute("userPermitNames", sessionData.getUserPermitNames());
         return SUB_DIR + "rights";
     }
 
-    @RequestMapping( "/rights/users" )
+    @RequestMapping("/rights/users")
     public String users(final @NonNull Model model) throws ExecutionException, InterruptedException {
         final List<UserEntity> users = userService.getUsers();
         model.addAttribute(ERROR, webErrorBean.getWebErrorData());
-        model.addAttribute( "users", users );
+        model.addAttribute("users", users);
         return SUB_DIR + "users";
     }
 
-    @RequestMapping( "/rights/roles" )
+    @RequestMapping("/rights/roles")
     public String roles(final @NonNull Model model) throws ExecutionException, InterruptedException {
         final List<RoleEntity> roles = roleService.getRoles();
         model.addAttribute(ERROR, webErrorBean.getWebErrorData());
-        model.addAttribute( "roles", roles );
+        model.addAttribute("roles", roles);
         return SUB_DIR + "roles";
     }
 
+    @RequestMapping("/rights/permits")
+    public String permits(final @NonNull Model model) throws ExecutionException, InterruptedException {
+        final List<PermitEntity> permits =
+            permitService.getValidPermits();
+        model.addAttribute(ERROR, webErrorBean.getWebErrorData());
+        model.addAttribute("permits", permits);
+        return SUB_DIR + "permits";
+    }
 }

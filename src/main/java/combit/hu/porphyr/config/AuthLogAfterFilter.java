@@ -65,7 +65,9 @@ public class AuthLogAfterFilter implements Filter {
         if (!result) {
             for (String entryValue : sessionData.getUserPermittedRequestCalls()) {
                 result = requestURI.matches(entryValue);
-                if ( result ) break;
+                if (result) {
+                    break;
+                }
             }
         }
         return result;

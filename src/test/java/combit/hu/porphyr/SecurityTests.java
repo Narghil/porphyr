@@ -37,7 +37,7 @@ class SecurityTests {
     private final @NonNull MockMvc mockMvc;
 
     @Autowired
-    public SecurityTests( final @NonNull MockMvc mockMvc){
+    public SecurityTests(final @NonNull MockMvc mockMvc) {
         this.mockMvc = mockMvc;
     }
 
@@ -63,7 +63,7 @@ class SecurityTests {
     @Test
     void accessUnsecuredResourceThenOk() throws Exception {
         mockMvc.perform(get("/logout"))
-            .andExpect( status().is3xxRedirection())
+            .andExpect(status().is3xxRedirection())
         ;
     }
 
@@ -85,7 +85,7 @@ class SecurityTests {
 
     @Test
     @WithMockUser
-    void performLogout() throws Exception{
+    void performLogout() throws Exception {
         mockMvc
             .perform(post("/logout").secure(true).with(csrf()))
             .andExpect(status().is3xxRedirection())
@@ -98,9 +98,8 @@ class SecurityTests {
     @Autowired
     private MessageSource messageSource;
 
-    private String getMessageProperty( String propertyName){
+    private String getMessageProperty(String propertyName) {
         Locale localeValue = new Locale("");
         return messageSource.getMessage(propertyName, null, "- none -", localeValue);
     }
-
 }

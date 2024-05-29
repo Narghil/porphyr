@@ -8,7 +8,9 @@ import combit.hu.porphyr.config.repository.UserRepository;
 import combit.hu.porphyr.service.DeveloperService;
 import combit.hu.porphyr.config.service.UserService;
 import combit.hu.porphyr.service.PorphyrServiceException;
+
 import static combit.hu.porphyr.TestConstants.*;
+
 import lombok.NonNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -50,14 +52,14 @@ class UserTests {
         final @NonNull DeveloperRepository developerRepository
     ) {
         this.entityManager = entityManager;
-        this.spiedUserService = new UserService( this.entityManager, userRepository);
+        this.spiedUserService = new UserService(this.entityManager, userRepository);
         this.spyUserRepository = Mockito.mock(
-            UserRepository.class, AdditionalAnswers.delegatesTo( userRepository)
+            UserRepository.class, AdditionalAnswers.delegatesTo(userRepository)
         );
         this.spiedUserService.setUserRepository(this.spyUserRepository);
         this.spiedUserService.setEntityManager(this.entityManager);
 
-        this.developerService = new DeveloperService( this.entityManager, developerRepository );
+        this.developerService = new DeveloperService(this.entityManager, developerRepository);
 
         PorphyrServiceException.initExceptionsCounter();
     }
@@ -74,79 +76,103 @@ class UserTests {
     @Rollback
     //OneToMany kapcsolatok lekérdezésének ellenőrzése
     void userEntityQueriesTest() {
-        final @NonNull UserEntity userUser = Objects.requireNonNull( spyUserRepository.findByLoginName(LOGIN_NAMES[0]));
-        final @NonNull UserEntity userAdmin= Objects.requireNonNull( spyUserRepository.findByLoginName(LOGIN_NAMES[1]));
+        final @NonNull UserEntity userUser = Objects.requireNonNull(spyUserRepository.findByLoginName(LOGIN_NAMES[0]));
+        final @NonNull UserEntity userAdmin = Objects.requireNonNull(spyUserRepository.findByLoginName(LOGIN_NAMES[1]));
 
         //Roles
         assertArrayEquals(
             new String[]{ROLE_NAMES[1]},
-                userAdmin.getRoles().stream().map(RoleEntity::getRole).toArray(String[]::new)
+            userAdmin.getRoles().stream().map(RoleEntity::getRole).toArray(String[]::new)
         );
         //Developers
-        assertArrayEquals( DEVELOPER_NAMES,
+        assertArrayEquals(
+            DEVELOPER_NAMES,
             userAdmin.getDevelopers().stream().map(DeveloperEntity::getName).sorted().toArray(String[]::new)
         );
         //findAllById
-        assertEquals( LOGIN_NAMES[0],
+        assertEquals(
+            LOGIN_NAMES[0],
             Objects.requireNonNull(spyUserRepository.findAllById(
-                Objects.requireNonNull(userUser.getId() ) ) ).getLoginName() );
-        assertEquals( LOGIN_NAMES[1],
+                Objects.requireNonNull(userUser.getId()))).getLoginName()
+        );
+        assertEquals(
+            LOGIN_NAMES[1],
             Objects.requireNonNull(spyUserRepository.findAllById(
-                Objects.requireNonNull( userAdmin.getId() ) ) ).getLoginName() );
+                Objects.requireNonNull(userAdmin.getId()))).getLoginName()
+        );
     }
 
     @Test
     @Transactional
     @Rollback
     void userServiceQueriesTest() throws ExecutionException, InterruptedException {
-        @NonNull List<String> actualUserPermitNames = new ArrayList<>();
-        @NonNull List<String> actualUserPermittedRequestCalls = new ArrayList<>();
-        @NonNull List<DeveloperEntity> actualUserDevelopers = new ArrayList<>();
+        @NonNull
+        List<String> actualUserPermitNames = new ArrayList<>();
+        @NonNull
+        List<String> actualUserPermittedRequestCalls = new ArrayList<>();
+        @NonNull
+        List<DeveloperEntity> actualUserDevelopers = new ArrayList<>();
 
-        @NonNull List<DeveloperEntity> requestedUserDevelopers =
-            Collections.singletonList(developerService.getDeveloperById(1L)) ;
-        @NonNull List<DeveloperEntity> requestedAdminDevelopers =
+        @NonNull
+        List<DeveloperEntity> requestedUserDevelopers =
+            Collections.singletonList(developerService.getDeveloperById(1L));
+        @NonNull
+        List<DeveloperEntity> requestedAdminDevelopers =
             Arrays.asList(
                 developerService.getDeveloperById(1L), developerService.getDeveloperById(2L),
                 developerService.getDeveloperById(3L), developerService.getDeveloperById(4L)
             );
 
         //getUserByLoginNames
-        final @NonNull UserEntity userUser = Objects.requireNonNull( spyUserRepository.findByLoginName(LOGIN_NAMES[0]));
-        final @NonNull UserEntity userAdmin= Objects.requireNonNull( spyUserRepository.findByLoginName(LOGIN_NAMES[1]));
+        final @NonNull UserEntity userUser = Objects.requireNonNull(spyUserRepository.findByLoginName(LOGIN_NAMES[0]));
+        final @NonNull UserEntity userAdmin = Objects.requireNonNull(spyUserRepository.findByLoginName(LOGIN_NAMES[1]));
         assertArrayEquals(
             USER_FULL_NAMES,
-            new String[]{ userUser.getFullName(), userAdmin.getFullName() }
+            new String[]{userUser.getFullName(), userAdmin.getFullName()}
         );
 
         //getUserById()
-        assertEquals( LOGIN_NAMES[0],
+        assertEquals(
+            LOGIN_NAMES[0],
             Objects.requireNonNull(spiedUserService.getUserById(
-                Objects.requireNonNull(userUser.getId() ) ) ).getLoginName() );
-        assertEquals( LOGIN_NAMES[1],
+                Objects.requireNonNull(userUser.getId()))).getLoginName()
+        );
+        assertEquals(
+            LOGIN_NAMES[1],
             Objects.requireNonNull(spiedUserService.getUserById(
-                Objects.requireNonNull( userAdmin.getId() ) ) ).getLoginName() );
+                Objects.requireNonNull(userAdmin.getId()))).getLoginName()
+        );
         //getUsers() --------------------------
         assertArrayEquals(
             LOGIN_NAMES,
             spiedUserService.getUsers().stream().map(UserEntity::getLoginName).toArray(String[]::new)
         );
         verify(spyUserRepository, times(1)).findAll();
-        verify( spyUserRepository, times(2)).findByLoginName(anyString());
+        verify(spyUserRepository, times(2)).findByLoginName(anyString());
         //getUserPermits() : "user" user
-        UserEntity user = spiedUserService.getUserByLoginName( LOGIN_NAMES[0] );
-        assertNotNull( user );
-        assertTrue( spiedUserService.getUserPermits( user, actualUserPermitNames, actualUserPermittedRequestCalls, actualUserDevelopers ) );
-        assertEquals( 24, actualUserPermitNames.size());
+        UserEntity user = spiedUserService.getUserByLoginName(LOGIN_NAMES[0]);
+        assertNotNull(user);
+        assertTrue(spiedUserService.getUserPermits(
+            user,
+            actualUserPermitNames,
+            actualUserPermittedRequestCalls,
+            actualUserDevelopers
+        ));
+        assertEquals(24, actualUserPermitNames.size());
         assertArrayEquals(
             requestedUserDevelopers.stream().map(DeveloperEntity::getName).sorted().toArray(),
             actualUserDevelopers.stream().map(DeveloperEntity::getName).sorted().toArray()
         );
         //getUserPermits() : "admin" user
-        user = spiedUserService.getUserByLoginName( LOGIN_NAMES[1] );
-        assertNotNull( user );
-        assertTrue( spiedUserService.getUserPermits( user, actualUserPermitNames, actualUserPermittedRequestCalls, actualUserDevelopers ) );
-        assertEquals( 27, actualUserPermitNames.size() );
+        user = spiedUserService.getUserByLoginName(LOGIN_NAMES[1]);
+        assertNotNull(user);
+        assertTrue(spiedUserService.getUserPermits(
+            user,
+            actualUserPermitNames,
+            actualUserPermittedRequestCalls,
+            actualUserDevelopers
+        ));
+        assertEquals(27, actualUserPermitNames.size());
         assertArrayEquals(
             requestedAdminDevelopers.stream().map(DeveloperEntity::getName).sorted().toArray(),
             actualUserDevelopers.stream().map(DeveloperEntity::getName).sorted().toArray()
@@ -172,7 +198,7 @@ class UserTests {
         // - Még nem létező névvel
         expectedUser.setLoginName(JOHN_SMITH);
         assertDoesNotThrow(() -> spyUserRepository.saveAndFlush(expectedUser));
-        assertNotNull( expectedUser.getId() );
+        assertNotNull(expectedUser.getId());
         // - Visszaolvasás
         entityManager.clear();
         actualUser = spyUserRepository.findByLoginName(JOHN_SMITH);
@@ -185,7 +211,7 @@ class UserTests {
         assertThrows(Exception.class, () -> spiedUserService.modifyUser(userWithExistingLoginName));
         //
         entityManager.clear();
-        final UserEntity userWithNewLoginName =  spyUserRepository.findByLoginName(JOHN_SMITH);
+        final UserEntity userWithNewLoginName = spyUserRepository.findByLoginName(JOHN_SMITH);
         assertNotNull(userWithNewLoginName);
         userWithNewLoginName.setLoginName(MODDED_USER);
         assertDoesNotThrow(() -> spyUserRepository.saveAndFlush(userWithNewLoginName));

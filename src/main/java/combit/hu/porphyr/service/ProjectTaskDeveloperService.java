@@ -89,7 +89,8 @@ public class ProjectTaskDeveloperService {
 
         @Override
         public void run() {
-            @Nullable PorphyrServiceException porphyrServiceException = null;
+            @Nullable
+            PorphyrServiceException porphyrServiceException = null;
             final @NonNull ProjectTaskEntity projectTaskEntity = projectTaskDeveloperEntity.getProjectTaskEntity();
             final @NonNull ProjectDeveloperEntity projectDeveloperEntity = projectTaskDeveloperEntity.getProjectDeveloperEntity();
             entityManager.detach(projectTaskDeveloperEntity);
@@ -205,7 +206,8 @@ public class ProjectTaskDeveloperService {
                 return projectTaskDeveloperRepository.findAll();
             }
         }
-        @NonNull List<ProjectTaskDeveloperEntity> result = new ArrayList<>();
+        @NonNull
+        List<ProjectTaskDeveloperEntity> result = new ArrayList<>();
         try {
             result = forkJoinPool.submit(new CallableCore()).get();
         } catch (ExecutionException executionException) {
@@ -231,7 +233,8 @@ public class ProjectTaskDeveloperService {
                 return projectTaskDeveloperRepository.findAllById(id);
             }
         }
-        @Nullable ProjectTaskDeveloperEntity result = null;
+        @Nullable
+        ProjectTaskDeveloperEntity result = null;
         try {
             result = forkJoinPool.submit(new CallableCore(id)).get();
         } catch (ExecutionException executionException) {
@@ -265,7 +268,8 @@ public class ProjectTaskDeveloperService {
                     projectTaskEntity, projectDeveloperEntity);
             }
         }
-        @Nullable ProjectTaskDeveloperEntity result = null;
+        @Nullable
+        ProjectTaskDeveloperEntity result = null;
         try {
             result = forkJoinPool.submit(new CallableCore(projectTaskEntity, projectDeveloperEntity)).get();
         } catch (ExecutionException executionException) {
@@ -292,7 +296,8 @@ public class ProjectTaskDeveloperService {
                 return projectTaskDeveloperRepository.findAllByProjectTaskEntity(projectTaskEntity);
             }
         }
-        @NonNull List<ProjectTaskDeveloperEntity> result = new ArrayList<>();
+        @NonNull
+        List<ProjectTaskDeveloperEntity> result = new ArrayList<>();
         try {
             result = forkJoinPool.submit(new CallableCore(projectTaskEntity)).get();
         } catch (ExecutionException executionException) {
@@ -319,7 +324,8 @@ public class ProjectTaskDeveloperService {
                 return projectTaskDeveloperRepository.findAllByProjectDeveloperEntity(projectDeveloperEntity);
             }
         }
-        @NonNull List<ProjectTaskDeveloperEntity> result = new ArrayList<>();
+        @NonNull
+        List<ProjectTaskDeveloperEntity> result = new ArrayList<>();
         try {
             result = forkJoinPool.submit(new CallableCore(projectDeveloperEntity)).get();
         } catch (ExecutionException executionException) {
@@ -355,7 +361,8 @@ public class ProjectTaskDeveloperService {
                 );
             }
         }
-        @NonNull List<ProjectTaskDeveloperEntity> result = new ArrayList<>();
+        @NonNull
+        List<ProjectTaskDeveloperEntity> result = new ArrayList<>();
         try {
             result = forkJoinPool.submit(new CallableCore(projectId, developerId)).get();
         } catch (ExecutionException executionException) {
@@ -384,7 +391,8 @@ public class ProjectTaskDeveloperService {
                 return projectTaskDeveloperRepository.findProjectTasksDeveloperByDeveloperId(developerId);
             }
         }
-        @NonNull List<ProjectTaskDeveloperEntity> result = new ArrayList<>();
+        @NonNull
+        List<ProjectTaskDeveloperEntity> result = new ArrayList<>();
         try {
             result = forkJoinPool.submit(new CallableCore(developerId)).get();
         } catch (ExecutionException executionException) {

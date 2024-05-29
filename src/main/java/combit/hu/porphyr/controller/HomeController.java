@@ -45,7 +45,7 @@ public class HomeController {
 
     private static final String ERROR = "error";
 
-    @RequestMapping( "/" )
+    @RequestMapping("/")
     public String root(final @NonNull Model model) {
 
         ArrayList<String> userPermitNames = new ArrayList<>();
@@ -55,15 +55,15 @@ public class HomeController {
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         sessionData.setSelectedProjectId(0L);
-        if( userService.getActualUserPermits( userPermitNames, userPermittedRequestCalls, userDevelopers )) {
-            sessionData.setUserLoginName( auth.getName() );
-            sessionData.setUserPermitNames( userPermitNames );
-            sessionData.setUserPermittedRequestCalls( userPermittedRequestCalls );
-            sessionData.setUserDevelopers( userDevelopers );
+        if (userService.getActualUserPermits(userPermitNames, userPermittedRequestCalls, userDevelopers)) {
+            sessionData.setUserLoginName(auth.getName());
+            sessionData.setUserPermitNames(userPermitNames);
+            sessionData.setUserPermittedRequestCalls(userPermittedRequestCalls);
+            sessionData.setUserDevelopers(userDevelopers);
         }
 
         model.addAttribute(ERROR, webErrorBean.getWebErrorData());
-        model.addAttribute("userPermitNames", sessionData.getUserPermitNames() );
+        model.addAttribute("userPermitNames", sessionData.getUserPermitNames());
         return "porphyr";
     }
 

@@ -13,8 +13,10 @@ import java.util.Map;
 @Value
 public class RequestsConstants {
 
-    public static final @NonNull String PERMIT_ALL = "permit_all";
     public static final @NonNull String PERMIT_ROOT = "root";
+    public static final @NonNull String PERMIT_LOGOUT = "logout";
+    public static final @NonNull String PERMIT_ERROR = "error";
+    public static final @NonNull String PERMIT_ALL = "permit_all";
     public static final @NonNull String PERMIT_PROJECTS = "projects";
     public static final @NonNull String PERMIT_PROJECT_NEW = "newProject";
     public static final @NonNull String PERMIT_PROJECT_DELETE = "deleteProject";
@@ -35,11 +37,43 @@ public class RequestsConstants {
     public static final @NonNull String PERMIT_DEVELOPER_MODIFY = "modifyDeveloper";
     public static final @NonNull String PERMIT_DEVELOPER_TASKS = "developerTasks";
     public static final @NonNull String PERMIT_DEVELOPER_TASK_MODIFY = "modifyDeveloperTask";
-    public static final @NonNull String PERMIT_ERROR = "error";
     public static final @NonNull String PERMIT_DBCONSOLE = "dbConsole";
     public static final @NonNull String PERMIT_DEVELOPER_RAW_LIST = "rawDeveloperList";
-    public static final @NonNull String PERMIT_LOGOUT = "logout";
     public static final @NonNull String PERMIT_RIGHTS = "rights";
+
+    public static final @NonNull Map<String, String> PERMITS;
+
+    static {
+        final Map<String, String> tmpMap = new HashMap<>();
+        tmpMap.put(PERMIT_ROOT, "Főmenü");
+        tmpMap.put(PERMIT_LOGOUT, "Kilépés");
+        tmpMap.put(PERMIT_ERROR, "Hibák megjelenítése");
+        tmpMap.put(PERMIT_ALL, "Minden");
+        tmpMap.put(PERMIT_PROJECTS, "Projektek");
+        tmpMap.put(PERMIT_PROJECT_NEW, "Új projekt felvitele");
+        tmpMap.put(PERMIT_PROJECT_DELETE, "Projekt törlése");
+        tmpMap.put(PERMIT_PROJECT_MODIFY, "Projekt módosítása");
+        tmpMap.put(PERMIT_PROJECT_DEVELOPERS, "Projekt fejlesztői");
+        tmpMap.put(PERMIT_PROJECT_DEVELOPER_NEW, "Fejlesztő hozzárendelése a projekthez");
+        tmpMap.put(PERMIT_PROJECT_DEVELOPER_TASKS, "A projekt fejlesztőinek feladatai");
+        tmpMap.put(PERMIT_PROJECT_DEVELOPER_TASK_NEW, "Feladat hozzárendelése a projekt fejlesztőihez");
+        tmpMap.put(PERMIT_PROJECT_TASKS, "Projekt feladatai");
+        tmpMap.put(PERMIT_PROJECT_TASK_NEW, "Új feladat felvitele a projekthez");
+        tmpMap.put(PERMIT_PROJECT_TASK_MODIFY, "Projekt feladatainak módosítása");
+        tmpMap.put(PERMIT_PROJECT_TASK_DEVELOPERS, "A projekt feladatain dolgozó fejlesztők");
+        tmpMap.put(PERMIT_PROJECT_TASK_DEVELOPER_NEW, "Új fejlesztő hozzárendelése a projekt feladataihoz");
+        tmpMap.put(PERMIT_PROJECT_TASK_DEVELOPER_DELETE, "Fejlesztő kivonása a projekt feladataiból");
+        tmpMap.put(PERMIT_PROJECT_TASK_POSTS, "A projekt feladataihoz fűzött megjegyzések kezelése");
+        tmpMap.put(PERMIT_DEVELOPERS, "Fejlesztők");
+        tmpMap.put(PERMIT_DEVELOPER_NEW, "Új fejlesztő felvitele");
+        tmpMap.put(PERMIT_DEVELOPER_MODIFY, "Fejlesztők módosítása");
+        tmpMap.put(PERMIT_DEVELOPER_TASKS, "Fejlesztők feladatai");
+        tmpMap.put(PERMIT_DEVELOPER_TASK_MODIFY, "Fejlesztő feladatainak módosítása");
+        tmpMap.put(PERMIT_DBCONSOLE, "Adatbázis konzol");
+        tmpMap.put(PERMIT_DEVELOPER_RAW_LIST, "Fejlesztők nyers listája, teszteléshez");
+        tmpMap.put(PERMIT_RIGHTS, "Jogosultságok kezelése");
+        PERMITS = Collections.unmodifiableMap(tmpMap);
+    }
 
     public static final @NonNull String CALL_RAW_DEVELOPER_LIST = "/devs";
     public static final @NonNull String CALL_SELECT_DEVELOPER_OPERATION = "/selectDeveloperOperation";
@@ -110,8 +144,13 @@ public class RequestsConstants {
     public static final @NonNull String CALL_START_NEW_USER_DEVELOPER = "/startNewUserDeveloper/\\d*";
     public static final @NonNull String CALL_USER_DEVELOPER_NEW = "/rights/user_developer_new";
     public static final @NonNull String CALL_USER_DEVELOPER_NEW_DATA_PROCESSING = "/newUserDeveloperDataProcessing";
+    public static final @NonNull String CALL_RIGHTS_PERMITS = "/rights/permits";
+    public static final @NonNull String CALL_START_ROLE_PERMITS = "/startRolePermits/\\d*";
+    public static final @NonNull String CALL_ROLE_PERMITS = "/rights/role_permits";
+    public static final @NonNull String CALL_START_NEW_ROLE_PERMIT = "/startNewRolePermit/\\d*";
+    public static final @NonNull String CALL_INSERT_NEW_ROLE_PERMIT = "/insertNewRolePermit";
+    public static final @NonNull String CALL_START_DELETE_ROLE_PERMIT = "/startDeleteRolePermit/\\d*/\\d*";
 
-    //A PERMITS táblába a kulcsok kerülnek bele. Így egy funkcióhoz (engedélyhez) több request is tartozhat.
     public static final @NonNull Map<String, List<String>> PROTECTED_REQUEST_CALLS;
 
     static {
@@ -210,7 +249,11 @@ public class RequestsConstants {
                 CALL_START_USER_ROLES, CALL_RIGHTS_USER_ROLES, CALL_START_DELETE_USER_ROLE,
                 CALL_START_NEW_USER_ROLE, CALL_USER_ROLE_NEW, CALL_USER_ROLE_NEW_DATA_PROCESSING,
                 CALL_START_USER_DEVELOPERS, CALL_RIGHTS_USER_DEVELOPERS, CALL_START_DELETE_USER_DEVELOPER,
-                CALL_START_NEW_USER_DEVELOPER, CALL_USER_DEVELOPER_NEW, CALL_USER_DEVELOPER_NEW_DATA_PROCESSING
+                CALL_START_NEW_USER_DEVELOPER, CALL_USER_DEVELOPER_NEW, CALL_USER_DEVELOPER_NEW_DATA_PROCESSING,
+                CALL_RIGHTS_PERMITS,
+                CALL_START_ROLE_PERMITS, CALL_ROLE_PERMITS,
+                CALL_START_NEW_ROLE_PERMIT, CALL_INSERT_NEW_ROLE_PERMIT,
+                CALL_START_DELETE_ROLE_PERMIT
             ))
         );
         PROTECTED_REQUEST_CALLS = Collections.unmodifiableMap(tmpMap);

@@ -69,9 +69,12 @@ public class DevelopersTasksController {
         @NonNull
         final TemplateData dataFromTemplate
     ) throws InterruptedException, ExecutionException {
-        @Nullable Long id = dataFromTemplate.getId();
-        @Nullable Long time = dataFromTemplate.getLongData();
-        @NonNull String result = REDIRECT_TO_DEVELOPER_TASKS;
+        @Nullable
+        Long id = dataFromTemplate.getId();
+        @Nullable
+        Long time = dataFromTemplate.getLongData();
+        @NonNull
+        String result = REDIRECT_TO_DEVELOPER_TASKS;
         if (id == null || time == null) {
             throw new PorphyrServiceException(PorphyrServiceException.Exceptions.NULL_VALUE);
         }

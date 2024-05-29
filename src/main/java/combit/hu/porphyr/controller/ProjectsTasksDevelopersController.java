@@ -50,7 +50,8 @@ public class ProjectsTasksDevelopersController {
         @NonNull
         final TemplateData dataFromTemplate
     ) throws ExecutionException, InterruptedException {
-        @NonNull final String result;
+        @NonNull
+        final String result;
         sessionData.setDataFromTemplate(dataFromTemplate);
         final @Nullable Long projectTaskDeveloperId = dataFromTemplate.getId();
         if (projectTaskDeveloperId == null) {
@@ -110,7 +111,7 @@ public class ProjectsTasksDevelopersController {
     //---------------------- Új fejlesztő hozzárendelése a feladathoz
     @RequestMapping("/project_tasks_developers_new")
     public @NonNull String newProjectTaskDeveloper(Model model)
-    throws InterruptedException, ExecutionException {
+        throws InterruptedException, ExecutionException {
         final @NonNull ProjectEntity project = sessionData.getSelectedProject();
         final @NonNull ProjectTaskEntity projectTask = sessionData.getSelectedProjectTask();
         final @NonNull List<ProjectDeveloperEntity> projectDevelopers = project.getProjectDevelopers();
@@ -140,10 +141,10 @@ public class ProjectsTasksDevelopersController {
         final TemplateData dataFromTemplate
     ) throws InterruptedException, ExecutionException {
         final @Nullable Long projectDeveloperId = dataFromTemplate.getId();
-        if( projectDeveloperId == null){
+        if (projectDeveloperId == null) {
             throw new PorphyrServiceException(PorphyrServiceException.Exceptions.NULL_VALUE);
         }
-        sessionData.setSelectedProjectDeveloperId( projectDeveloperId );
+        sessionData.setSelectedProjectDeveloperId(projectDeveloperId);
         final @NonNull ProjectDeveloperEntity projectDeveloper = sessionData.getSelectedProjectDeveloper();
         final @NonNull ProjectTaskEntity projectTask = sessionData.getSelectedProjectTask();
         final @NonNull ProjectTaskDeveloperEntity newProjectTaskDeveloper = new ProjectTaskDeveloperEntity();

@@ -62,7 +62,8 @@ public class RoleService {
                 return roleRepository.findByRole(roleName);
             }
         }
-        @Nullable RoleEntity result = null;
+        @Nullable
+        RoleEntity result = null;
         try {
             result = forkJoinPool.submit(new CallableCore(roleName)).get();
         } catch (ExecutionException executionException) {
@@ -88,7 +89,8 @@ public class RoleService {
                 return roleRepository.findAllById(id);
             }
         }
-        @Nullable RoleEntity result = null;
+        @Nullable
+        RoleEntity result = null;
         try {
             result = forkJoinPool.submit(new CallableCore(id)).get();
         } catch (ExecutionException executionException) {
@@ -108,7 +110,8 @@ public class RoleService {
                 return roleRepository.findAll();
             }
         }
-        @NonNull List<RoleEntity> result = new ArrayList<>();
+        @NonNull
+        List<RoleEntity> result = new ArrayList<>();
         try {
             result = forkJoinPool.submit(new CallableCore()).get();
         } catch (ExecutionException executionException) {
@@ -139,7 +142,8 @@ public class RoleService {
                 return (!roleRepository.findAllByRoleAndIdNot(roleName, id).isEmpty());
             }
         }
-        @NonNull Boolean result = false;
+        @NonNull
+        Boolean result = false;
         try {
             result = forkJoinPool.submit(new CallableCore(roleName, id)).get();
         } catch (ExecutionException executionException) {

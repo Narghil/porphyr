@@ -57,7 +57,8 @@ public class ProjectsDevelopersController {
     ) throws ExecutionException, InterruptedException {
         @NonNull
         final String result;
-        @Nullable Long developerId = dataFromTemplate.getId();
+        @Nullable
+        Long developerId = dataFromTemplate.getId();
         if (developerId == null) {
             throw new PorphyrServiceException(PorphyrServiceException.Exceptions.NULL_VALUE);
         }
@@ -93,8 +94,8 @@ public class ProjectsDevelopersController {
         final @Nullable ProjectEntity project = sessionData.getSelectedProject();
         final @NonNull List<ProjectDeveloperEntity> projectDeveloperList = project.getProjectDevelopers();
 
-        for( ProjectDeveloperEntity projectDeveloper : projectDeveloperList){
-            projectDeveloperService.getDeveloperFullTimeInProject( projectDeveloper );
+        for (ProjectDeveloperEntity projectDeveloper : projectDeveloperList) {
+            projectDeveloperService.getDeveloperFullTimeInProject(projectDeveloper);
         }
 
         model.addAttribute("error", webErrorBean.getWebErrorData());
@@ -137,7 +138,8 @@ public class ProjectsDevelopersController {
         if (developerId == null) {
             throw new PorphyrServiceException(PorphyrServiceException.Exceptions.NULL_VALUE);
         }
-        @Nullable DeveloperEntity selectedDeveloper = developerService.getDeveloperById(developerId);
+        @Nullable
+        DeveloperEntity selectedDeveloper = developerService.getDeveloperById(developerId);
         if (selectedDeveloper == null) {
             throw new PorphyrServiceException(PorphyrServiceException.Exceptions.NULL_VALUE);
         }

@@ -8,9 +8,10 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 //@EnableWebMvc
-// A WebMvcConfigurer implementációban, az @EnableWebMvc és a @Configuration annotációk együttes alkalmazása esetén
+// A WebMvcConfigure(+r) implementációban, az @EnableWebMvc és a @Configuration annotációk együttes alkalmazása esetén
 // a STATIC könyvtár elemeire 404-es hibát jelez a Tomcat server.
 // Egyes fórumok szerint az @EnableWebMvc használata - ettől függetlenül is - felesleges.
+// Class 'WebConfigurator' is never used - hibás riasztás!
 @Configuration
 public class WebConfigurator implements WebMvcConfigurer {
 
