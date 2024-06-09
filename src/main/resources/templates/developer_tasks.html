@@ -53,13 +53,7 @@
                 <a class="btn-icon btn-outline-light"
                    data-bs-toggle="tooltip" data-bs-placement="top" title="Az idő rögzítése">
                    <img data-th-src="@{~/icons/accept.svg}" src="../static/icons/accept.svg" width="20" alt=""
-                        data-th-onclick="'setFields( ' + #{MODIFY} + ',' + ${task.id} + ' )'"
-                   >
-                </a>
-                <a class="btn-icon btn-outline-light"
-                   data-bs-toggle="tooltip" data-bs-placement="top" title="Bejegyzések">
-                   <img data-th-src="@{~/icons/posts.svg}" src="../static/icons/posts.svg" width="20" alt=""
-                        data-th-onclick="'setFields( ' + #{POSTS} + ',' + ${task.id} + ' )'"
+                        data-th-onclick="'setFieldsTime( ' + #{MODIFY} + ',' + ${task.id} + ' )'"
                    >
                 </a>
             </td>
@@ -68,7 +62,7 @@
     </table>
 
     <!-- Data Form -->
-    <form hidden name="taskSpendTime" data-th-action="@{/modifyDeveloperTask}"
+    <form hidden name="taskSpendTime" data-th-action="@{/selectDeveloperTaskOperation}"
           data-th-object="${dataFromTemplate}" method="post" class="form">
         <label for="operation"></label>
         <input type="text" class="form-control" id="operation" name="operation" data-th-field="*{operation}"
@@ -79,11 +73,11 @@
         <label for="longData">&nbsp;</label>
         <input type="number" class="form-control" id="longData" name="longData" data-th-field="*{longData}"
                placeholder="0"/>
-        <button type="submit" id="submitButton" class="btn btn-outline-secondary">Idő rögzítése</button>
+        <button type="submit" id="submitButton" class="btn btn-outline-secondary">Submit</button>
     </form>
 
     <script>
-        function setFields( operation, id ) {
+        function setFieldsTime( operation, id ) {
             var timeFieldName = "spendTime" + id;
             var timeFieldValue = document.getElementById( timeFieldName ).getAttribute('value');
 
@@ -92,7 +86,6 @@
             document.getElementById("longData").setAttribute('value', timeFieldValue );
             document.getElementById("submitButton").click();
         }
-
         function setTime( event, id ){
             var input = event.target;
             var timeFieldName = "spendTime" + id;

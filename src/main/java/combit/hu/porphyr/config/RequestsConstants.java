@@ -36,7 +36,6 @@ public class RequestsConstants {
     public static final @NonNull String PERMIT_DEVELOPER_NEW = "newDeveloper";
     public static final @NonNull String PERMIT_DEVELOPER_MODIFY = "modifyDeveloper";
     public static final @NonNull String PERMIT_DEVELOPER_TASKS = "developerTasks";
-    public static final @NonNull String PERMIT_DEVELOPER_TASK_MODIFY = "modifyDeveloperTask";
     public static final @NonNull String PERMIT_DBCONSOLE = "dbConsole";
     public static final @NonNull String PERMIT_DEVELOPER_RAW_LIST = "rawDeveloperList";
     public static final @NonNull String PERMIT_RIGHTS = "rights";
@@ -68,7 +67,6 @@ public class RequestsConstants {
         tmpMap.put(PERMIT_DEVELOPER_NEW, "Új fejlesztő felvitele");
         tmpMap.put(PERMIT_DEVELOPER_MODIFY, "Fejlesztők módosítása");
         tmpMap.put(PERMIT_DEVELOPER_TASKS, "Fejlesztők feladatai");
-        tmpMap.put(PERMIT_DEVELOPER_TASK_MODIFY, "Fejlesztő feladatainak módosítása");
         tmpMap.put(PERMIT_DBCONSOLE, "Adatbázis konzol");
         tmpMap.put(PERMIT_DEVELOPER_RAW_LIST, "Fejlesztők nyers listája, teszteléshez");
         tmpMap.put(PERMIT_RIGHTS, "Jogosultságok kezelése");
@@ -83,7 +81,7 @@ public class RequestsConstants {
     public static final @NonNull String CALL_START_MODIFY_DEVELOPER = "/developer_modify";
     public static final @NonNull String CALL_MODIFY_DEVELOPER = "/modifyDeveloper";
     public static final @NonNull String CALL_DEVELOPER_TASKS = "/developer_tasks";
-    public static final @NonNull String CALL_MODIFY_DEVELOPER_TASK = "/modifyDeveloperTask";
+    public static final @NonNull String CALL_SELECT_DEVELOPER_TASK_OPERATION = "/selectDeveloperTaskOperation";
     public static final @NonNull String CALL_ERROR = "/error";
     public static final @NonNull String CALL_ROOT = "/";
     public static final @NonNull String CALL_DBCONSOLE = "/dbConsole";
@@ -225,12 +223,13 @@ public class RequestsConstants {
         );
         tmpMap.put(
             PERMIT_DEVELOPER_MODIFY,
-            new ArrayList<>(Arrays.asList(CALL_START_MODIFY_DEVELOPER, CALL_MODIFY_DEVELOPER))
+            new ArrayList<>(Arrays.asList(
+                CALL_START_MODIFY_DEVELOPER,
+                CALL_MODIFY_DEVELOPER
+            ))
         );
-        tmpMap.put(PERMIT_DEVELOPER_TASKS, new ArrayList<>(Collections.singletonList(CALL_DEVELOPER_TASKS)));
-        tmpMap.put(
-            PERMIT_DEVELOPER_TASK_MODIFY,
-            new ArrayList<>(Collections.singletonList(CALL_MODIFY_DEVELOPER_TASK))
+        tmpMap.put(PERMIT_DEVELOPER_TASKS, new ArrayList<>(Arrays.asList(
+            CALL_DEVELOPER_TASKS, CALL_SELECT_DEVELOPER_TASK_OPERATION ))
         );
         tmpMap.put(PERMIT_DEVELOPER_RAW_LIST, new ArrayList<>(Collections.singletonList(CALL_RAW_DEVELOPER_LIST)));
         tmpMap.put(PERMIT_ERROR, new ArrayList<>(Collections.singletonList(CALL_ERROR)));

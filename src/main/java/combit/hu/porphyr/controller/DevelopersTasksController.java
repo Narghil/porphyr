@@ -30,7 +30,9 @@ public class DevelopersTasksController {
     private final @NonNull ProjectTaskDeveloperService projectTaskDeveloperService;
 
     @Autowired
-    public DevelopersTasksController(final @NonNull ProjectTaskDeveloperService projectTaskDeveloperService) {
+    public DevelopersTasksController(
+        final @NonNull ProjectTaskDeveloperService projectTaskDeveloperService
+    ) {
         this.projectTaskDeveloperService = projectTaskDeveloperService;
     }
 
@@ -62,24 +64,33 @@ public class DevelopersTasksController {
         return "developer_tasks";
     }
 
-    //---------------- Fejlesztő feladatának módosítása
-    @PostMapping("/modifyDeveloperTask")
-    public @NonNull String modifyDeveloperTask(
+    //---------------- Feladatválasztó
+    @PostMapping("/selectDeveloperTaskOperation")
+    public @NonNull String selectDeveloperTaskOperation(
         @ModelAttribute
+        @NonNull
+        final TemplateData dataFromTemplate,
+        final @NonNull Model model
+    ) throws ExecutionException, InterruptedException {
+        return modifyDeveloperTask(dataFromTemplate);
+    }
+
+    //---------------- Fejlesztő feladatának módosítása
+    public @NonNull String modifyDeveloperTask(
         @NonNull
         final TemplateData dataFromTemplate
     ) throws InterruptedException, ExecutionException {
         @Nullable
-        Long id = dataFromTemplate.getId();
+        Long projectTaskDeveloperId = dataFromTemplate.getId();
         @Nullable
         Long time = dataFromTemplate.getLongData();
         @NonNull
         String result = REDIRECT_TO_DEVELOPER_TASKS;
-        if (id == null || time == null) {
+        if (projectTaskDeveloperId == null || time == null) {
             throw new PorphyrServiceException(PorphyrServiceException.Exceptions.NULL_VALUE);
         }
         final @Nullable ProjectTaskDeveloperEntity projectTaskDeveloper = projectTaskDeveloperService.getProjectTaskDeveloperById(
-            id);
+            projectTaskDeveloperId);
         if (projectTaskDeveloper == null) {
             throw new PorphyrServiceException(PorphyrServiceException.Exceptions.NULL_VALUE);
         }

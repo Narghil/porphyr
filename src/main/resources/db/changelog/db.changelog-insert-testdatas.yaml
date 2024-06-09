@@ -431,7 +431,7 @@ databaseChangeLog:
                     value: "root"
               - column:
                     name: DESCRIPTION
-                    value: "Főoldal"
+                    value: "Főmenü"
     - insert:
           tableName: PERMITS
           columns:
@@ -449,7 +449,7 @@ databaseChangeLog:
                     value: "dbConsole"
               - column:
                     name: DESCRIPTION
-                    value: "Adatbázis-konzol"
+                    value: "Adatbázis konzol"
     - insert:
           tableName: PERMITS
           columns:
@@ -467,7 +467,7 @@ databaseChangeLog:
                     value: "rawDeveloperList"
               - column:
                     name: DESCRIPTION
-                    value: "Nyers lista a fejlesztőkről, teszteléshez"
+                    value: "Fejlesztők nyers listája, teszteléshez"
     - insert:
           tableName: PERMITS
           columns:
@@ -485,7 +485,7 @@ databaseChangeLog:
                     value: "newDeveloper"
               - column:
                     name: DESCRIPTION
-                    value: "Új fejlesztő felvétele"
+                    value: "Új fejlesztő felvitele"
     - insert:
           tableName: PERMITS
           columns:
@@ -494,7 +494,7 @@ databaseChangeLog:
                     value: "modifyDeveloper"
               - column:
                     name: DESCRIPTION
-                    value: "Fejlesztő módosítása"
+                    value: "Fejlesztők módosítása"
     - insert:
           tableName: PERMITS
           columns:
@@ -503,7 +503,7 @@ databaseChangeLog:
                     value: "developerTasks"
               - column:
                     name: DESCRIPTION
-                    value: "Fejlesztő feladatai"
+                    value: "Fejlesztők feladatai"
     - insert:
           tableName: PERMITS
           columns:
@@ -512,7 +512,7 @@ databaseChangeLog:
                     value: "modifyDeveloperTask"
               - column:
                     name: DESCRIPTION
-                    value: "Fejlesztő feladatának módosítása"
+                    value: "Fejlesztő feladatainak módosítása"
     - insert:
           tableName: PERMITS
           columns:
@@ -539,7 +539,7 @@ databaseChangeLog:
                     value: "newProject"
               - column:
                     name: DESCRIPTION
-                    value: "Új projekt felvétele"
+                    value: "Új projekt felvitele"
     - insert:
           tableName: PERMITS
           columns:
@@ -575,7 +575,7 @@ databaseChangeLog:
                     value: "projectDeveloperTasks"
               - column:
                     name: DESCRIPTION
-                    value: "Fejlesztő feladatai a projektben"
+                    value: "A projekt fejlesztőinek feladatai"
     - insert:
           tableName: PERMITS
           columns:
@@ -584,7 +584,7 @@ databaseChangeLog:
                     value: "newProjectDeveloperTask"
               - column:
                     name: DESCRIPTION
-                    value: "Új projektfeladat hozzárendelése a fejlesztőhöz"
+                    value: "Feladat hozzárendelése a projekt fejlesztőihez"
     - insert:
           tableName: PERMITS
           columns:
@@ -593,7 +593,7 @@ databaseChangeLog:
                     value: "projectTasks"
               - column:
                     name: DESCRIPTION
-                    value: "A projekt feladatai"
+                    value: "Projekt feladatai"
     - insert:
           tableName: PERMITS
           columns:
@@ -602,7 +602,7 @@ databaseChangeLog:
                     value: "newProjectTask"
               - column:
                     name: DESCRIPTION
-                    value: "Új projektfeladat"
+                    value: "Új feladat felvitele a projekthez"
     - insert:
           tableName: PERMITS
           columns:
@@ -611,7 +611,7 @@ databaseChangeLog:
                     value: "modifyProjectTask"
               - column:
                     name: DESCRIPTION
-                    value: "Projektfeladat módosítása"
+                    value: "Projekt feladatainak módosítása"
     - insert:
           tableName: PERMITS
           columns:
@@ -620,7 +620,7 @@ databaseChangeLog:
                     value: "projectTaskDevelopers"
               - column:
                     name: DESCRIPTION
-                    value: "A projektfeladaton dolgozó fejlesztők"
+                    value: "A projekt feladatain dolgozó fejlesztők"
     - insert:
           tableName: PERMITS
           columns:
@@ -629,7 +629,7 @@ databaseChangeLog:
                     value: "newProjectTaskDeveloper"
               - column:
                     name: DESCRIPTION
-                    value: "Fejlesztő hozzárendelése a projektfeladathoz"
+                    value: "Új fejlesztő hozzárendelése a projekt feladataihoz"
     - insert:
           tableName: PERMITS
           columns:
@@ -638,7 +638,7 @@ databaseChangeLog:
                     value: "deleteProjectTaskDeveloper"
               - column:
                     name: DESCRIPTION
-                    value: "Fejlesztő eltávolítása a projektfeladatból"
+                    value: "Fejlesztő kivonása a projekt feladataiból"
     - insert:
           tableName: PERMITS
           columns:
@@ -647,7 +647,7 @@ databaseChangeLog:
                     value: "permit_all"
               - column:
                     name: DESCRIPTION
-                    value: "Minden jogosultság"
+                    value: "Minden"
     - insert:
           tableName: PERMITS
           columns:
@@ -656,7 +656,7 @@ databaseChangeLog:
                     value: "projectTaskPosts"
               - column:
                     name: DESCRIPTION
-                    value: "Projekt feladatának bejegyzései"
+                    value: "A projekt feladataihoz fűzött megjegyzések kezelése"
     - insert:
           tableName: PERMITS
           columns:

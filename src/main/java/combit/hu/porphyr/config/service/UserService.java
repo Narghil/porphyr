@@ -234,7 +234,7 @@ public class UserService implements UserDetailsService {
             @Override
             public void run() {
                 if (!Objects.equals(modifiedUserEntity.getNewPassword(), modifiedUserEntity.getRetypedPassword())) {
-                    throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.USER_INSERT_DIFFERENT_PASSWORDS));
+                    throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.USER_MODIFY_DIFFERENT_PASSWORDS));
                 } else if (modifiedUserEntity.getId() == null) {
                     throw (new PorphyrServiceException(PorphyrServiceException.Exceptions.USER_MODIFY_NOT_SAVED));
                 } else {

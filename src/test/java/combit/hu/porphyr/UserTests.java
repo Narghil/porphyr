@@ -261,6 +261,14 @@ class UserTests {
         assertNotNull(userId);
         actualUser = Objects.requireNonNull(spiedUserService.getUserByLoginName(NEW_USER));
         assertNotNull(actualUser);
+        // - Eltérő jelszóval
+        entityManager.clear();
+        userForInsert.setRetypedPassword("does_not_equals");
+        assertEquals(
+            PorphyrServiceException.Exceptions.USER_INSERT_DIFFERENT_PASSWORDS.getDescription(),
+            assertThrows(PorphyrServiceException.class, () -> spiedUserService.insertNewUser(userForInsert)
+            ).getMessage()
+        );
         // - Minden hibalehetőség tesztelve volt:
         assertDoesNotThrow(() -> PorphyrServiceException.isAllExceptionsThrown(PorphyrServiceException.ExceptionGroups.USERS_INSERT));
     }
@@ -305,6 +313,14 @@ class UserTests {
         actualUser = spiedUserService.getUserByLoginName(NEW_LOGIN_NAME);
         assertNotNull(actualUser);
         verify(spyUserRepository, times(2)).saveAndFlush(any(UserEntity.class));
+        // - Eltérő jelszóval
+        entityManager.clear();
+        userWithAnyNames.setRetypedPassword("does_not_equals");
+        assertEquals(
+            PorphyrServiceException.Exceptions.USER_MODIFY_DIFFERENT_PASSWORDS.getDescription(),
+            assertThrows(PorphyrServiceException.class, () -> spiedUserService.modifyUser(userWithAnyNames)
+            ).getMessage()
+        );
         // - Minden hibalehetőség tesztelve volt:
         assertDoesNotThrow(() -> PorphyrServiceException.isAllExceptionsThrown(PorphyrServiceException.ExceptionGroups.USERS_MODIFY));
     }
