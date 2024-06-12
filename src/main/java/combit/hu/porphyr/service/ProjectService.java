@@ -1,6 +1,5 @@
 package combit.hu.porphyr.service;
 
-import combit.hu.porphyr.config.RequestsConstants;
 import combit.hu.porphyr.controller.helpers.SessionData;
 import combit.hu.porphyr.domain.ProjectEntity;
 import combit.hu.porphyr.repository.ProjectRepository;
@@ -22,6 +21,8 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
+
+import static combit.hu.porphyr.controller.helpers.ControllerConstants.ROLE_ADMIN;
 
 @Service
 @Transactional
@@ -314,14 +315,14 @@ public class ProjectService {
 
     /**
      * A bejelentkezett user-hez tartozó projektek listájának lekérdezése
-     * Ha PERMIT_PROJECT_NEW joga van, akkor minden projektet láthat.
+     * Ha admin, akkor minden projektet láthat.
      */
     public synchronized @NonNull List<ProjectEntity> getActualUserProjects()
         throws ExecutionException, InterruptedException {
         final class CallableCore implements Callable<List<ProjectEntity>> {
             @Override
             public List<ProjectEntity> call() {
-                if (sessionData.getUserPermitNames().contains(RequestsConstants.PERMIT_PROJECT_NEW)) {
+                if (sessionData.getUserRoleNames().contains(ROLE_ADMIN)) {
                     return projectRepository.findAll();
                 } else {
                     return projectRepository.findAllByActualUserDevelopers(sessionData.getUserDevelopers());

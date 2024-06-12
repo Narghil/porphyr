@@ -278,7 +278,7 @@ public class PorphyrServiceException extends IllegalArgumentException {
         // ------------------ Egyéb hibák -----------------
         UNDEFINED(ExceptionGroups.UNDEFINED, "Undefined", 0),
         NULL_VALUE(ExceptionGroups.UNDEFINED, "Adathiba: Üres érték, nem várt helyen.", 0),
-        // ---------------- Controllerek hibaüzenetei ------------------
+        // ---------------- Controller -ek hibaüzenetei ------------------
         CONTROLLER_SELECTED_PROJECT_NOT_EXISTS(
             ExceptionGroups.CONTROLLERS,
             "A kiválasztott projekt nem érhető el vagy törölték.",

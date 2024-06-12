@@ -40,6 +40,7 @@
             <td class="col col-lg-1" style="text-align:right">
                 <label hidden for="none"> </label>
                 <input type="number" class="form-control"
+                       data-th-disabled="${userEditLevel} < #{EDITOR}"
                        data-th-value="${task.spendTime}"
                        min="0" id='none'
                        data-th-id="'spendTime' + ${task.id}"
@@ -51,6 +52,7 @@
             </td>
             <td class="col col-lg-1" style="text-align:center">
                 <a class="btn-icon btn-outline-light"
+                   data-th-if="${userEditLevel} >= #{EDITOR}"
                    data-bs-toggle="tooltip" data-bs-placement="top" title="Az idő rögzítése">
                    <img data-th-src="@{~/icons/accept.svg}" src="../static/icons/accept.svg" width="20" alt=""
                         data-th-onclick="'setFieldsTime( ' + #{MODIFY} + ',' + ${task.id} + ' )'"

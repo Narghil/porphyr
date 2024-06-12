@@ -11,7 +11,7 @@
         </a>
     </nav>
 
-    <div class="container p-3">
+    <div class="container p-3" data-th-if="${userEditLevel} >= #{ADMIN}">
         <a class="btn btn-outline-secondary" data-th-href="@{'/developers_new_start'}">
             <img data-th-src="@{icons/new.svg}" src="../static/icons/new.svg" width="20" alt="" class="mb-1"/>
             <span>Új fejlesztő felvétele</span>
@@ -39,12 +39,14 @@
                     />
                 </a>
                 <a class="btn-icon btn-outline-light"
+                   data-th-if="${userEditLevel} >= #{ADMIN}"
                    data-bs-toggle="tooltip" data-bs-placement="top" title="A fejlesztő adatainak szerkesztése">
                     <img data-th-src="@{~/icons/modify.svg}" src="../static/icons/modify.svg" width="20" alt=""
                          data-th-onclick="'setFields( ' + #{MODIFY} + ',' + ${developer.id} + ')'"
                     />
                 </a>
                 <a class="btn-icon btn-outline-light"
+                   data-th-if="${userEditLevel} >= #{ADMIN}"
                    data-bs-toggle="tooltip" data-bs-placement="top" title="A fejlesztő törlése">
                     <img data-th-src="@{~/icons/delete.svg}" src="../static/icons/delete.svg" width="20" alt=""
                          data-th-onclick="'setFields( ' + #{DELETE} + ',' + ${developer.id} + ')'"

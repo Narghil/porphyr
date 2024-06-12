@@ -1,5 +1,6 @@
 package combit.hu.porphyr.config.service;
 
+import combit.hu.porphyr.config.repository.PermitRepository;
 import combit.hu.porphyr.domain.DeveloperEntity;
 import combit.hu.porphyr.config.domain.PermitEntity;
 import combit.hu.porphyr.config.domain.RoleEntity;
@@ -30,6 +31,7 @@ import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
+import java.util.stream.Collectors;
 
 import static combit.hu.porphyr.config.RequestsConstants.PROTECTED_REQUEST_CALLS;
 
@@ -46,13 +48,19 @@ public class UserService implements UserDetailsService {
     @GuardedBy("this")
     private @NonNull UserRepository userRepository;
 
+    @Setter(onMethod_ = {@Synchronized})
+    @GuardedBy("this")
+    private @NonNull PermitRepository permitRepository;
+
     @Autowired
     public UserService(
         final @NonNull EntityManager entityManager,
-        final @NonNull UserRepository userRepository
+        final @NonNull UserRepository userRepository,
+        final @NonNull PermitRepository permitRepository
     ) {
         this.entityManager = entityManager;
         this.userRepository = userRepository;
+        this.permitRepository = permitRepository;
     }
 
     private static final @NonNull ForkJoinPool forkJoinPool = ForkJoinPool.commonPool();
@@ -298,6 +306,7 @@ public class UserService implements UserDetailsService {
      */
     public synchronized Boolean getUserPermits(
         final @NonNull UserEntity userEntity,
+        final @NonNull List<String> userRoleNames,
         final @NonNull List<String> userPermitNames,
         final @NonNull List<String> userPermittedRequestCalls,
         final @NonNull List<DeveloperEntity> userDevelopers
@@ -305,24 +314,27 @@ public class UserService implements UserDetailsService {
         throws ExecutionException, InterruptedException {
         final class CallableCore implements Callable<Boolean> {
             private final @NonNull UserEntity userEntity;
+            private final @NonNull List<String> userRoleNames;
             private final @NonNull List<String> userPermitNames;
             private final @NonNull List<String> userPermittedRequestCalls;
             private final @NonNull List<DeveloperEntity> userDevelopers;
 
             public CallableCore(
                 final @NonNull UserEntity userEntity,
+                final @NonNull List<String> userRoleNames,
                 final @NonNull List<String> userPermitNames,
                 final @NonNull List<String> userPermittedRequestCalls,
                 final @NonNull List<DeveloperEntity> userDevelopers
             ) {
                 this.userEntity = userEntity;
+                this.userRoleNames = userRoleNames;
                 this.userPermitNames = userPermitNames;
                 this.userPermittedRequestCalls = userPermittedRequestCalls;
                 this.userDevelopers = userDevelopers;
             }
 
             @Override
-            public Boolean call() {
+            public Boolean call() throws InterruptedException, ExecutionException {
                 userDevelopers.addAll(userEntity.getDevelopers());
                 for (RoleEntity role : userEntity.getRoles()) {
                     for (PermitEntity permit : role.getPermits()) {
@@ -330,6 +342,11 @@ public class UserService implements UserDetailsService {
                     }
                 }
                 changeIfPermitAll(userPermitNames, userPermittedRequestCalls);
+                userRoleNames.addAll(userEntity.getRoles()
+                    .stream()
+                    .map(RoleEntity::getRole)
+                    .collect(Collectors.toList()));
+
                 return true;
             }
         }
@@ -342,6 +359,7 @@ public class UserService implements UserDetailsService {
             userDevelopers.clear();
             result = forkJoinPool.submit(new CallableCore(
                 userEntity,
+                userRoleNames,
                 userPermitNames,
                 userPermittedRequestCalls,
                 userDevelopers
@@ -358,6 +376,7 @@ public class UserService implements UserDetailsService {
      */
     @SneakyThrows
     public synchronized @NonNull Boolean getActualUserPermits(
+        final @NonNull List<String> userRoleNames,
         final @NonNull List<String> userPermitNames,
         final @NonNull List<String> userPermittedRequestCalls,
         final @NonNull List<DeveloperEntity> userDevelopers
@@ -367,6 +386,7 @@ public class UserService implements UserDetailsService {
         );
         return (userEntity != null) && getUserPermits(
             userEntity,
+            userRoleNames,
             userPermitNames,
             userPermittedRequestCalls,
             userDevelopers
@@ -379,12 +399,16 @@ public class UserService implements UserDetailsService {
         final @NonNull String permitName,
         final @NonNull List<String> userPermitNames,
         final @NonNull List<String> userPermittedRequestCalls
-    ) {
+    ) throws ExecutionException, InterruptedException {
         if (!userPermitNames.contains(permitName)) {
             userPermitNames.add(permitName);
             List<String> requestCalls = PROTECTED_REQUEST_CALLS.get(permitName);
             if (requestCalls == null) {
-                throw new NullPointerException("Empty requestCalls at:" + permitName);
+                final @NonNull PermitService permitService = new PermitService(permitRepository);
+                PermitEntity permitEntity = permitService.getPermitByName(permitName);
+                if (permitEntity != null && permitEntity.getUsable()) {
+                    throw new NullPointerException("Empty protected request calls on permit:" + permitName);
+                }
             } else {
                 for (String requestCall : requestCalls) {
                     if (!userPermittedRequestCalls.contains(requestCall)) {

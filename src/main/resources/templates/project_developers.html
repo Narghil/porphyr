@@ -15,7 +15,7 @@
         <div data-th-case="'0'">
             A projekthez minden lehetséges fejlesztő hozzá van rendelve.
         </div>
-        <div data-th-case="*">
+        <div data-th-case="*" data-th-if="${userEditLevel} >= #{ADMIN}">
             <a class="btn btn-outline-secondary" data-th-href="@{'/project_developers_new'}">
                 <img data-th-src="@{icons/new.svg}" src="../static/icons/new.svg" width="20" alt="" class="mb-1"/>
                 <span>Új fejlesztő hozzárendelése a projekthez</span>
@@ -34,7 +34,10 @@
         <tbody>
         <tr data-th-each="projectDeveloper : ${projectDevelopers}">
             <td class="col col-lg-9" data-th-text="${projectDeveloper.developerEntity.name}">Név</td>
-            <td class="col col-lg-1" style="text-align:right" data-th-text="${projectDeveloper.spendTime}">Idő</td>
+            <td class="col col-lg-1" style="text-align:right"
+                data-th-disabled="${userEditLevel} < #{EDITOR}"
+                data-th-text="${projectDeveloper.spendTime}">Idő
+            </td>
             <td class="col col-lg-2" style="text-align:center">
                 <a class="noDecor" href="#"
                    data-bs-toggle="tooltip" data-bs-placement="top" title="A fejlesztő feladatai a projektben">
@@ -42,7 +45,7 @@
                          data-th-onclick="'setFields( ' + #{TASKS} + ','  + ${projectDeveloper.developerEntity.id} + ')'"
                     />
                 </a>
-                <a class="noDecor" href="#"
+                <a class="noDecor" href="#" data-th-if="${userEditLevel} >= #{ADMIN}"
                    data-bs-toggle="tooltip" data-bs-placement="top" title="A fejlesztő eltávolítása a projektből">
                     <img data-th-src="@{~/icons/delete.svg}" src="../static/icons/delete.svg" width="20" alt=""
                          data-th-onclick="'setFields( ' + #{DELETE} + ',' + ${projectDeveloper.developerEntity.id} + ')'"

@@ -48,6 +48,7 @@ public class HomeController {
     @RequestMapping("/")
     public String root(final @NonNull Model model) {
 
+        ArrayList<String> userRoleNames = new ArrayList<>();
         ArrayList<String> userPermitNames = new ArrayList<>();
         ArrayList<String> userPermittedRequestCalls = new ArrayList<>();
         ArrayList<DeveloperEntity> userDevelopers = new ArrayList<>();
@@ -55,8 +56,14 @@ public class HomeController {
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         sessionData.setSelectedProjectId(0L);
-        if (userService.getActualUserPermits(userPermitNames, userPermittedRequestCalls, userDevelopers)) {
+        if (userService.getActualUserPermits(
+            userRoleNames,
+            userPermitNames,
+            userPermittedRequestCalls,
+            userDevelopers
+        )) {
             sessionData.setUserLoginName(auth.getName());
+            sessionData.setUserRoleNames(userRoleNames);
             sessionData.setUserPermitNames(userPermitNames);
             sessionData.setUserPermittedRequestCalls(userPermittedRequestCalls);
             sessionData.setUserDevelopers(userDevelopers);
@@ -70,9 +77,12 @@ public class HomeController {
     @RequestMapping("/projects")
     public @NonNull String projects(final @NonNull Model model) throws ExecutionException, InterruptedException {
         model.addAttribute(ERROR, webErrorBean.getWebErrorData());
-        // --- model.addAttribute("projectsList", projectService.getProjects())
         model.addAttribute("projectsList", projectService.getActualUserProjects());
         model.addAttribute("dataFromTemplate", sessionData.getDataFromTemplate());
+        model.addAttribute("userEditLevel", sessionData.getUserEditLevel());
+
+        model.addAttribute("throwingError", sessionData.getSelectedDeveloper());
+
         return "projects";
     }
 
@@ -82,6 +92,7 @@ public class HomeController {
         model.addAttribute(ERROR, webErrorBean.getWebErrorData());
         model.addAttribute("developers", developerList);
         model.addAttribute("dataFromTemplate", sessionData.getDataFromTemplate());
+        model.addAttribute("userEditLevel", sessionData.getUserEditLevel());
         return "developers";
     }
 }

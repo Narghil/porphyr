@@ -103,6 +103,7 @@ public class ProjectsDevelopersController {
         model.addAttribute("projectDevelopers", projectDeveloperList);
         model.addAttribute("assignAbleDevelopers", allDevelopers.size() - projectDeveloperList.size());
         model.addAttribute("dataFromTemplate", sessionData.getDataFromTemplate());
+        model.addAttribute("userEditLevel", sessionData.getUserEditLevel());
         return result;
     }
 

@@ -65,6 +65,8 @@ public class ProjectsTasksPostsController {
         model.addAttribute("posts", sessionData.getSelectedProjectTask().getProjectTaskPosts());
         model.addAttribute("developers", developers);
         model.addAttribute("dataFromTemplate", templateData);
+        model.addAttribute("userEditLevel", sessionData.getUserEditLevel());
+        model.addAttribute("actualDevelopers", sessionData.getUserDevelopers());
         model.addAttribute(ERROR, webErrorBean.getWebErrorData());
 
         return "project_tasks_posts";

@@ -120,6 +120,7 @@ public class ProjectsDevelopersTasksController {
             "assignAbleProjectTasks",
             allProjectTasks.size() - allProjectTaskDevelopers.size()
         );
+        model.addAttribute("userEditLevel", sessionData.getUserEditLevel());
         return "project_developers_tasks";
     }
 

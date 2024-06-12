@@ -63,6 +63,7 @@ public class ProjectsTasksController {
         model.addAttribute(ERROR, webErrorBean.getWebErrorData());
         model.addAttribute("project", project);
         model.addAttribute("dataFromTemplate", sessionData.getDataFromTemplate());
+        model.addAttribute("userEditLevel", sessionData.getUserEditLevel());
         return "project_tasks";
     }
 
@@ -123,6 +124,8 @@ public class ProjectsTasksController {
         );
         model.addAttribute("projectTask", projectTask);
         model.addAttribute("dataFromTemplate", sessionData.getDataFromTemplate());
+        model.addAttribute("userEditLevel", sessionData.getUserEditLevel());
+        model.addAttribute("actualDevelopers", sessionData.getUserDevelopers());
         return "project_tasks_developers";
     }
 

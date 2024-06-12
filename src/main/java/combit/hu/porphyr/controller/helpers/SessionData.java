@@ -22,7 +22,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
+
+import static combit.hu.porphyr.controller.helpers.ControllerConstants.*;
 
 /**
  * A template-nek átadott és azoktól visszakapott adatok session szintű tárolására szolgáló objektum,
@@ -59,6 +63,7 @@ public class SessionData {
     private @NonNull Long selectedProjectTaskId;
     private @NonNull Long selectedProjectTaskDeveloperId;
     private @NonNull String userLoginName;
+    private @NonNull ArrayList<String> userRoleNames;
     private @NonNull ArrayList<String> userPermitNames;
     private @NonNull ArrayList<String> userPermittedRequestCalls;
     private @NonNull ArrayList<DeveloperEntity> userDevelopers;
@@ -115,6 +120,40 @@ public class SessionData {
         return result;
     }
 
+    public @NonNull List<DeveloperEntity> loadProjectDevelopers()
+        throws InterruptedException, ExecutionException {
+        @NonNull
+        ArrayList<DeveloperEntity> result = new ArrayList<>();
+        final @NonNull List<ProjectDeveloperEntity> developers =
+            Objects.requireNonNull(projectService.getProjectById(this.selectedProjectId))
+                .getProjectDevelopers();
+        for (ProjectDeveloperEntity projectDeveloper : developers) {
+            result.add(projectDeveloper.getDeveloperEntity());
+        }
+        return result;
+    }
+
+    public int getUserEditLevel()
+        throws ExecutionException, InterruptedException {
+        int result = EDIT_LEVEL_READER;
+
+        if (userRoleNames.contains(ROLE_ADMIN)) {
+            result = EDIT_LEVEL_ADMIN;
+        } else {
+            if (this.selectedProjectId != 0) {
+                List<DeveloperEntity> projectDevelopers = loadProjectDevelopers();
+                if (projectDevelopers.stream().anyMatch(userDevelopers::contains)) {
+                    result = EDIT_LEVEL_COMMENTER;
+                }
+            }
+            if ((this.selectedDeveloperId != 0) && userDevelopers.contains(getSelectedDeveloper())) {
+                result = EDIT_LEVEL_EDITOR;
+            }
+        }
+
+        return result;
+    }
+
     @Autowired
     public SessionData(
         final @NonNull ProjectService projectService,
@@ -137,6 +176,7 @@ public class SessionData {
         selectedProjectTaskId = 0L;
         selectedProjectTaskDeveloperId = 0L;
         userLoginName = "anonymus";
+        userRoleNames = new ArrayList<>();
         userPermitNames = new ArrayList<>();
         userPermittedRequestCalls = new ArrayList<>();
         userDevelopers = new ArrayList<>();

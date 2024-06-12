@@ -1,5 +1,6 @@
 package combit.hu.porphyr;
 
+import combit.hu.porphyr.config.repository.PermitRepository;
 import combit.hu.porphyr.domain.DeveloperEntity;
 import combit.hu.porphyr.config.domain.RoleEntity;
 import combit.hu.porphyr.config.domain.UserEntity;
@@ -49,10 +50,11 @@ class UserTests {
     public UserTests(
         final @NonNull EntityManager entityManager,
         final @NonNull UserRepository userRepository,
-        final @NonNull DeveloperRepository developerRepository
+        final @NonNull DeveloperRepository developerRepository,
+        final @NonNull PermitRepository permitRepository
     ) {
         this.entityManager = entityManager;
-        this.spiedUserService = new UserService(this.entityManager, userRepository);
+        this.spiedUserService = new UserService(this.entityManager, userRepository,permitRepository);
         this.spyUserRepository = Mockito.mock(
             UserRepository.class, AdditionalAnswers.delegatesTo(userRepository)
         );
@@ -107,6 +109,8 @@ class UserTests {
     @Rollback
     void userServiceQueriesTest() throws ExecutionException, InterruptedException {
         @NonNull
+        List<String> actualUserRoleNames = new ArrayList<>();
+        @NonNull
         List<String> actualUserPermitNames = new ArrayList<>();
         @NonNull
         List<String> actualUserPermittedRequestCalls = new ArrayList<>();
@@ -154,6 +158,7 @@ class UserTests {
         assertNotNull(user);
         assertTrue(spiedUserService.getUserPermits(
             user,
+            actualUserRoleNames,
             actualUserPermitNames,
             actualUserPermittedRequestCalls,
             actualUserDevelopers
@@ -168,6 +173,7 @@ class UserTests {
         assertNotNull(user);
         assertTrue(spiedUserService.getUserPermits(
             user,
+            actualUserRoleNames,
             actualUserPermitNames,
             actualUserPermittedRequestCalls,
             actualUserDevelopers

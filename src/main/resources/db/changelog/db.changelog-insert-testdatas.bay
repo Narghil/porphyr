@@ -384,6 +384,43 @@ databaseChangeLog:
             name: DEVELOPER_ID
             valueNumeric: 1
         tableName: USERS_DEVELOPERS
+    # admin
+    - insert:
+          columns:
+              - column:
+                    name: USER_ID
+                    valueNumeric: 2
+              - column:
+                    name: DEVELOPER_ID
+                    valueNumeric: 1
+          tableName: USERS_DEVELOPERS
+    - insert:
+        columns:
+        - column:
+            name: USER_ID
+            valueNumeric: 2
+        - column:
+            name: DEVELOPER_ID
+            valueNumeric: 2
+        tableName: USERS_DEVELOPERS
+    - insert:
+        columns:
+        - column:
+            name: USER_ID
+            valueNumeric: 2
+        - column:
+            name: DEVELOPER_ID
+            valueNumeric: 3
+        tableName: USERS_DEVELOPERS
+    - insert:
+          columns:
+              - column:
+                    name: USER_ID
+                    valueNumeric: 2
+              - column:
+                    name: DEVELOPER_ID
+                    valueNumeric: 4
+          tableName: USERS_DEVELOPERS
     # --------------------
     # Inserts into PERMITS
     # --------------------

@@ -2,6 +2,7 @@ package combit.hu.porphyr;
 
 import combit.hu.porphyr.config.domain.RoleEntity;
 import combit.hu.porphyr.config.domain.UserEntity;
+import combit.hu.porphyr.config.repository.PermitRepository;
 import combit.hu.porphyr.config.repository.RoleRepository;
 import combit.hu.porphyr.config.repository.UserRepository;
 import combit.hu.porphyr.config.service.RoleService;
@@ -43,10 +44,11 @@ class UserRoleTests {
     public UserRoleTests(
         final @NonNull EntityManager entityManager,
         final @NonNull UserRepository userRepository,
-        final @NonNull RoleRepository roleRepository
+        final @NonNull RoleRepository roleRepository,
+        final @NonNull PermitRepository permitRepository
     ) {
         this.entityManager = entityManager;
-        this.spiedUserService = new UserService(this.entityManager, userRepository);
+        this.spiedUserService = new UserService(this.entityManager, userRepository, permitRepository);
         this.spyUserRepository = Mockito.mock(
             UserRepository.class, AdditionalAnswers.delegatesTo(userRepository)
         );

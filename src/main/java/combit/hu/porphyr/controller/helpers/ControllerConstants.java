@@ -14,6 +14,13 @@ public class ControllerConstants {
     public static final int MENU_ITEM_INSERT = 7;
     public static final @NonNull String ERROR_TITLE = "Hiba!";
 
+    public static final int EDIT_LEVEL_READER = 0;
+    public static final int EDIT_LEVEL_COMMENTER = 10;
+    public static final int EDIT_LEVEL_EDITOR = 20;
+    public static final int EDIT_LEVEL_ADMIN = 100;
+
+    public static final String ROLE_ADMIN = "ADMIN";
+
     private ControllerConstants() {
     }
 }

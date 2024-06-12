@@ -61,6 +61,7 @@ public class DevelopersTasksController {
         model.addAttribute("allProjectTasksDeveloper", allProjectTasksDeveloper);
         model.addAttribute("developer", developer);
         model.addAttribute("dataFromTemplate", sessionData.getDataFromTemplate());
+        model.addAttribute("userEditLevel", sessionData.getUserEditLevel());
         return "developer_tasks";
     }
 

@@ -1,5 +1,6 @@
 package combit.hu.porphyr;
 
+import combit.hu.porphyr.config.repository.PermitRepository;
 import combit.hu.porphyr.domain.DeveloperEntity;
 import combit.hu.porphyr.config.domain.UserEntity;
 import combit.hu.porphyr.repository.DeveloperRepository;
@@ -44,10 +45,11 @@ class UserDeveloperTests {
     public UserDeveloperTests(
         final @NonNull EntityManager entityManager,
         final @NonNull UserRepository userRepository,
-        final @NonNull DeveloperRepository developerRepository
+        final @NonNull DeveloperRepository developerRepository,
+        final @NonNull PermitRepository permitRepository
     ) {
         this.entityManager = entityManager;
-        this.spiedUserService = new UserService(this.entityManager, userRepository);
+        this.spiedUserService = new UserService(this.entityManager, userRepository, permitRepository);
         this.spyUserRepository = Mockito.mock(
             UserRepository.class, AdditionalAnswers.delegatesTo(userRepository)
         );

@@ -12,7 +12,7 @@
         </a>
     </nav>
 
-    <div class="container p-3">
+    <div class="container p-3" data-th-if="${userEditLevel} >= #{COMMENTER}">
         <button type="button" class="btn btn-outline-secondary"
                 id="newPostButton"
                 data-th-onclick="|startNewPost( #{INSERT} )|"
@@ -93,6 +93,11 @@
             <!-- Function icons -->
             <td class="col col-lg-1 border" style="text-align:center">
                 <a class="btn-icon btn-outline-light"
+                   data-th-if="
+                   ( ${userEditLevel} == #{ADMIN} )
+                   ? true
+                   : ${ #arrays.contains( actualDevelopers , post.developerEntity ) }
+                   "
                    data-th-id="'modifyIcon' + ${post.id}"
                    data-bs-toggle="tooltip" data-bs-placement="top" title="Módosítás">
                     <img data-th-src="@{~/icons/modify.svg}" src="../static/icons/modify.svg" width="20" alt=""
@@ -116,6 +121,11 @@
                     />
                 </a>
                 <a class="btn-icon btn-outline-light"
+                   data-th-if="
+                   ( ${userEditLevel} == #{ADMIN} )
+                   ? true
+                   : ${ #arrays.contains( actualDevelopers , post.developerEntity ) }
+                   "
                    data-th-id="'deleteIcon' + ${post.id}"
                    data-bs-toggle="tooltip" data-bs-placement="top" title="Törlés">
                     <img data-th-src="@{~/icons/delete.svg}" src="../static/icons/delete.svg" width="20" alt=""

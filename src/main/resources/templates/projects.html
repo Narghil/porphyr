@@ -13,7 +13,7 @@
         </a>
     </nav>
 
-    <div class="container p-3">
+    <div class="container p-3" data-th-if="${userEditLevel} == #{ADMIN}" >
         <a class="btn btn-outline-secondary" data-th-href="@{'/project_new_start'}">
             <img data-th-src="@{icons/new.svg}" src="../static/icons/new.svg" width="20" alt="" class="mb-1"/>
             <span>Új projekt</span>
@@ -45,7 +45,7 @@
                    <img data-th-src="@{~/icons/tasks.svg}" src="../static/icons/tasks.svg" width="20" alt=""
                         data-th-onclick="'setFields( ' + #{TASKS} + ',' + ${project.id} + ')'"/>
                 </a>
-                <a class="noDecor" href="#"
+                <a class="noDecor" href="#" data-th-if="${userEditLevel} == #{ADMIN}"
                    data-bs-toggle="tooltip" data-bs-placement="top" title="Módosítás, törlés">
                    <img data-th-src="@{~/icons/modify.svg}" src="../static/icons/modify.svg" width="20" alt=""
                         data-th-onclick="'setFields( ' + #{MODIFY} + ',' + ${project.id} + ')'"/>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="hu" data-layout-decorate="~{layouts/main_decorator}">
+<head><title>Hiba!</title></head>
+<body>
+<div data-layout-fragment="mainContent">
+    <article>
+        <br />
+        <h4>
+            Internal program error:
+        </h4>
+        <br />
+        <div>
+            Request: <span data-th-text="${requestURI}">RequestURI</span>
+        </div>
+        <div data-th-each="message : ${errorMessages}">
+            <div data-th-text="${message}">Hibaüzenet</div>
+        </div>
+        <br/>
+        <h6><a href="javascript:history.back()">
+            <button>Vissza az előző oldalra</button>
+        </a></h6>
+        <br/>
+    </article>
+</div>
+</body>
+</html>

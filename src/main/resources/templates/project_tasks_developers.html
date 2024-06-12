@@ -18,7 +18,7 @@
             <div data-th-case="'0'">
                 <p>A feladathoz a projekt minden fejlesztője hozzá van rendelve.</p>
             </div>
-            <div data-th-case="*">
+            <div data-th-case="*" data-th-if="${userEditLevel} >= #{ADMIN}">
                 <p><a class="btn btn-outline-secondary" data-th-href="@{'/project_tasks_developers_new'}">
                     <img data-th-src="@{icons/new.svg}" src="../static/icons/new.svg" width="20" alt="" class="mb-1"/>
                     Új fejlesztő hozzárendelése a feladathoz
@@ -43,6 +43,11 @@
             <td class="col col-lg-2 border" style="text-align:right">
                 <label hidden for="none"></label>
                 <input type="number" class="form-control"
+                       data-th-readonly="!(
+                       ( ${userEditLevel} == #{ADMIN} )
+                       ? true
+                       : ${ #arrays.contains( actualDevelopers , projectTaskDeveloper.projectDeveloperEntity.developerEntity ) }
+                       )"
                        data-th-value="${projectTaskDeveloper.spendTime}"
                        min="0" id='none'
                        data-th-id="'spendTime' + ${projectTaskDeveloper.id}"
@@ -55,12 +60,17 @@
             <!-- Function icons -->
             <td class="col col-lg-1 border" style="text-align:center">
                 <a class="btn-icon btn-outline-light"
+                   data-th-if="
+                    ( ${userEditLevel} == #{ADMIN} )
+                    ? true
+                    : ${ #arrays.contains( actualDevelopers , projectTaskDeveloper.projectDeveloperEntity.developerEntity ) } "
                    data-bs-toggle="tooltip" data-bs-placement="top" title="Az idő rögzítése">
                    <img data-th-src="@{~/icons/accept.svg}" src="../static/icons/accept.svg" width="20" alt=""
                         data-th-onclick="'setFields( ' + #{MODIFY} + ',' + ${projectTaskDeveloper.id} + ' )'"
                    >
                 </a>
                 <a class="btn-icon btn-outline-light"
+                   data-th-if="${userEditLevel} >= #{ADMIN}"
                    data-bs-toggle="tooltip" data-bs-placement="top"
                    title="A fejlesztő eltávolítása a feladatból">
                    <img data-th-src="@{~/icons/delete.svg}" src="../static/icons/delete.svg" width="20" alt=""
