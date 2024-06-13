@@ -25,7 +25,7 @@ databaseChangeLog:
               nullable: false
               unique: false
             name: DESCRIPTION
-            type: CHARACTER LARGE OBJECT
+            type: CLOB
         - column:
             constraints:
               nullable: false

@@ -25,7 +25,7 @@ databaseChangeLog:
             type: VARCHAR(200)
         - column:
             name: DESCRIPTION
-            type: CHARACTER LARGE OBJECT
+            type: CLOB
         tableName: PROJECTTASKS
     - createIndex:
           columns:

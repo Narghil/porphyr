@@ -21,7 +21,7 @@ databaseChangeLog:
             type: VARCHAR(200)
         - column:
             name: DESCRIPTION
-            type: CHARACTER LARGE OBJECT
+            type: CLOB
         tableName: PROJECTS
 - changeSet:
     id: 4

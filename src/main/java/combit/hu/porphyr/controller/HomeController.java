@@ -80,9 +80,6 @@ public class HomeController {
         model.addAttribute("projectsList", projectService.getActualUserProjects());
         model.addAttribute("dataFromTemplate", sessionData.getDataFromTemplate());
         model.addAttribute("userEditLevel", sessionData.getUserEditLevel());
-
-        model.addAttribute("throwingError", sessionData.getSelectedDeveloper());
-
         return "projects";
     }
 
