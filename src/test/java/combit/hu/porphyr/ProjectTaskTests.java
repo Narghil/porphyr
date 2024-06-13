@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
@@ -134,11 +135,20 @@ class ProjectTaskTests {
         );
         // getProjectTaskPosts
         assertArrayEquals(
-            new String[]{
-                "Az 1. fejlesztő bejegyzése az első feladathoz", "A 2. fejlesztő bejegyzése az első feladathoz"
-            },
-            Objects.requireNonNull(projectTaskRepository.findAllById(1L)).getProjectTaskPosts().stream()
-                .map(PostEntity::getDescription).toArray(String[]::new)
+            Arrays.stream(
+                new String[]{
+                    "Az 1. fejlesztő bejegyzése az első feladathoz",
+                    "A 2. fejlesztő bejegyzése az első feladathoz"
+                }
+            ).sorted().toArray()
+            ,
+            Objects.requireNonNull(projectTaskRepository.findAllById(1L))
+                .getProjectTaskPosts()
+                .stream()
+                .map( (PostEntity e) -> ( Objects.requireNonNull(e.getDescription())) )
+                .sorted()
+                .toArray(String[]::new)
+
         );
         assertArrayEquals(
             new String[]{},

@@ -26,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -86,21 +85,11 @@ class UserTests {
             new String[]{ROLE_NAMES[1]},
             userAdmin.getRoles().stream().map(RoleEntity::getRole).toArray(String[]::new)
         );
-        //Developers
-        assertArrayEquals(
-            DEVELOPER_NAMES,
-            userAdmin.getDevelopers().stream().map(DeveloperEntity::getName).sorted().toArray(String[]::new)
-        );
         //findAllById
         assertEquals(
             LOGIN_NAMES[0],
             Objects.requireNonNull(spyUserRepository.findAllById(
                 Objects.requireNonNull(userUser.getId()))).getLoginName()
-        );
-        assertEquals(
-            LOGIN_NAMES[1],
-            Objects.requireNonNull(spyUserRepository.findAllById(
-                Objects.requireNonNull(userAdmin.getId()))).getLoginName()
         );
     }
 
@@ -120,12 +109,6 @@ class UserTests {
         @NonNull
         List<DeveloperEntity> requestedUserDevelopers =
             Collections.singletonList(developerService.getDeveloperById(1L));
-        @NonNull
-        List<DeveloperEntity> requestedAdminDevelopers =
-            Arrays.asList(
-                developerService.getDeveloperById(1L), developerService.getDeveloperById(2L),
-                developerService.getDeveloperById(3L), developerService.getDeveloperById(4L)
-            );
 
         //getUserByLoginNames
         final @NonNull UserEntity userUser = Objects.requireNonNull(spyUserRepository.findByLoginName(LOGIN_NAMES[0]));
@@ -178,11 +161,7 @@ class UserTests {
             actualUserPermittedRequestCalls,
             actualUserDevelopers
         ));
-        assertEquals(27, actualUserPermitNames.size());
-        assertArrayEquals(
-            requestedAdminDevelopers.stream().map(DeveloperEntity::getName).sorted().toArray(),
-            actualUserDevelopers.stream().map(DeveloperEntity::getName).sorted().toArray()
-        );
+        assertEquals(26, actualUserPermitNames.size());
     }
 
     //--------------------------- Repository műveletek tesztje -----------------------------

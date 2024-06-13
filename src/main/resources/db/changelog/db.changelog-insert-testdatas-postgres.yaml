@@ -1,0 +1,69 @@
+databaseChangeLog:
+- changeSet:
+    id: 23
+    author: Pernyei Gabor
+    changes:
+    # ------------------
+    # Inserts into USERS
+    # ------------------
+    - insert:
+        columns:
+        - column:
+            name: email
+            value: admin@email.org
+        - column:
+            name: LOGIN_NAME
+            value: admin
+        - column:
+            name: FULL_NAME
+            value: Rendszergazda
+        - column:
+            name: PASSWORD
+            value: "{bcrypt}$2a$10$xU/NYqThNXLNFhBMyORlfupt5NTIE93fiwabOmTB1/fRs03YoqodC"
+        tableName: USERS
+    # ------------------
+    # Inserts into ROLES
+    # ------------------
+    - insert:
+        columns:
+        - column:
+            name: ROLE
+            value: ADMIN
+        tableName: ROLES
+    # ------------------------
+    # Inserts into USERS_ROLES
+    # ------------------------
+    - insert:
+        columns:
+        - column:
+            name: USER_ID
+            valueNumeric: 1
+        - column:
+            name: ROLE_ID
+            valueNumeric: 1
+        tableName: USERS_ROLES
+    # --------------------
+    # Inserts into PERMITS
+    # --------------------
+    - insert:
+          tableName: PERMITS
+          columns:
+              - column:
+                    name: NAME
+                    value: "permit_all"
+              - column:
+                    name: DESCRIPTION
+                    value: "Minden"
+    # --------------------------
+    # Inserts into ROLES_PERMITS
+    # --------------------------
+    # ADMIN: minden : permit_all
+    - insert:
+          tableName: ROLES_PERMITS
+          columns:
+              - column:
+                    name: ROLE_ID
+                    valueNumeric: 1
+              - column:
+                    name: PERMIT_ID
+                    valueNumeric: 1

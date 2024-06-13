@@ -387,6 +387,7 @@ databaseChangeLog:
     # --------------------
     # Inserts into PERMITS
     # --------------------
+    # 1	
     - insert:
           tableName: PERMITS
           columns:
@@ -396,6 +397,7 @@ databaseChangeLog:
               - column:
                     name: DESCRIPTION
                     value: "Főmenü"
+    # 2		
     - insert:
           tableName: PERMITS
           columns:
@@ -405,6 +407,7 @@ databaseChangeLog:
               - column:
                     name: DESCRIPTION
                     value: "Hibák megjelenítése"
+    # 3
     - insert:
           tableName: PERMITS
           columns:
@@ -414,6 +417,7 @@ databaseChangeLog:
               - column:
                     name: DESCRIPTION
                     value: "Adatbázis konzol"
+    # 4
     - insert:
           tableName: PERMITS
           columns:
@@ -423,6 +427,7 @@ databaseChangeLog:
               - column:
                     name: DESCRIPTION
                     value: "Kilépés"
+    # 5
     - insert:
           tableName: PERMITS
           columns:
@@ -432,6 +437,7 @@ databaseChangeLog:
               - column:
                     name: DESCRIPTION
                     value: "Fejlesztők nyers listája, teszteléshez"
+    # 6
     - insert:
           tableName: PERMITS
           columns:
@@ -441,6 +447,7 @@ databaseChangeLog:
               - column:
                     name: DESCRIPTION
                     value: "Fejlesztők"
+    # 7
     - insert:
           tableName: PERMITS
           columns:
@@ -450,6 +457,7 @@ databaseChangeLog:
               - column:
                     name: DESCRIPTION
                     value: "Új fejlesztő felvitele"
+    # 8
     - insert:
           tableName: PERMITS
           columns:
@@ -459,6 +467,7 @@ databaseChangeLog:
               - column:
                     name: DESCRIPTION
                     value: "Fejlesztők módosítása"
+    # 9
     - insert:
           tableName: PERMITS
           columns:
@@ -468,159 +477,7 @@ databaseChangeLog:
               - column:
                     name: DESCRIPTION
                     value: "Fejlesztők feladatai"
-    - insert:
-          tableName: PERMITS
-          columns:
-              - column:
-                    name: NAME
-                    value: "modifyDeveloperTask"
-              - column:
-                    name: DESCRIPTION
-                    value: "Fejlesztő feladatainak módosítása"
-    - insert:
-          tableName: PERMITS
-          columns:
-              - column:
-                    name: NAME
-                    value: "projects"
-              - column:
-                    name: DESCRIPTION
-                    value: "Projektek"
-    - insert:
-          tableName: PERMITS
-          columns:
-              - column:
-                    name: NAME
-                    value: "modifyProject"
-              - column:
-                    name: DESCRIPTION
-                    value: "Projekt módosítása"
-    - insert:
-          tableName: PERMITS
-          columns:
-              - column:
-                    name: NAME
-                    value: "newProject"
-              - column:
-                    name: DESCRIPTION
-                    value: "Új projekt felvitele"
-    - insert:
-          tableName: PERMITS
-          columns:
-              - column:
-                    name: NAME
-                    value: "deleteProject"
-              - column:
-                    name: DESCRIPTION
-                    value: "Projekt törlése"
-    - insert:
-          tableName: PERMITS
-          columns:
-              - column:
-                    name: NAME
-                    value: "projectDevelopers"
-              - column:
-                    name: DESCRIPTION
-                    value: "Projekt fejlesztői"
-    - insert:
-          tableName: PERMITS
-          columns:
-              - column:
-                    name: NAME
-                    value: "newProjectDeveloper"
-              - column:
-                    name: DESCRIPTION
-                    value: "Fejlesztő hozzárendelése a projekthez"
-    - insert:
-          tableName: PERMITS
-          columns:
-              - column:
-                    name: NAME
-                    value: "projectDeveloperTasks"
-              - column:
-                    name: DESCRIPTION
-                    value: "A projekt fejlesztőinek feladatai"
-    - insert:
-          tableName: PERMITS
-          columns:
-              - column:
-                    name: NAME
-                    value: "newProjectDeveloperTask"
-              - column:
-                    name: DESCRIPTION
-                    value: "Feladat hozzárendelése a projekt fejlesztőihez"
-    - insert:
-          tableName: PERMITS
-          columns:
-              - column:
-                    name: NAME
-                    value: "projectTasks"
-              - column:
-                    name: DESCRIPTION
-                    value: "Projekt feladatai"
-    - insert:
-          tableName: PERMITS
-          columns:
-              - column:
-                    name: NAME
-                    value: "newProjectTask"
-              - column:
-                    name: DESCRIPTION
-                    value: "Új feladat felvitele a projekthez"
-    - insert:
-          tableName: PERMITS
-          columns:
-              - column:
-                    name: NAME
-                    value: "modifyProjectTask"
-              - column:
-                    name: DESCRIPTION
-                    value: "Projekt feladatainak módosítása"
-    - insert:
-          tableName: PERMITS
-          columns:
-              - column:
-                    name: NAME
-                    value: "projectTaskDevelopers"
-              - column:
-                    name: DESCRIPTION
-                    value: "A projekt feladatain dolgozó fejlesztők"
-    - insert:
-          tableName: PERMITS
-          columns:
-              - column:
-                    name: NAME
-                    value: "newProjectTaskDeveloper"
-              - column:
-                    name: DESCRIPTION
-                    value: "Új fejlesztő hozzárendelése a projekt feladataihoz"
-    - insert:
-          tableName: PERMITS
-          columns:
-              - column:
-                    name: NAME
-                    value: "deleteProjectTaskDeveloper"
-              - column:
-                    name: DESCRIPTION
-                    value: "Fejlesztő kivonása a projekt feladataiból"
-    - insert:
-          tableName: PERMITS
-          columns:
-              - column:
-                    name: NAME
-                    value: "permit_all"
-              - column:
-                    name: DESCRIPTION
-                    value: "Minden"
-    - insert:
-          tableName: PERMITS
-          columns:
-              - column:
-                    name: NAME
-                    value: "projectTaskPosts"
-              - column:
-                    name: DESCRIPTION
-                    value: "A projekt feladataihoz fűzött megjegyzések kezelése"
+    # 10
     - insert:
           tableName: PERMITS
           columns:
@@ -630,6 +487,166 @@ databaseChangeLog:
               - column:
                     name: DESCRIPTION
                     value: "Jogosultságok kezelése"
+    # 11
+    - insert:
+          tableName: PERMITS
+          columns:
+              - column:
+                    name: NAME
+                    value: "projects"
+              - column:
+                    name: DESCRIPTION
+                    value: "Projektek"
+    # 12
+    - insert:
+          tableName: PERMITS
+          columns:
+              - column:
+                    name: NAME
+                    value: "modifyProject"
+              - column:
+                    name: DESCRIPTION
+                    value: "Projekt módosítása"
+    # 13
+    - insert:
+          tableName: PERMITS
+          columns:
+              - column:
+                    name: NAME
+                    value: "newProject"
+              - column:
+                    name: DESCRIPTION
+                    value: "Új projekt felvitele"
+    # 14
+    - insert:
+          tableName: PERMITS
+          columns:
+              - column:
+                    name: NAME
+                    value: "deleteProject"
+              - column:
+                    name: DESCRIPTION
+                    value: "Projekt törlése"
+    # 15
+    - insert:
+          tableName: PERMITS
+          columns:
+              - column:
+                    name: NAME
+                    value: "projectDevelopers"
+              - column:
+                    name: DESCRIPTION
+                    value: "Projekt fejlesztői"
+    # 16
+    - insert:
+          tableName: PERMITS
+          columns:
+              - column:
+                    name: NAME
+                    value: "newProjectDeveloper"
+              - column:
+                    name: DESCRIPTION
+                    value: "Fejlesztő hozzárendelése a projekthez"
+    # 17
+    - insert:
+          tableName: PERMITS
+          columns:
+              - column:
+                    name: NAME
+                    value: "projectDeveloperTasks"
+              - column:
+                    name: DESCRIPTION
+                    value: "A projekt fejlesztőinek feladatai"
+    # 18
+    - insert:
+          tableName: PERMITS
+          columns:
+              - column:
+                    name: NAME
+                    value: "newProjectDeveloperTask"
+              - column:
+                    name: DESCRIPTION
+                    value: "Feladat hozzárendelése a projekt fejlesztőihez"
+    # 19
+    - insert:
+          tableName: PERMITS
+          columns:
+              - column:
+                    name: NAME
+                    value: "projectTasks"
+              - column:
+                    name: DESCRIPTION
+                    value: "Projekt feladatai"
+    # 20
+    - insert:
+          tableName: PERMITS
+          columns:
+              - column:
+                    name: NAME
+                    value: "newProjectTask"
+              - column:
+                    name: DESCRIPTION
+                    value: "Új feladat felvitele a projekthez"
+    # 21
+    - insert:
+          tableName: PERMITS
+          columns:
+              - column:
+                    name: NAME
+                    value: "modifyProjectTask"
+              - column:
+                    name: DESCRIPTION
+                    value: "Projekt feladatainak módosítása"
+    # 22
+    - insert:
+          tableName: PERMITS
+          columns:
+              - column:
+                    name: NAME
+                    value: "projectTaskDevelopers"
+              - column:
+                    name: DESCRIPTION
+                    value: "A projekt feladatain dolgozó fejlesztők"
+    # 23
+    - insert:
+          tableName: PERMITS
+          columns:
+              - column:
+                    name: NAME
+                    value: "newProjectTaskDeveloper"
+              - column:
+                    name: DESCRIPTION
+                    value: "Új fejlesztő hozzárendelése a projekt feladataihoz"
+    # 24
+    - insert:
+          tableName: PERMITS
+          columns:
+              - column:
+                    name: NAME
+                    value: "deleteProjectTaskDeveloper"
+              - column:
+                    name: DESCRIPTION
+                    value: "Fejlesztő kivonása a projekt feladataiból"
+    # 25
+    - insert:
+          tableName: PERMITS
+          columns:
+              - column:
+                    name: NAME
+                    value: "permit_all"
+              - column:
+                    name: DESCRIPTION
+                    value: "Minden"
+    # 26
+    - insert:
+          tableName: PERMITS
+          columns:
+              - column:
+                    name: NAME
+                    value: "projectTaskPosts"
+              - column:
+                    name: DESCRIPTION
+                    value: "A projekt feladataihoz fűzött megjegyzések kezelése"
     # --------------------
     # Inserts into ROLES_PERMITS
     # --------------------
