@@ -122,7 +122,7 @@ public class ProjectsTasksDevelopersController {
                 aDeveloper.getDeveloperEntity().getId() != null &&
                     aDeveloper.getDeveloperEntity()
                         .getId()
-                        .equals(projectTaskDeveloper.getProjectDeveloperEntity().getDeveloperEntity().getId()))
+                        .equals(projectTaskDeveloper.getDeveloperEntity().getId()))
             );
         }
 
@@ -148,7 +148,7 @@ public class ProjectsTasksDevelopersController {
         final @NonNull ProjectDeveloperEntity projectDeveloper = sessionData.getSelectedProjectDeveloper();
         final @NonNull ProjectTaskEntity projectTask = sessionData.getSelectedProjectTask();
         final @NonNull ProjectTaskDeveloperEntity newProjectTaskDeveloper = new ProjectTaskDeveloperEntity();
-        newProjectTaskDeveloper.setProjectTaskAndProjectDeveloper(projectTask, projectDeveloper);
+        newProjectTaskDeveloper.setProjectTaskAndDeveloper(projectTask, projectDeveloper.getDeveloperEntity());
         try {
             projectTaskDeveloperService.insertNewProjectTaskDeveloper(newProjectTaskDeveloper);
         } catch (PorphyrServiceException porphyrServiceException) {

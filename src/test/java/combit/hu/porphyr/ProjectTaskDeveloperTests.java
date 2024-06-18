@@ -1,9 +1,12 @@
 package combit.hu.porphyr;
 
+import combit.hu.porphyr.domain.DeveloperEntity;
 import combit.hu.porphyr.domain.ProjectDeveloperEntity;
 import combit.hu.porphyr.domain.ProjectTaskDeveloperEntity;
 import combit.hu.porphyr.domain.ProjectTaskEntity;
+import combit.hu.porphyr.repository.DeveloperRepository;
 import combit.hu.porphyr.repository.ProjectDeveloperRepository;
+import combit.hu.porphyr.repository.ProjectRepository;
 import combit.hu.porphyr.repository.ProjectTaskDeveloperRepository;
 import combit.hu.porphyr.repository.ProjectTaskRepository;
 import combit.hu.porphyr.service.ProjectTaskDeveloperService;
@@ -23,7 +26,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.times;
@@ -36,35 +43,40 @@ class ProjectTaskDeveloperTests {
     private final @NonNull EntityManager entityManager;
     private final @NonNull ProjectTaskDeveloperRepository projectTaskDeveloperRepository;
     private final @NonNull ProjectTaskRepository projectTaskRepository;
+    private final @NonNull DeveloperRepository developerRepository;
+    private final @NonNull ProjectTaskDeveloperRepository spyProjectTaskDeveloperRepository;
+    private final @NonNull ProjectTaskDeveloperService spiedProjectTaskDeveloperService;
+    private final @NonNull ProjectRepository projectRepository;
     private final @NonNull ProjectDeveloperRepository projectDeveloperRepository;
-    private final ProjectTaskDeveloperRepository spyProjectTaskDeveloperRepository;
-    private final ProjectTaskDeveloperService spiedProjectTaskDeveloperService;
 
     @Autowired
     public ProjectTaskDeveloperTests(
         final @NonNull EntityManager entityManager,
         final @NonNull ProjectTaskDeveloperRepository projectTaskDeveloperRepository,
         final @NonNull ProjectTaskRepository projectTaskRepository,
-        final @NonNull ProjectDeveloperRepository projectDeveloperRepository
+        final @NonNull DeveloperRepository developerRepository,
+        final @NonNull ProjectDeveloperRepository projectDeveloperRepository,
+        final @NonNull ProjectRepository projectRepository
     ) {
         this.entityManager = entityManager;
         this.projectTaskDeveloperRepository = projectTaskDeveloperRepository;
         this.projectTaskRepository = projectTaskRepository;
+        this.developerRepository = developerRepository;
+        this.projectRepository = projectRepository;
         this.projectDeveloperRepository = projectDeveloperRepository;
         this.spiedProjectTaskDeveloperService = new ProjectTaskDeveloperService(
             this.entityManager,
             this.projectTaskDeveloperRepository,
             this.projectTaskRepository,
-            this.projectDeveloperRepository
+            this.developerRepository
         );
         this.spyProjectTaskDeveloperRepository = Mockito.mock(
             ProjectTaskDeveloperRepository.class, AdditionalAnswers.delegatesTo(this.projectTaskDeveloperRepository)
         );
         this.spiedProjectTaskDeveloperService.setProjectTaskDeveloperRepository(this.spyProjectTaskDeveloperRepository);
-
-        this.spiedProjectTaskDeveloperService.setEntityManager(this.entityManager);
         this.spiedProjectTaskDeveloperService.setProjectTaskRepository(this.projectTaskRepository);
-        this.spiedProjectTaskDeveloperService.setProjectDeveloperRepository(this.projectDeveloperRepository);
+        this.spiedProjectTaskDeveloperService.setDeveloperRepository(this.developerRepository);
+        this.spiedProjectTaskDeveloperService.setEntityManager(this.entityManager);
 
         PorphyrServiceException.initExceptionsCounter();
     }
@@ -86,7 +98,11 @@ class ProjectTaskDeveloperTests {
         // - projectTask.id = null (constraint ellenőrzés)
         projectTaskEntity = new ProjectTaskEntity();
         projectDeveloperEntity = projectDeveloperRepository.findAllById(1L);
-        projectTaskDeveloperEntity.setProjectTaskAndProjectDeveloper(projectTaskEntity, projectDeveloperEntity);
+
+        projectTaskDeveloperEntity.setProjectTaskAndDeveloper(
+            projectTaskEntity,
+            Objects.requireNonNull(projectDeveloperEntity).getDeveloperEntity()
+        );
         assertThrows(
             DataIntegrityViolationException.class,
             () -> spyProjectTaskDeveloperRepository.save(projectTaskDeveloperEntity)
@@ -95,7 +111,10 @@ class ProjectTaskDeveloperTests {
         // - projectDeveloper.id = null (constraint ellenőrzés)
         projectTaskEntity = projectTaskRepository.findAllById(1L);
         projectDeveloperEntity = new ProjectDeveloperEntity();
-        projectTaskDeveloperEntity.setProjectTaskAndProjectDeveloper(projectTaskEntity, projectDeveloperEntity);
+        projectTaskDeveloperEntity.setProjectTaskAndDeveloper(
+            projectTaskEntity,
+            Objects.requireNonNull(projectDeveloperEntity).getDeveloperEntity()
+        );
         assertThrows(
             DataIntegrityViolationException.class,
             () -> spyProjectTaskDeveloperRepository.save(projectTaskDeveloperEntity)
@@ -104,7 +123,10 @@ class ProjectTaskDeveloperTests {
         // - Már létező tétel felvétele
         projectTaskEntity = projectTaskRepository.findAllById(1L);
         projectDeveloperEntity = projectDeveloperRepository.findAllById(1L);
-        projectTaskDeveloperEntity.setProjectTaskAndProjectDeveloper(projectTaskEntity, projectDeveloperEntity);
+        projectTaskDeveloperEntity.setProjectTaskAndDeveloper(
+            projectTaskEntity,
+            Objects.requireNonNull(projectDeveloperEntity).getDeveloperEntity()
+        );
         assertThrows(
             DataIntegrityViolationException.class,
             () -> spyProjectTaskDeveloperRepository.save(projectTaskDeveloperEntity)
@@ -113,7 +135,10 @@ class ProjectTaskDeveloperTests {
         // - Nem létező tétel felvétele
         projectTaskEntity = projectTaskRepository.findAllById(1L);
         projectDeveloperEntity = projectDeveloperRepository.findAllById(3L);
-        projectTaskDeveloperEntity.setProjectTaskAndProjectDeveloper(projectTaskEntity, projectDeveloperEntity);
+        projectTaskDeveloperEntity.setProjectTaskAndDeveloper(
+            projectTaskEntity,
+            Objects.requireNonNull(projectDeveloperEntity).getDeveloperEntity()
+        );
         projectTaskDeveloperEntity.setSpendTime(0L);
         assertDoesNotThrow(() -> spyProjectTaskDeveloperRepository.saveAndFlush(projectTaskDeveloperEntity));
         Long projectTaskDeveloperId = projectTaskDeveloperEntity.getId();
@@ -128,6 +153,23 @@ class ProjectTaskDeveloperTests {
         spyProjectTaskDeveloperRepository.deleteById(projectTaskDeveloperId);
         assertDoesNotThrow(entityManager::flush);
         entityManager.clear();
+
+        //sumSpendTimeByDeveloperId
+        assertEquals(0, projectTaskDeveloperRepository.sumSpendTimeByDeveloperId(1L));
+        assertEquals(1, projectTaskDeveloperRepository.sumSpendTimeByDeveloperId(2L));
+        assertEquals(0, projectTaskDeveloperRepository.sumSpendTimeByDeveloperId(3L));
+        assertEquals(0, projectTaskDeveloperRepository.sumSpendTimeByDeveloperId(4L));
+        // getDeveloperFullTime
+        List<DeveloperEntity> actualDevelopers = developerRepository.findAll().stream().sorted(
+            Comparator.comparing(DeveloperEntity::getName)).collect(Collectors.toList());
+        try {
+            assertEquals(0L, spiedProjectTaskDeveloperService.getDeveloperFullTime(actualDevelopers.get(0)));
+            assertEquals(1L, spiedProjectTaskDeveloperService.getDeveloperFullTime(actualDevelopers.get(1)));
+            assertEquals(0L, spiedProjectTaskDeveloperService.getDeveloperFullTime(actualDevelopers.get(2)));
+            assertEquals(0L, spiedProjectTaskDeveloperService.getDeveloperFullTime(actualDevelopers.get(3)));
+        } catch (ExecutionException | InterruptedException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     @Test
@@ -137,10 +179,15 @@ class ProjectTaskDeveloperTests {
         ProjectTaskDeveloperEntity newProjectTaskDeveloper = new ProjectTaskDeveloperEntity();
         ProjectTaskEntity projectTaskEntity;
         ProjectDeveloperEntity projectDeveloperEntity;
+        DeveloperEntity developerEntity;
         // -  projectTaskEntity nincs elmentve
         projectTaskEntity = new ProjectTaskEntity();
+        projectTaskEntity.setProjectEntity(Objects.requireNonNull(projectRepository.findAllById(1L)));
         projectDeveloperEntity = projectDeveloperRepository.findAllById(1L);
-        newProjectTaskDeveloper.setProjectTaskAndProjectDeveloper(projectTaskEntity, projectDeveloperEntity);
+        newProjectTaskDeveloper.setProjectTaskAndDeveloper(
+            projectTaskEntity,
+            Objects.requireNonNull(projectDeveloperEntity).getDeveloperEntity()
+        );
         assertEquals(
             PorphyrServiceException.Exceptions.PROJECTTASKDEVELOPER_INSERT_PROJECTTASK_NOT_SAVED.getDescription(),
             assertThrows(
@@ -151,8 +198,10 @@ class ProjectTaskDeveloperTests {
         entityManager.clear();
         // -  projectTaskEntity nincs az adatbázisban
         projectTaskEntity = projectTaskRepository.findAllById(5L);
+        projectDeveloperEntity = projectDeveloperRepository.findAllById(1L);
         assertNotNull(projectTaskEntity);
-        newProjectTaskDeveloper.setProjectTaskAndProjectDeveloper(projectTaskEntity, projectDeveloperEntity);
+        newProjectTaskDeveloper.setProjectTaskAndDeveloper(projectTaskEntity, Objects.requireNonNull(
+            projectDeveloperEntity).getDeveloperEntity());
         projectTaskRepository.delete(projectTaskEntity);
         entityManager.flush();
         assertEquals(
@@ -163,39 +212,39 @@ class ProjectTaskDeveloperTests {
             ).getMessage()
         );
         entityManager.clear();
-        // -  projectDeveloperEntity nincs elmentve
+        // -  developerEntity nincs elmentve
         projectTaskEntity = projectTaskRepository.findAllById(1L);
-        projectDeveloperEntity = new ProjectDeveloperEntity();
-        newProjectTaskDeveloper.setProjectTaskAndProjectDeveloper(projectTaskEntity, projectDeveloperEntity);
+        developerEntity = new DeveloperEntity();
+        newProjectTaskDeveloper.setProjectTaskAndDeveloper(projectTaskEntity, developerEntity);
         assertEquals(
-            PorphyrServiceException.Exceptions.PROJECTTASKDEVELOPER_INSERT_PROJECTDEVELOPER_NOT_SAVED.getDescription(),
+            PorphyrServiceException.Exceptions.PROJECTTASKDEVELOPER_INSERT_DEVELOPER_NOT_SAVED.getDescription(),
             assertThrows(
                 PorphyrServiceException.class,
                 () -> spiedProjectTaskDeveloperService.insertNewProjectTaskDeveloper(newProjectTaskDeveloper)
             ).getMessage()
         );
         entityManager.clear();
-        // -  projectDeveloperEntity nincs az adatbázisban
+        // -  developerEntity nincs az adatbázisban
         projectTaskEntity = projectTaskRepository.findAllById(1L);
-        projectDeveloperEntity = projectDeveloperRepository.findAllById(7L);
-        assertNotNull(projectDeveloperEntity);
-        newProjectTaskDeveloper.setProjectTaskAndProjectDeveloper(projectTaskEntity, projectDeveloperEntity);
-        projectDeveloperRepository.delete(projectDeveloperEntity);
+        developerEntity = developerRepository.findAllById(5L);
+        assertNotNull(developerEntity);
+        newProjectTaskDeveloper.setProjectTaskAndDeveloper(projectTaskEntity, developerEntity);
+        developerRepository.delete(developerEntity);
         entityManager.flush();
         assertEquals(
-            PorphyrServiceException.Exceptions.PROJECTTASKDEVELOPER_INSERT_PROJECTDEVELOPER_NOT_EXISTS.getDescription(),
+            PorphyrServiceException.Exceptions.PROJECTTASKDEVELOPER_INSERT_DEVELOPER_NOT_EXISTS.getDescription(),
             assertThrows(
                 PorphyrServiceException.class,
                 () -> spiedProjectTaskDeveloperService.insertNewProjectTaskDeveloper(newProjectTaskDeveloper)
             ).getMessage()
         );
         entityManager.clear();
-        // -  A projectTaskEntity és a projectDeveloperEntity más// - más projekthez tartozik
+        // -  A DeveloperEntity nincs hozzárendelve a ProjectTaskEntity ProjectEntity - hez
         projectTaskEntity = projectTaskRepository.findAllById(4L);
-        projectDeveloperEntity = projectDeveloperRepository.findAllById(1L);
-        newProjectTaskDeveloper.setProjectTaskAndProjectDeveloper(projectTaskEntity, projectDeveloperEntity);
+        developerEntity = developerRepository.findAllById(1L);
+        newProjectTaskDeveloper.setProjectTaskAndDeveloper(projectTaskEntity, developerEntity);
         assertEquals(
-            PorphyrServiceException.Exceptions.PROJECTTASKDEVELOPER_INSERT_TASK_OR_DEVELOPER_NOT_IN_PROJECT.getDescription(),
+            PorphyrServiceException.Exceptions.PROJECTTASKDEVELOPER_INSERT_DEVELOPER_NOT_IN_PROJECT.getDescription(),
             assertThrows(
                 PorphyrServiceException.class,
                 () -> spiedProjectTaskDeveloperService.insertNewProjectTaskDeveloper(newProjectTaskDeveloper)
@@ -205,7 +254,10 @@ class ProjectTaskDeveloperTests {
         // -  Már létezik ilyen összerendelés
         projectTaskEntity = projectTaskRepository.findAllById(1L);
         projectDeveloperEntity = projectDeveloperRepository.findAllById(1L);
-        newProjectTaskDeveloper.setProjectTaskAndProjectDeveloper(projectTaskEntity, projectDeveloperEntity);
+        newProjectTaskDeveloper.setProjectTaskAndDeveloper(
+            projectTaskEntity,
+            Objects.requireNonNull(projectDeveloperEntity).getDeveloperEntity()
+        );
         assertEquals(
             PorphyrServiceException.Exceptions.PROJECTTASKDEVELOPER_INSERT_EXISTING_DATA.getDescription(),
             assertThrows(
@@ -217,7 +269,10 @@ class ProjectTaskDeveloperTests {
         // - minden adat jó, felvitel és visszaolvasás
         projectTaskEntity = projectTaskRepository.findAllById(1L);
         projectDeveloperEntity = projectDeveloperRepository.findAllById(3L);
-        newProjectTaskDeveloper.setProjectTaskAndProjectDeveloper(projectTaskEntity, projectDeveloperEntity);
+        newProjectTaskDeveloper.setProjectTaskAndDeveloper(
+            projectTaskEntity,
+            Objects.requireNonNull(projectDeveloperEntity).getDeveloperEntity()
+        );
         assertDoesNotThrow(() -> spiedProjectTaskDeveloperService.insertNewProjectTaskDeveloper(newProjectTaskDeveloper));
         verify(spyProjectTaskDeveloperRepository, times(1)).saveAndFlush(newProjectTaskDeveloper);
         assertEquals(

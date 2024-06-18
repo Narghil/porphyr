@@ -142,7 +142,7 @@ public class ProjectDeveloperService {
             public void run() {
                 if (projectDeveloperEntity.getId() == null) {
                     throw new PorphyrServiceException(PorphyrServiceException.Exceptions.PROJECTDEVELOPER_DELETE_NOT_SAVED);
-                } else if (!projectTaskDeveloperRepository.findAllByProjectDeveloperEntity(projectDeveloperEntity)
+                } else if (!projectTaskDeveloperRepository.findAllByDeveloperEntity(projectDeveloperEntity.getDeveloperEntity())
                     .isEmpty()) {
                     throw new PorphyrServiceException(PorphyrServiceException.Exceptions.PROJECTDEVELOPER_DELETE_ASSIGNED_TO_TASK);
                 } else {
@@ -332,8 +332,9 @@ public class ProjectDeveloperService {
                 Long projectId = projectDeveloper.getProjectEntity().getId();
                 result = (developerId == null || projectId == null)
                          ? 0L
-                         : projectDeveloperRepository.sumSpendTimeByDeveloperIdAndProjectId(developerId, projectId);
+                         : projectTaskDeveloperRepository.sumSpendTimeByDeveloperIdAndProjectId(developerId, projectId);
                 projectDeveloper.setSpendTime(result);
+
                 return result;
             }
         }

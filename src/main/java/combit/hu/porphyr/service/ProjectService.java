@@ -184,9 +184,6 @@ public class ProjectService {
         List<ProjectEntity> result = new ArrayList<>();
         try {
             result = forkJoinPool.submit(new CallableCore()).get();
-            for (ProjectEntity project : result) {
-                getProjectFullTime(project);
-            }
         } catch (ExecutionException ee) {
             PorphyrServiceException.handleExecutionException(ee);
         }
@@ -214,9 +211,6 @@ public class ProjectService {
         ProjectEntity result = null;
         try {
             result = forkJoinPool.submit(new CallableCore(id)).get();
-            if (result != null) {
-                getProjectFullTime(result);
-            }
         } catch (ExecutionException ee) {
             PorphyrServiceException.handleExecutionException(ee);
         }
@@ -245,9 +239,6 @@ public class ProjectService {
         ProjectEntity result = null;
         try {
             result = forkJoinPool.submit(new CallableCore(name)).get();
-            if (result != null) {
-                getProjectFullTime(result);
-            }
         } catch (ExecutionException ee) {
             PorphyrServiceException.handleExecutionException(ee);
         }
@@ -284,36 +275,6 @@ public class ProjectService {
     }
 
     /**
-     * Egy project-re fordított teljes munkaidő
-     */
-    public synchronized @NonNull Long getProjectFullTime(final @NonNull ProjectEntity project)
-        throws ExecutionException, InterruptedException {
-        final class CallableCore implements Callable<Long> {
-            private final @NonNull ProjectEntity project;
-
-            public CallableCore(final @NonNull ProjectEntity project) {
-                this.project = project;
-            }
-
-            @Override
-            public @NonNull Long call() {
-                @Nullable
-                Long projectId = project.getId();
-                return (projectId == null) ? 0L : projectRepository.sumSpendTimeByProjectId(projectId);
-            }
-        }
-        @NonNull
-        Long result = 0L;
-        try {
-            result = forkJoinPool.submit(new CallableCore(project)).get();
-            project.setSpendTime(result);
-        } catch (ExecutionException ee) {
-            PorphyrServiceException.handleExecutionException(ee);
-        }
-        return result;
-    }
-
-    /**
      * A bejelentkezett user-hez tartozó projektek listájának lekérdezése
      * Ha admin, akkor minden projektet láthat.
      */
@@ -333,9 +294,6 @@ public class ProjectService {
         List<ProjectEntity> result = new ArrayList<>();
         try {
             result = forkJoinPool.submit(new CallableCore()).get();
-            for (ProjectEntity project : result) {
-                getProjectFullTime(project);
-            }
         } catch (ExecutionException ee) {
             PorphyrServiceException.handleExecutionException(ee);
         }

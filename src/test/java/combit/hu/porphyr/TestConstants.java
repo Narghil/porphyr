@@ -13,7 +13,7 @@ public class TestConstants {
 
     protected static @NonNull
     final String[] DEVELOPER_NAMES = new String[]{
-        "1. fejlesztő", "2. fejlesztő", "3. fejlesztő", "4. fejlesztő"
+        "1. fejlesztő", "2. fejlesztő", "3. fejlesztő", "4. fejlesztő", "5. fejlesztő"
     };
 
     protected static @NonNull

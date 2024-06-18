@@ -215,8 +215,8 @@ public class ProjectsDevelopersTasksController {
         try {
             ProjectTaskDeveloperEntity projectTaskDeveloperEntity = new ProjectTaskDeveloperEntity();
             projectTaskDeveloperEntity.setProjectTaskEntity(projectTaskEntity);
-            projectTaskDeveloperEntity.setProjectDeveloperEntity(
-                sessionData.getSelectedProjectDeveloper()
+            projectTaskDeveloperEntity.setDeveloperEntity(
+                sessionData.getSelectedProjectDeveloper().getDeveloperEntity()
             );
             projectTaskDeveloperService.insertNewProjectTaskDeveloper(projectTaskDeveloperEntity);
         } catch (PorphyrServiceException porphyrServiceException) {

@@ -76,7 +76,7 @@ class UserDeveloperTests {
     @Transactional
     @Rollback
     void userDeveloperTests() throws ExecutionException, InterruptedException {
-        final @NonNull String NEW_DEVELOPER = "5. fejlesztő";
+        final @NonNull String NEW_DEVELOPER = "6. fejlesztő";
         //Létező developer felvitele a user-hez
         final @NonNull UserEntity expectedUser =
             Objects.requireNonNull(spiedUserService.getUserByLoginName(LOGIN_NAMES[0]));

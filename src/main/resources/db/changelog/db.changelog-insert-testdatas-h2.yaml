@@ -132,6 +132,12 @@ databaseChangeLog:
             name: NAME
             value: 4. fejlesztő
         tableName: DEVELOPERS
+    - insert:
+        columns:
+        - column:
+            name: NAME
+            value: 5. fejlesztő
+        tableName: DEVELOPERS
     # ------------------------------
     # Inserts into PROJECTDEVELOPERS
     # ------------------------------
@@ -207,7 +213,7 @@ databaseChangeLog:
             name: PROJECTTASK_ID
             valueNumeric: 1
         - column:
-            name: PROJECTDEVELOPER_ID
+            name: DEVELOPER_ID
             valueNumeric: 1
         - column:
             name: SPEND_TIME
@@ -219,7 +225,7 @@ databaseChangeLog:
             name: PROJECTTASK_ID
             valueNumeric: 1
         - column:
-            name: PROJECTDEVELOPER_ID
+            name: DEVELOPER_ID
             valueNumeric: 2
         - column:
             name: SPEND_TIME
@@ -231,7 +237,7 @@ databaseChangeLog:
             name: PROJECTTASK_ID
             valueNumeric: 2
         - column:
-            name: PROJECTDEVELOPER_ID
+            name: DEVELOPER_ID
             valueNumeric: 2
         - column:
             name: SPEND_TIME
@@ -243,7 +249,7 @@ databaseChangeLog:
             name: PROJECTTASK_ID
             valueNumeric: 2
         - column:
-            name: PROJECTDEVELOPER_ID
+            name: DEVELOPER_ID
             valueNumeric: 3
         - column:
             name: SPEND_TIME
@@ -255,8 +261,8 @@ databaseChangeLog:
             name: PROJECTTASK_ID
             valueNumeric: 3
         - column:
-            name: PROJECTDEVELOPER_ID
-            valueNumeric: 4
+            name: DEVELOPER_ID
+            valueNumeric: 2
         - column:
             name: SPEND_TIME
             valueNumeric: 0
@@ -267,8 +273,8 @@ databaseChangeLog:
             name: PROJECTTASK_ID
             valueNumeric: 3
         - column:
-            name: PROJECTDEVELOPER_ID
-            valueNumeric: 5
+            name: DEVELOPER_ID
+            valueNumeric: 3
         - column:
             name: SPEND_TIME
             valueNumeric: 0
@@ -279,8 +285,8 @@ databaseChangeLog:
             name: PROJECTTASK_ID
             valueNumeric: 4
         - column:
-            name: PROJECTDEVELOPER_ID
-            valueNumeric: 5
+            name: DEVELOPER_ID
+            valueNumeric: 3
         - column:
             name: SPEND_TIME
             valueNumeric: 0
@@ -291,8 +297,8 @@ databaseChangeLog:
             name: PROJECTTASK_ID
             valueNumeric: 4
         - column:
-            name: PROJECTDEVELOPER_ID
-            valueNumeric: 6
+            name: DEVELOPER_ID
+            valueNumeric: 2
         - column:
             name: SPEND_TIME
             valueNumeric: 1
@@ -886,7 +892,7 @@ databaseChangeLog:
         columns:
             - column:
                 name: CREATED
-                value: 2024-04-22 11:32:30
+                value: 2024-04-22 11.32.30
             - column:
                 name: PROJECTTASK_ID
                 valueNumeric: 1

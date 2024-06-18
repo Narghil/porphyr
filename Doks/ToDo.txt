@@ -1,3 +1,8 @@
-
-Postolási lehetőség biztosítása a ProjectTaskEntity-khez.
-(Megjegyzés: Csak azoknak a felhasználóknak, akik az adott Projecthet hozzá vannak rendelve + admin)
+TODO:
+- ProjectTaskDeveloper tábla ProjectDeveloper mezője helyett Developer mezőt kell alkalmazni!
+    Hiányzik még: Controller / HTML réteg
+- SpendTime tábla:
+    - ProjectTaskDeveloperID
+    - Day
+    - SpendTime
+- Állományok csatolása a post-okhoz

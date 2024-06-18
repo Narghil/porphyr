@@ -27,20 +27,10 @@ public interface DeveloperRepository extends CrudRepository<DeveloperEntity, Lon
     void saveAndFlush(final @NonNull DeveloperEntity developerEntity);
 
     @Query(
-        "SELECT COALESCE(SUM( ProjectTaskDeveloper.spendTime ),0) " +
-            "FROM ProjectTaskDeveloperEntity ProjectTaskDeveloper, ProjectDeveloperEntity ProjectDeveloper " +
-            "WHERE " +
-            "ProjectDeveloper.developerEntity.id = :developerId and " +
-            "ProjectTaskDeveloper.projectDeveloperEntity.id = ProjectDeveloper.id "
-    )
-    @NonNull
-    Long sumSpendTimeByDeveloperId(final @NonNull Long developerId);
-
-    @Query(
         "SELECT Developer " +
             "    FROM DeveloperEntity Developer, " +
             "        ProjectTaskDeveloperEntity ProjectTaskDeveloper " +
-            "    WHERE Developer.id = ProjectTaskDeveloper.projectDeveloperEntity.developerEntity.id and " +
+            "    WHERE Developer.id = ProjectTaskDeveloper.developerEntity.id and " +
             "        ProjectTaskDeveloper.projectTaskEntity.id = :projectTaskId "
     )
     @NonNull

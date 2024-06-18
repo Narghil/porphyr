@@ -178,9 +178,6 @@ public class DeveloperService {
         List<DeveloperEntity> result = new ArrayList<>();
         try {
             result = forkJoinPool.submit(new CallableCore()).get();
-            for (DeveloperEntity developer : result) {
-                getDeveloperFullTime(developer);
-            }
         } catch (ExecutionException executionException) {
             PorphyrServiceException.handleExecutionException(executionException);
         }
@@ -238,9 +235,6 @@ public class DeveloperService {
         DeveloperEntity result = null;
         try {
             result = forkJoinPool.submit(new CallableCore(id)).get();
-            if (result != null) {
-                getDeveloperFullTime(result);
-            }
         } catch (ExecutionException executionException) {
             PorphyrServiceException.handleExecutionException(executionException);
         }
@@ -273,9 +267,6 @@ public class DeveloperService {
         DeveloperEntity result = null;
         try {
             result = forkJoinPool.submit(new CallableCore(name)).get();
-            if (result != null) {
-                getDeveloperFullTime(result);
-            }
         } catch (ExecutionException executionException) {
             PorphyrServiceException.handleExecutionException(executionException);
         }
@@ -307,39 +298,6 @@ public class DeveloperService {
             result = forkJoinPool.submit(new CallableCore(name, id)).get();
         } catch (ExecutionException executionException) {
             PorphyrServiceException.handleExecutionException(executionException);
-        }
-        return result;
-    }
-
-    /**
-     * Egy developer teljes munkaideje
-     */
-    public synchronized @NonNull Long getDeveloperFullTime(
-        final @NonNull DeveloperEntity developer
-    )
-        throws ExecutionException, InterruptedException {
-        final class CallableCore implements Callable<Long> {
-            private final @NonNull DeveloperEntity developer;
-
-            public CallableCore(final @NonNull DeveloperEntity developer) {
-                this.developer = developer;
-            }
-
-            @Override
-            public @NonNull Long call() {
-                @Nullable
-                Long developerId = developer.getId();
-                return (developerId == null)
-                       ? 0L : developerRepository.sumSpendTimeByDeveloperId(developerId);
-            }
-        }
-        @NonNull
-        Long result = 0L;
-        try {
-            result = forkJoinPool.submit(new CallableCore(developer)).get();
-            developer.setSpendTime(result);
-        } catch (ExecutionException ee) {
-            PorphyrServiceException.handleExecutionException(ee);
         }
         return result;
     }

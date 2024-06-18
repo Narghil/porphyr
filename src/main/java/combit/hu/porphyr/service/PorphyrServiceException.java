@@ -197,6 +197,7 @@ public class PorphyrServiceException extends IllegalArgumentException {
             0
         ),
         // ------- ProjectTaskDeveloper hibák ----------
+        // --- Insert ---
         PROJECTTASKDEVELOPER_INSERT_PROJECTTASK_NOT_SAVED(
             ExceptionGroups.PROJECTTASKDEVELOPERS_INSERT,
             "A kiválasztott feladat nincs elmentve, az összerendelés nem végezhető el!",
@@ -207,19 +208,19 @@ public class PorphyrServiceException extends IllegalArgumentException {
             "A kiválasztott feladatot törölték, az összerendelés nem végezhető el!",
             0
         ),
-        PROJECTTASKDEVELOPER_INSERT_PROJECTDEVELOPER_NOT_SAVED(
+        PROJECTTASKDEVELOPER_INSERT_DEVELOPER_NOT_SAVED(
             ExceptionGroups.PROJECTTASKDEVELOPERS_INSERT,
             "A kiválasztott fejlesztő nincs elmentve, az összerendelés nem végezhető el!",
             0
         ),
-        PROJECTTASKDEVELOPER_INSERT_PROJECTDEVELOPER_NOT_EXISTS(
+        PROJECTTASKDEVELOPER_INSERT_DEVELOPER_NOT_EXISTS(
             ExceptionGroups.PROJECTTASKDEVELOPERS_INSERT,
             "A kiválasztott fejlesztőt törölték, az összerendelés nem végezhető el!",
             0
         ),
-        PROJECTTASKDEVELOPER_INSERT_TASK_OR_DEVELOPER_NOT_IN_PROJECT(
+        PROJECTTASKDEVELOPER_INSERT_DEVELOPER_NOT_IN_PROJECT(
             ExceptionGroups.PROJECTTASKDEVELOPERS_INSERT,
-            "A feladat és a fejlesztő más-más projekthez tartozik!",
+            "A fejlesztő nem dolgozik a projektben!",
             0
         ),
         PROJECTTASKDEVELOPER_INSERT_EXISTING_DATA(
@@ -227,6 +228,7 @@ public class PorphyrServiceException extends IllegalArgumentException {
             "A kiválasztott feladaton már dolgozik a kiválasztott fejlesztő!",
             0
         ),
+        // --- Modify ---
         PROJECTTASKDEVELOPER_MODIFY_NOT_SAVED(
             ExceptionGroups.PROJECTTASKDEVELOPERS_MODIFY,
             "Az összerendelés nincs elmentve, a módosítás nem végezhető el!",

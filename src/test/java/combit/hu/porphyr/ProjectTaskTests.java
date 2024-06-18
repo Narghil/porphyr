@@ -2,7 +2,6 @@ package combit.hu.porphyr;
 
 import combit.hu.porphyr.domain.DeveloperEntity;
 import combit.hu.porphyr.domain.PostEntity;
-import combit.hu.porphyr.domain.ProjectDeveloperEntity;
 import combit.hu.porphyr.domain.ProjectEntity;
 import combit.hu.porphyr.domain.ProjectTaskDeveloperEntity;
 import combit.hu.porphyr.domain.ProjectTaskEntity;
@@ -101,37 +100,37 @@ class ProjectTaskTests {
         assertArrayEquals(
             new String[]{"1. fejlesztő", "2. fejlesztő"},
             Objects.requireNonNull(projectTaskRepository.findAllById(1L)).getProjectTaskDevelopers().stream()
-                .map(ProjectTaskDeveloperEntity::getProjectDeveloperEntity)
-                .map(ProjectDeveloperEntity::getDeveloperEntity)
-                .map(DeveloperEntity::getName).toArray(String[]::new)
+                .map(ProjectTaskDeveloperEntity::getDeveloperEntity)
+                .map(DeveloperEntity::getName)
+                .sorted().toArray(String[]::new)
         );
         assertArrayEquals(
             new String[]{"2. fejlesztő", "3. fejlesztő"},
             Objects.requireNonNull(projectTaskRepository.findAllById(2L)).getProjectTaskDevelopers().stream()
-                .map(ProjectTaskDeveloperEntity::getProjectDeveloperEntity)
-                .map(ProjectDeveloperEntity::getDeveloperEntity)
-                .map(DeveloperEntity::getName).toArray(String[]::new)
+                .map(ProjectTaskDeveloperEntity::getDeveloperEntity)
+                .map(DeveloperEntity::getName)
+                .sorted().toArray(String[]::new)
         );
         assertArrayEquals(
             new String[]{"2. fejlesztő", "3. fejlesztő"},
             Objects.requireNonNull(projectTaskRepository.findAllById(3L)).getProjectTaskDevelopers().stream()
-                .map(ProjectTaskDeveloperEntity::getProjectDeveloperEntity)
-                .map(ProjectDeveloperEntity::getDeveloperEntity)
-                .map(DeveloperEntity::getName).toArray(String[]::new)
+                .map(ProjectTaskDeveloperEntity::getDeveloperEntity)
+                .map(DeveloperEntity::getName)
+                .sorted().toArray(String[]::new)
         );
         assertArrayEquals(
-            new String[]{"3. fejlesztő", "4. fejlesztő"},
+            new String[]{"2. fejlesztő", "3. fejlesztő"},
             Objects.requireNonNull(projectTaskRepository.findAllById(4L)).getProjectTaskDevelopers().stream()
-                .map(ProjectTaskDeveloperEntity::getProjectDeveloperEntity)
-                .map(ProjectDeveloperEntity::getDeveloperEntity)
-                .map(DeveloperEntity::getName).toArray(String[]::new)
+                .map(ProjectTaskDeveloperEntity::getDeveloperEntity)
+                .map(DeveloperEntity::getName)
+                .sorted().toArray(String[]::new)
         );
         assertArrayEquals(
             new String[]{},
             Objects.requireNonNull(projectTaskRepository.findAllById(5L)).getProjectTaskDevelopers().stream()
-                .map(ProjectTaskDeveloperEntity::getProjectDeveloperEntity)
-                .map(ProjectDeveloperEntity::getDeveloperEntity)
-                .map(DeveloperEntity::getName).toArray(String[]::new)
+                .map(ProjectTaskDeveloperEntity::getDeveloperEntity)
+                .map(DeveloperEntity::getName)
+                .sorted().toArray(String[]::new)
         );
         // getProjectTaskPosts
         assertArrayEquals(
@@ -145,7 +144,7 @@ class ProjectTaskTests {
             Objects.requireNonNull(projectTaskRepository.findAllById(1L))
                 .getProjectTaskPosts()
                 .stream()
-                .map( (PostEntity e) -> ( Objects.requireNonNull(e.getDescription())) )
+                .map((PostEntity e) -> (Objects.requireNonNull(e.getDescription())))
                 .sorted()
                 .toArray(String[]::new)
 

@@ -23,10 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -108,11 +106,6 @@ class DeveloperTests {
                 .stream().sorted(Comparator.comparing(DeveloperEntity::getName))
                 .toArray()
         );
-        //sumSpendTimeByDeveloperId
-        assertEquals(0, spyDeveloperRepository.sumSpendTimeByDeveloperId(1L));
-        assertEquals(0, spyDeveloperRepository.sumSpendTimeByDeveloperId(2L));
-        assertEquals(0, spyDeveloperRepository.sumSpendTimeByDeveloperId(3L));
-        assertEquals(1, spyDeveloperRepository.sumSpendTimeByDeveloperId(4L));
     }
 
     @Test
@@ -167,13 +160,6 @@ class DeveloperTests {
             }
         );
         verify(spyDeveloperRepository, times(8)).findAllByNameAndIdNot(anyString(), anyLong());
-        // getDeveloperFullTime
-        List<DeveloperEntity> actualDevelopers = spiedDeveloperService.getDevelopers().stream().sorted(
-            Comparator.comparing(DeveloperEntity::getName)).collect(Collectors.toList());
-        assertEquals(0L, spiedDeveloperService.getDeveloperFullTime(actualDevelopers.get(0)));
-        assertEquals(0L, spiedDeveloperService.getDeveloperFullTime(actualDevelopers.get(1)));
-        assertEquals(0L, spiedDeveloperService.getDeveloperFullTime(actualDevelopers.get(2)));
-        assertEquals(1L, spiedDeveloperService.getDeveloperFullTime(actualDevelopers.get(3)));
         // getDevelopersByProjectTask
         assertArrayEquals(
             Arrays.stream(new DeveloperEntity[]{

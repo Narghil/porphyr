@@ -22,12 +22,12 @@ import javax.persistence.Table;
  * Mezők:  <br/>
  * - {@code id:} &#9;&#9;&#9                        Egyedi azonosító <br/>
  * - {@code projectTaskEntity:} &#9;&#9;            Projektfeladat <br/>
- * - {@code projectDeveloperEntity:} &#9;           Projektfejlesztő <br/>
- * A projectTaskEntity és a projectDeveloperEntity együtt egyedi <br/>
+ * - {@code developerEntity:} &#9;                  Fejlesztő <br/>
+ * A projectTaskEntity és a developerEntity együtt egyedi <br/>
  * <br/>
  *
  * @see ProjectTaskEntity
- * @see ProjectDeveloperEntity
+ * @see DeveloperEntity
  */
 
 @Entity
@@ -48,22 +48,22 @@ public class ProjectTaskDeveloperEntity {
     private ProjectTaskEntity projectTaskEntity;
 
     @ManyToOne
-    @JoinColumn(name = "projectdeveloper_id")
+    @JoinColumn(name = "developer_id")
     @JsonManagedReference
     @NonNull
-    private ProjectDeveloperEntity projectDeveloperEntity;
+    private DeveloperEntity developerEntity;
 
     public ProjectTaskDeveloperEntity() {
         spendTime = 0L;
         projectTaskEntity = new ProjectTaskEntity();
-        projectDeveloperEntity = new ProjectDeveloperEntity();
+        developerEntity = new DeveloperEntity();
     }
 
-    public void setProjectTaskAndProjectDeveloper(
+    public void setProjectTaskAndDeveloper(
         ProjectTaskEntity projectTask,
-        ProjectDeveloperEntity projectDeveloper
+        DeveloperEntity developer
     ) {
         setProjectTaskEntity(projectTask);
-        setProjectDeveloperEntity(projectDeveloper);
+        setDeveloperEntity(developer);
     }
 }

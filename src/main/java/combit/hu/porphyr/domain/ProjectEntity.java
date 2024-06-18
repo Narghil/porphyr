@@ -15,7 +15,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,22 +60,17 @@ public class ProjectEntity {
     @JsonBackReference
     private @NonNull List<ProjectDeveloperEntity> projectDevelopers;
 
-    @Transient
-    private @NonNull Long spendTime;
-
     public ProjectEntity(final @NonNull String name, final @Nullable String description) {
         this.name = name;
         this.description = description;
         this.projectTasks = new ArrayList<>();
         this.projectDevelopers = new ArrayList<>();
-        this.spendTime = 0L;
     }
 
     public ProjectEntity() {
         name = "";
         this.projectTasks = new ArrayList<>();
         this.projectDevelopers = new ArrayList<>();
-        this.spendTime = 0L;
     }
 }
 

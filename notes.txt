@@ -1,7 +1,0 @@
-TODO:
-- ProjectTaskDeveloper tábla ProjectDeveloper mezője helyett Developer mezőt kell alkalmazni!
-- SpendTime tábla:
-    - ProjectTaskDeveloperID
-    - Day
-    - SpendTime
-    

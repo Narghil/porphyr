@@ -5,6 +5,7 @@ import combit.hu.porphyr.domain.ProjectDeveloperEntity;
 import combit.hu.porphyr.domain.ProjectEntity;
 import combit.hu.porphyr.domain.ProjectTaskEntity;
 import combit.hu.porphyr.repository.ProjectRepository;
+import combit.hu.porphyr.repository.ProjectTaskDeveloperRepository;
 import combit.hu.porphyr.service.ProjectService;
 import combit.hu.porphyr.service.PorphyrServiceException;
 import lombok.NonNull;
@@ -20,6 +21,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
@@ -38,11 +40,13 @@ class ProjectTests {
     private final @NonNull EntityManager entityManager;
     private final @NonNull ProjectRepository spyProjectRepository;
     private final @NonNull ProjectService spiedProjectService;
+    private final @NonNull ProjectTaskDeveloperRepository projectTaskDeveloperRepository;
 
     @Autowired
     public ProjectTests(
         final @NonNull EntityManager entityManager,
-        final @NonNull ProjectRepository projectRepository
+        final @NonNull ProjectRepository projectRepository,
+        final @NonNull ProjectTaskDeveloperRepository projectTaskDeveloperRepository
     ) {
         this.entityManager = entityManager;
         this.spiedProjectService = new ProjectService(this.entityManager, projectRepository);
@@ -51,6 +55,7 @@ class ProjectTests {
         );
         this.spiedProjectService.setProjectRepository(this.spyProjectRepository);
         this.spiedProjectService.setEntityManager(this.entityManager);
+        this.projectTaskDeveloperRepository = projectTaskDeveloperRepository;
         PorphyrServiceException.initExceptionsCounter();
     }
 
@@ -151,10 +156,15 @@ class ProjectTests {
         );
         verify(spyProjectRepository, times(8)).findAllByNameAndIdNot(anyString(), anyLong());
         //getProjectFullTime
-        assertEquals(0L, spiedProjectService.getProjectFullTime(actualProjects.get(0)));
-        assertEquals(1L, spiedProjectService.getProjectFullTime(actualProjects.get(1)));
-        assertEquals(0L, spiedProjectService.getProjectFullTime(actualProjects.get(2)));
-        assertEquals(0L, spiedProjectService.getProjectFullTime(actualProjects.get(3)));
+        actualProjects.sort(Comparator.comparing(ProjectEntity::getId, Comparator.naturalOrder()));
+        assertEquals(0L, projectTaskDeveloperRepository
+            .sumSpendTimeByProjectId(Objects.requireNonNull(actualProjects.get(0).getId())));
+        assertEquals(1L, projectTaskDeveloperRepository
+            .sumSpendTimeByProjectId(Objects.requireNonNull(actualProjects.get(1).getId())));
+        assertEquals(0L, projectTaskDeveloperRepository
+            .sumSpendTimeByProjectId(Objects.requireNonNull(actualProjects.get(2).getId())));
+        assertEquals(0L, projectTaskDeveloperRepository
+            .sumSpendTimeByProjectId(Objects.requireNonNull(actualProjects.get(3).getId())));
     }
 
     @Test

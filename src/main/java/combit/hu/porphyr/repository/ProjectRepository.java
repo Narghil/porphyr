@@ -28,16 +28,6 @@ public interface ProjectRepository extends CrudRepository<ProjectEntity, Long> {
     void saveAndFlush(final @NonNull ProjectEntity projectEntity);
 
     @Query(
-        "SELECT COALESCE(SUM( ProjectTaskDeveloper.spendTime ),0) " +
-            "FROM ProjectTaskEntity ProjectTask, ProjectTaskDeveloperEntity ProjectTaskDeveloper " +
-            "WHERE " +
-            "ProjectTask.projectEntity.id = :projectId and " +
-            "ProjectTaskDeveloper.projectTaskEntity.id = ProjectTask.id "
-    )
-    @NonNull
-    Long sumSpendTimeByProjectId(final @NonNull Long projectId);
-
-    @Query(
         "SELECT DISTINCT Project " +
             "FROM ProjectEntity Project," +
             "   ProjectDeveloperEntity ProjectDeveloper," +

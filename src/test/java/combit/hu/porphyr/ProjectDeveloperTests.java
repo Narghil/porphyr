@@ -44,6 +44,7 @@ class ProjectDeveloperTests {
     private final @NonNull ProjectRepository projectRepository;
     private final @NonNull DeveloperRepository developerRepository;
     private final @NonNull ProjectDeveloperRepository spyProjectDeveloperRepository;
+    private final @NonNull ProjectTaskDeveloperRepository spyProjectTaskDeveloperRepository;
     private final @NonNull ProjectDeveloperService spiedProjectDeveloperService;
 
     @Autowired
@@ -68,11 +69,14 @@ class ProjectDeveloperTests {
         this.spyProjectDeveloperRepository = Mockito.mock(
             ProjectDeveloperRepository.class, AdditionalAnswers.delegatesTo(this.projectDeveloperRepository)
         );
+        this.spyProjectTaskDeveloperRepository = Mockito.mock(
+            ProjectTaskDeveloperRepository.class, AdditionalAnswers.delegatesTo(projectTaskDeveloperRepository)
+        );
         this.spiedProjectDeveloperService.setProjectDeveloperRepository(this.spyProjectDeveloperRepository);
         this.spiedProjectDeveloperService.setEntityManager(this.entityManager);
         this.spiedProjectDeveloperService.setProjectRepository(this.projectRepository);
         this.spiedProjectDeveloperService.setDeveloperRepository(this.developerRepository);
-        this.spiedProjectDeveloperService.setProjectTaskDeveloperRepository(projectTaskDeveloperRepository);
+        this.spiedProjectDeveloperService.setProjectTaskDeveloperRepository(this.spyProjectTaskDeveloperRepository);
 
         PorphyrServiceException.initExceptionsCounter();
     }
@@ -137,10 +141,6 @@ class ProjectDeveloperTests {
         assertNotNull(projectDeveloperEntity.getId());
         spyProjectDeveloperRepository.deleteById(projectDeveloperEntity.getId());
         assertDoesNotThrow(entityManager::flush);
-        // Tétel törlése, ahol a fejlesztőhöz még tartozik feladat (FK ellenőrzés)
-        entityManager.clear();
-        spyProjectDeveloperRepository.deleteById(1L);
-        assertThrows(javax.persistence.PersistenceException.class, entityManager::flush);
         //Lekérdezések
         entityManager.clear();
         developerEntity = developerRepository.findAllById(1L);
@@ -314,13 +314,18 @@ class ProjectDeveloperTests {
                                                                  ? 0L : projectDeveloper.getId()))
                 .collect(Collectors.toList());
         Mockito.clearInvocations(spyProjectDeveloperRepository);
+        Mockito.clearInvocations(spyProjectTaskDeveloperRepository);
         assertEquals(0L, spiedProjectDeveloperService.getDeveloperFullTimeInProject(projectDevelopers.get(0)));
         assertEquals(0L, spiedProjectDeveloperService.getDeveloperFullTimeInProject(projectDevelopers.get(1)));
         assertEquals(0L, spiedProjectDeveloperService.getDeveloperFullTimeInProject(projectDevelopers.get(2)));
-        assertEquals(0L, spiedProjectDeveloperService.getDeveloperFullTimeInProject(projectDevelopers.get(3)));
+        assertEquals(1L, spiedProjectDeveloperService.getDeveloperFullTimeInProject(projectDevelopers.get(3)));
         assertEquals(0L, spiedProjectDeveloperService.getDeveloperFullTimeInProject(projectDevelopers.get(4)));
-        assertEquals(1L, spiedProjectDeveloperService.getDeveloperFullTimeInProject(projectDevelopers.get(5)));
+        assertEquals(0L, spiedProjectDeveloperService.getDeveloperFullTimeInProject(projectDevelopers.get(5)));
         assertEquals(0L, spiedProjectDeveloperService.getDeveloperFullTimeInProject(projectDevelopers.get(6)));
-        verify(spyProjectDeveloperRepository, times(7)).sumSpendTimeByDeveloperIdAndProjectId(anyLong(), anyLong());
+        verify(
+            spyProjectTaskDeveloperRepository,
+            times(7)
+        )
+            .sumSpendTimeByDeveloperIdAndProjectId(anyLong(), anyLong());
     }
 }

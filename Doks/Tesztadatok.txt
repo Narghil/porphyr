@@ -1,0 +1,50 @@
+Tesztadatok:
+============
+PROJECTS: 
+	Id		Name					Description
+	--		----					-----------
+	1		1. projekt				Első projekt
+	2		2. projekt				Második projekt
+	3		Projekt fejlesztővel	Projekt fejlesztővel
+	4		Projekt feladattal		Projekt feladattal
+	
+PROJECTTASKS
+	Id		Project_Id		Name							Description
+	--		----------		----							-----------
+	1		1				1. projekt 1. feladat			Első projekt első feladat
+	2		1				1. projekt 2. feladat			Első projekt második feladat
+	3		2				2. projekt 1. feladat			Második projekt első feladat
+	4		2				2. projekt 2. feladat			Második projekt második feladat
+	5		4				Projekt feladattal - feladat	Projekt feladattal - feladat
+	
+DEVELOPERS
+	Id		Name
+	--		----
+	1		1. fejlesztő
+	2		2. fejlesztő
+	3		3. fejlesztő
+	4		4. fejlesztő
+	
+PROJECTDEVELOPERS
+	Id		Project_Id		Developer_Id
+	--		----------		------------
+	1		1				1
+	2		1				2
+	3		1				3
+	4		2				2								=> 2 órát dolgozott a 2. feladaton
+	5		2				3
+	6		2				4
+	7		3				4
+	
+PROJECTTASKDEVELOPERS
+	Id		ProjectTask_Id	Developer_Id	Spend_Time
+	--		--------------	------------	-----------
+	1		1				1				0
+	2		1				2				0
+	3		2				2				0
+	4		2				3				0
+	5		3				2				0
+	6		3				3				0
+	7		4				3				0
+	8		4				2				1				=> 2. projekt 2. feladatán dolgozott a 2. fejlesztő
+	

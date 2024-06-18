@@ -23,9 +23,11 @@ import java.util.Set;
  * {@code - id:} &#9;&#9;&#9; Egyedi azonosító <br/>
  * {@code - name:} &#9;&#9;&#9; A fejlesztő neve. Egyedi. <br/>
  * {@code - developerProjects:} &#9; A projektek listája, amelyekhez a fejlesztő hozzá van rendelve. <br/>
+ * {@code - projectTaskDevelopers:} &#9; A fejlesztőhöz tartozó projectTask hozzárendelések. <br/>
  * <br/>
  *
  * @see ProjectDeveloperEntity
+ * @see ProjectTaskDeveloperEntity
  */
 
 @Entity
@@ -56,19 +58,22 @@ public class DeveloperEntity {
     )
     private Set<UserEntity> users = new HashSet<>();
 
-    @Transient
-    private @NonNull Long spendTime;
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @OneToMany(mappedBy = "developerEntity")
+    @JsonBackReference
+    private @NonNull List<ProjectTaskDeveloperEntity> projectTaskDevelopers;
 
     public DeveloperEntity(final @NonNull String name) {
         this.name = name;
         this.developerProjects = new ArrayList<>();
-        this.spendTime = 0L;
+        this.projectTaskDevelopers = new ArrayList<>();
     }
 
     public DeveloperEntity() {
         name = "";
         developerProjects = new ArrayList<>();
-        this.spendTime = 0L;
+        this.projectTaskDevelopers = new ArrayList<>();
     }
 }
 
